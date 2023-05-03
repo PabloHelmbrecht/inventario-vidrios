@@ -76,7 +76,7 @@ export default function Navbar() {
                       <span className="sr-only">Open user menu</span>
                       <Image
                         className="h-8 w-8 rounded-full"
-                        src={user?.image || "/public/favicon.ico"}
+                        src={user?.image || "https://media.licdn.com/dms/image/C4E0BAQETbxjnoHj6FQ/company-logo_200_200/0/1651757588440?e=1691020800&v=beta&t=WGCW5Yt44ABVeptgPOyQQiXrdoPNGvANCSWv4BrMh4U"}
                         height={32}
                         width={32}
                         alt={`${user?.name || "placeholder"} avatar`}
@@ -169,7 +169,7 @@ export default function Navbar() {
                     <div className="flex-shrink-0">
                       <Image
                         className="h-8 w-8 rounded-full"
-                        src={user.image ?? "/"}
+                        src={user.image ?? "https://media.licdn.com/dms/image/C4E0BAQETbxjnoHj6FQ/company-logo_200_200/0/1651757588440?e=1691020800&v=beta&t=WGCW5Yt44ABVeptgPOyQQiXrdoPNGvANCSWv4BrMh4U"}
                         height={32}
                         width={32}
                         alt={`${user.name ?? ""} avatar`}
