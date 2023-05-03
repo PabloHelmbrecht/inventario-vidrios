@@ -76,7 +76,7 @@ export default function Navbar() {
                       <span className="sr-only">Open user menu</span>
                       <Image
                         className="h-8 w-8 rounded-full"
-                        src={user?.image || "https://avatar.vercel.sh/leerob"}
+                        src={user?.image || "/public/favicon.ico"}
                         height={32}
                         width={32}
                         alt={`${user?.name || "placeholder"} avatar`}
@@ -101,7 +101,9 @@ export default function Navbar() {
                                 active ? "bg-gray-100" : "",
                                 "flex w-full px-4 py-2 text-sm text-gray-700"
                               )}
-                              onClick={() => signOut()}
+                              onClick={() => {
+                                void signOut();
+                              }}
                             >
                               Sign out
                             </button>
@@ -115,7 +117,9 @@ export default function Navbar() {
                                 active ? "bg-gray-100" : "",
                                 "flex w-full px-4 py-2 text-sm text-gray-700"
                               )}
-                              onClick={() => signIn("github")}
+                              onClick={() => {
+                                void signIn("google");
+                              }}
                             >
                               Sign in
                             </button>
@@ -165,10 +169,10 @@ export default function Navbar() {
                     <div className="flex-shrink-0">
                       <Image
                         className="h-8 w-8 rounded-full"
-                        src={user.image}
+                        src={user.image ?? "/"}
                         height={32}
                         width={32}
-                        alt={`${user.name} avatar`}
+                        alt={`${user.name ?? ""} avatar`}
                       />
                     </div>
                     <div className="ml-3">
@@ -182,7 +186,9 @@ export default function Navbar() {
                   </div>
                   <div className="mt-3 space-y-1">
                     <button
-                      onClick={() => signOut()}
+                      onClick={() => {
+                        void signOut();
+                      }}
                       className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                     >
                       Sign out
@@ -192,7 +198,9 @@ export default function Navbar() {
               ) : (
                 <div className="mt-3 space-y-1">
                   <button
-                    onClick={() => signIn("github")}
+                    onClick={() => {
+                      void signIn("google");
+                    }}
                     className="flex w-full px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                   >
                     Sign in
