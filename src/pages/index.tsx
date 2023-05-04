@@ -17,7 +17,7 @@ import {
 import { Dialog, Transition } from "@headlessui/react";
 
 //Custom components
-import Autocomplete from "../components/autocomplete";
+//import Autocomplete from "../components/autocomplete";
 
 const rows: GridRowsProp = [
   { id: 1, col1: "Hello", col2: "World" },
@@ -117,7 +117,7 @@ const Home: NextPage = () => {
                       Crear un vidrio nuevo
                     </Dialog.Title>
                     <div className="mt-2">
-                      <Autocomplete />
+                      {/*<Autocomplete />*/}
                     </div>
 
                     <div className="mt-4">
