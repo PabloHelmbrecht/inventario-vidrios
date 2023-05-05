@@ -9,6 +9,18 @@
   body {
     @apply h-full;
   }
-  
-  
+}
+
+.w-fit {
+  width: -webkit-fill-available;
+}
+
+.textfield-appearance {
+  -moz-appearance: textfield;
+}
+
+.textfield-appearance::-webkit-outer-spin-button,
+.textfield-appearance::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
