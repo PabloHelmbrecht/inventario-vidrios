@@ -1,5 +1,5 @@
 //React
-import { Fragment, useState } from 'react'
+import React, { Fragment, useState } from 'react'
 
 //Next
 import { type NextPage } from 'next'
@@ -10,6 +10,9 @@ import { DataGrid, GridToolbar, type GridRowsProp, type GridColDef } from '@mui/
 
 //Headless UI
 import { Dialog, Transition } from '@headlessui/react'
+
+//Final Form
+import { Form } from 'react-final-form'
 
 //Custom components
 import Combobox from '../components/comboboxField'
@@ -29,6 +32,10 @@ const columns: GridColDef[] = [
 
 const Home: NextPage = () => {
     const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
+
+    const onGlassCreation = (values: string) => {
+        console.log(values)
+    }
 
     return (
         <>
@@ -115,29 +122,51 @@ const Home: NextPage = () => {
                                 leaveTo="opacity-0 scale-95"
                             >
                                 <Dialog.Panel className="min-h-102 w-full max-w-md transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                    <form>
-                                        <Dialog.Title
-                                            as="h3"
-                                            className="text-lg font-medium leading-6 text-gray-900"
-                                        >
-                                            Crear un vidrio nuevo
-                                        </Dialog.Title>
-                                        <div className="mt-2 flex flex-col gap-4">
-                                            <Combobox />
-                                            <Numeric />
-                                            <TextArea />
-                                        </div>
+                                    <Form
+                                        onSubmit={onGlassCreation}
+                                        initialValues={{
+                                            textarea: 'prueba',
+                                            numeric: 2,
+                                            combobox: { id: 1, value: 'Insert options' },
+                                        }}
+                                        render={({ handleSubmit, submitting }) => (
+                                            <form>
+                                                <Dialog.Title
+                                                    as="h3"
+                                                    className="text-lg font-medium leading-6 text-gray-900"
+                                                >
+                                                    Crear un vidrio nuevo
+                                                </Dialog.Title>
 
-                                        <div className="mt-4">
-                                            <button
-                                                type="button"
-                                                className="rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
-                                                onClick={() => setIsGlassCreatorOpen(false)}
-                                            >
-                                                Got it, thanks!
-                                            </button>
-                                        </div>
-                                    </form>
+                                                <div className="mt-2 flex flex-col gap-4">
+                                                    <Combobox />
+                                                    <Numeric />
+                                                    <TextArea />
+                                                </div>
+
+                                                <div className="mt-4">
+                                                    <button
+                                                        type="button"
+                                                        className="rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
+                                                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                                                            if (e) {
+                                                                handleSubmit(e)
+                                                                    ?.then((val) => val)
+                                                                    .catch((e) => {
+                                                                        console.log(e)
+                                                                    })
+
+                                                                setIsGlassCreatorOpen(false)
+                                                            }
+                                                        }}
+                                                        disabled={submitting}
+                                                    >
+                                                        Crear Vidrio
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        )}
+                                    />
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>
