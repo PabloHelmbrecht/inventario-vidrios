@@ -2,25 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 @layer components {
-  #__next {
-    @apply h-full bg-gray-50;
-  }
-  html,
-  body {
-    @apply h-full;
-  }
+    #__next {
+        @apply h-full bg-gray-50;
+    }
+    html,
+    body {
+        @apply h-full;
+    }
 }
 
 .w-fit {
-  width: -webkit-fill-available;
+    width: -webkit-fill-available;
 }
 
 .textfield-appearance {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 .textfield-appearance::-webkit-outer-spin-button,
 .textfield-appearance::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
