@@ -18,7 +18,10 @@ type Option = {
 export default function ComboboxField({
     label = 'Insert label',
     name = 'combobox',
-    options = [{ id: 1, value: 'Insert options' }],
+    options = [
+        { id: 1, value: 'Insert options' },
+        { id: 2, value: 'Insert options' },
+    ],
 }: {
     label?: string
     name?: string
@@ -49,7 +52,8 @@ export default function ComboboxField({
                     {(props) => (
                         <Combobox
                             name={props.input.name}
-                            value={new String(props.input.value)}
+                            /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                            value={props.input.value}
                             onChange={props.input.onChange}
                         >
                             <div className="relative mt-1">

@@ -1,9 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 
 import { env } from '~/env.mjs'
-
-let globalThis
-
+/* eslint-disable-next-line */
 const globalForPrisma = globalThis as unknown as {
     prisma: PrismaClient | undefined
 }
