@@ -10,7 +10,7 @@ type Option = {
 export default function ComboboxField({
   label = "Insert label",
   options = [{ id: 1, value: "Insert options" }],
-  defaultValue,
+  defaultValue ,
 }: {
   label: string;
   options: Option[];
@@ -25,7 +25,7 @@ export default function ComboboxField({
     query === ""
       ? options
       : options.filter((option) =>
-          option.name
+          option.value
             .toLowerCase()
             .replace(/\s+/g, "")
             .includes(query.toLowerCase().replace(/\s+/g, ""))
