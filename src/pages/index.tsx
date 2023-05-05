@@ -61,14 +61,14 @@ const Home: NextPage = () => {
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
                     <div className="flex flex-col justify-center gap-4">
-                        <div className="flex w-full justify-end gap-2">
+                        <div className="flex w-full justify-end gap-3">
                             <button
                                 onClick={() => {
                                     setIsGlassCreatorOpen(true)
                                 }}
-                                className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
+                                className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600"
                             >
-                                Consumir
+                                Cargar
                             </button>
                             <button
                                 onClick={() => {
@@ -78,13 +78,14 @@ const Home: NextPage = () => {
                             >
                                 Mover
                             </button>
+
                             <button
                                 onClick={() => {
                                     setIsGlassCreatorOpen(true)
                                 }}
-                                className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600"
+                                className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
                             >
-                                Cargar
+                                Consumir
                             </button>
                         </div>
                         <DataGrid
