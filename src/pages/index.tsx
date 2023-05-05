@@ -1,3 +1,10 @@
+/*
+ * Agregar un botón de consumir y mover vidrio y para agrupar paquetes
+ * Cada botón abre una interfaz para
+ * Agregar la funcionalidad de poder editar los vidrios en la tabla
+ * Selecciono el vidrio por su código o su descripción, luego por sus dimensiones y por último por su ubicación y id, luego selecciono las cantidades y la posición final
+ */
+
 //React
 import React, { Fragment, useState } from 'react'
 
@@ -54,14 +61,30 @@ const Home: NextPage = () => {
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
                     <div className="flex flex-col justify-center gap-4">
-                        <div className="flex w-full justify-end">
+                        <div className="flex w-full justify-end gap-2">
+                            <button
+                                onClick={() => {
+                                    setIsGlassCreatorOpen(true)
+                                }}
+                                className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
+                            >
+                                Consumir
+                            </button>
                             <button
                                 onClick={() => {
                                     setIsGlassCreatorOpen(true)
                                 }}
                                 className=" rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
                             >
-                                Cargar Vidrio
+                                Mover
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsGlassCreatorOpen(true)
+                                }}
+                                className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600"
+                            >
+                                Cargar
                             </button>
                         </div>
                         <DataGrid
