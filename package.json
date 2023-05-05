@@ -6,8 +6,12 @@
     "build": "next build",
     "dev": "next dev",
     "postinstall": "prisma generate",
-    "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "type:check": "tsc --noEmit",
+    "analyze": "env ANALYZE=true pnpm build",
+    "lint": "npx eslint --fix \"./src/*.{js,jsx,ts,tsx}\"",
+    "types": "tsc",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@emotion/react": "^11.10.8",
@@ -33,7 +37,7 @@
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "autoprefixer": "^10.4.14",
-    "eslint": "^8.36.0",
+    "eslint": "^8.39.0",
     "eslint-config-next": "^13.2.4",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
