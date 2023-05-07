@@ -25,6 +25,7 @@ import { Form } from 'react-final-form'
 import Combobox from '../components/comboboxField'
 import Numeric from '../components/numericField'
 import TextArea from '../components/textareaField'
+import TextLine from '../components/textlineField'
 
 const rows: GridRowsProp = [
     { id: 1, col1: 'Hello', col2: 'World' },
@@ -160,6 +161,7 @@ const Home: NextPage = () => {
                                                 <div className="mt-2 flex flex-col gap-4">
                                                     <Combobox />
                                                     <Numeric />
+                                                    <TextLine />
                                                     <TextArea />
                                                 </div>
 
