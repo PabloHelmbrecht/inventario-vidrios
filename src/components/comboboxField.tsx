@@ -32,8 +32,6 @@ export default function ComboboxField({
     className?: string
 }) {
     const [query, setQuery] = useState<string>('')
-    const [error, setError] = useState<string>('')
-
     const filteredOptions: Option[] =
         query === ''
             ? options
@@ -42,22 +40,26 @@ export default function ComboboxField({
               )
 
     return (
-        <div className={className}>
-            <label
-                htmlFor="about"
-                className="block text-sm font-medium leading-6 text-gray-900"
-            >
-                {label}
-                {error ? <span className="text-xs italic  text-slate-500"> *{error}</span> : ''}
-            </label>
-            <div className="mt-2">
-                <Field
-                    name={name}
-                    type="text"
-                    validate={required}
-                >
-                    {(props) => (
-                        <>
+        <Field
+            name={name}
+            type="text"
+            validate={required}
+        >
+            {(props) => (
+                <>
+                    <div className={className}>
+                        <label
+                            htmlFor="about"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                            {label}
+                            {props.meta.error ? (
+                                <span className="text-xs italic  text-slate-500"> *{props.meta.error}</span>
+                            ) : (
+                                ''
+                            )}
+                        </label>
+                        <div className="mt-2">
                             <Combobox
                                 name={props.input.name}
                                 /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
@@ -72,7 +74,6 @@ export default function ComboboxField({
                                             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                                                 setQuery(event.target.value)
                                             }
-                                            onFocus={() => setError(props.meta.error as string)}
                                         />
 
                                         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -135,10 +136,10 @@ export default function ComboboxField({
                                     </Transition>
                                 </div>
                             </Combobox>
-                        </>
-                    )}
-                </Field>
-            </div>
-        </div>
+                        </div>
+                    </div>
+                </>
+            )}
+        </Field>
     )
 }
