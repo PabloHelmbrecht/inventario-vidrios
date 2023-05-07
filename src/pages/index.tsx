@@ -148,12 +148,7 @@ const Home: NextPage = () => {
                                 <Dialog.Panel className="min-h-102 w-full max-w-md transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
                                     <Form
                                         onSubmit={onGlassCreation}
-                                        initialValues={{
-                                            textarea: 'prueba',
-                                            numeric: 2,
-                                            combobox: { id: 1, value: 'Insert options' },
-                                        }}
-                                        render={({ handleSubmit, submitting }) => (
+                                        render={({ handleSubmit, submitting, hasValidationErrors }) => (
                                             <form>
                                                 <Dialog.Title
                                                     as="h3"
@@ -171,7 +166,7 @@ const Home: NextPage = () => {
                                                 <div className="mt-4">
                                                     <button
                                                         type="button"
-                                                        className="rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
+                                                        className="rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-400"
                                                         onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                                                             if (e) {
                                                                 handleSubmit(e)
@@ -183,7 +178,7 @@ const Home: NextPage = () => {
                                                                 setIsGlassCreatorOpen(false)
                                                             }
                                                         }}
-                                                        disabled={submitting}
+                                                        disabled={submitting || hasValidationErrors}
                                                     >
                                                         Crear Vidrio
                                                     </button>
