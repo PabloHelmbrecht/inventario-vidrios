@@ -31,8 +31,8 @@ export default function ComboboxField({
     options?: Option[]
     className?: string
 }) {
-    const [query, setQuery] = useState<string | string>('')
-    const [error, setError] = useState(new String(''))
+    const [query, setQuery] = useState<string>('')
+    const [error, setError] = useState<string>('')
 
     const filteredOptions: Option[] =
         query === ''
@@ -72,7 +72,7 @@ export default function ComboboxField({
                                             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                                                 setQuery(event.target.value)
                                             }
-                                            onFocus={() => setError(new String(props.meta.error))}
+                                            onFocus={() => setError(props.meta.error as string)}
                                         />
 
                                         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
