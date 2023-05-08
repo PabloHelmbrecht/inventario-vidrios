@@ -20,9 +20,10 @@ import { Dialog, Transition } from '@headlessui/react'
 
 //Final Form
 import { Form } from 'react-final-form'
+import createDecorator from 'final-form-calculate'
 
 //Custom components
-import Combobox from '../components/comboboxField'
+import Combobox, { type Option } from '../components/comboboxField'
 import Numeric from '../components/numericField'
 import TextArea from '../components/textareaField'
 import TextLine from '../components/textlineField'
@@ -37,6 +38,22 @@ const columns: GridColDef[] = [
     { field: 'col1', headerName: 'Column 1', width: 150 },
     { field: 'col2', headerName: 'Column 2', width: 150 },
 ]
+
+//Decorator test
+const decorator = createDecorator(
+    {
+        field: 'type',
+        updates: {
+            description: (typeValue: Option) => typeValue,
+        },
+    },
+    {
+        field: 'description',
+        updates: {
+            type: (descriptionValue: Option) => descriptionValue,
+        },
+    },
+)
 
 const Home: NextPage = () => {
     const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
@@ -149,6 +166,9 @@ const Home: NextPage = () => {
                                 <Dialog.Panel className="min-h-102 w-full max-w-md transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
                                     <Form
                                         onSubmit={onGlassCreation}
+                                        /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+                                        //@ts-ignore
+                                        decorators={[decorator]}
                                         render={({ handleSubmit, submitting, hasValidationErrors }) => (
                                             <form>
                                                 <Dialog.Title
@@ -159,7 +179,14 @@ const Home: NextPage = () => {
                                                 </Dialog.Title>
 
                                                 <div className="mt-2 flex flex-col gap-4">
-                                                    <Combobox />
+                                                    <Combobox
+                                                        label="Tipo"
+                                                        name="type"
+                                                    />
+                                                    <Combobox
+                                                        label="Descripción"
+                                                        name="description"
+                                                    />
                                                     <Numeric />
                                                     <TextLine />
                                                     <TextArea />

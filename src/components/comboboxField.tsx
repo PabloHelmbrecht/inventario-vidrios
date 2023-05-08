@@ -10,7 +10,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 //Final Form
 import { Field } from 'react-final-form'
 
-type Option = {
+export type Option = {
     id: number
     value: string
 }
