@@ -1,8 +1,6 @@
 //Final Form
 import { Field } from 'react-final-form'
 
-const required = (value: number | string): string | undefined => (value ? undefined : 'Requerido')
-
 export default function TextareaField({
     label = 'Insert label',
     name = 'textarea',
@@ -16,7 +14,6 @@ export default function TextareaField({
         <Field
             name={name}
             placeholder={placeholder}
-            validate={required}
         >
             {({ input, meta }) => (
                 <div className="col-span-full">

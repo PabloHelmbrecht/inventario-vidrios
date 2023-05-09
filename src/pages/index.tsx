@@ -15,18 +15,15 @@ import Head from 'next/head'
 //Material UI
 import { DataGrid, GridToolbar, type GridRowsProp, type GridColDef } from '@mui/x-data-grid'
 
-//Headless UI
-import { Dialog, Transition } from '@headlessui/react'
-
 //Final Form
-import { Form } from 'react-final-form'
-import createDecorator from 'final-form-calculate'
+import { type Calculation } from 'final-form-calculate'
 
 //Custom components
 import Combobox, { type Option } from '../components/inputFields/comboboxField'
 import Numeric from '../components/inputFields/numericField'
 import TextArea from '../components/inputFields/textareaField'
 import TextLine from '../components/inputFields/textlineField'
+import DialogForm from '../components/dialogForm'
 
 const rows: GridRowsProp = [
     { id: 1, col1: 'Hello', col2: 'World' },
@@ -39,8 +36,8 @@ const columns: GridColDef[] = [
     { field: 'col2', headerName: 'Column 2', width: 150 },
 ]
 
-//Decorator test
-const decorator = createDecorator(
+//Decorator
+const decorator: Calculation[] = [
     {
         field: 'type',
         updates: {
@@ -53,7 +50,7 @@ const decorator = createDecorator(
             type: (descriptionValue: Option) => descriptionValue,
         },
     },
-)
+]
 
 const Home: NextPage = () => {
     const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
@@ -130,97 +127,25 @@ const Home: NextPage = () => {
                 </div>
             </main>
 
-            <Transition
-                appear
-                show={isGlassCreatorOpen}
-                as={Fragment}
+            <DialogForm
+                title="Prueba"
+                isOpen={isGlassCreatorOpen}
+                setIsOpen={setIsGlassCreatorOpen}
+                onSubmit={onGlassCreation}
+                decorator={decorator}
             >
-                <Dialog
-                    as="div"
-                    className="relative z-10"
-                    onClose={() => setIsGlassCreatorOpen(false)}
-                >
-                    <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <div className="fixed inset-0 bg-black bg-opacity-25" />
-                    </Transition.Child>
-
-                    <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center">
-                            <Transition.Child
-                                as={Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0 scale-95"
-                                enterTo="opacity-100 scale-100"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100 scale-100"
-                                leaveTo="opacity-0 scale-95"
-                            >
-                                <Dialog.Panel className="min-h-102 w-full max-w-md transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                    <Form
-                                        onSubmit={onGlassCreation}
-                                        /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
-                                        //@ts-ignore
-                                        decorators={[decorator]}
-                                        render={({ handleSubmit, submitting, hasValidationErrors }) => (
-                                            <form>
-                                                <Dialog.Title
-                                                    as="h3"
-                                                    className="text-lg font-medium leading-6 text-gray-900"
-                                                >
-                                                    Crear un vidrio nuevo
-                                                </Dialog.Title>
-
-                                                <div className="mt-2 flex flex-col gap-4">
-                                                    <Combobox
-                                                        label="Tipo"
-                                                        name="type"
-                                                    />
-                                                    <Combobox
-                                                        label="Descripción"
-                                                        name="description"
-                                                    />
-                                                    <Numeric />
-                                                    <TextLine />
-                                                    <TextArea />
-                                                </div>
-
-                                                <div className="mt-4">
-                                                    <button
-                                                        type="button"
-                                                        className="rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-400"
-                                                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                                                            if (e) {
-                                                                handleSubmit(e)
-                                                                    ?.then((val) => val)
-                                                                    .catch((e) => {
-                                                                        console.log(e)
-                                                                    })
-
-                                                                setIsGlassCreatorOpen(false)
-                                                            }
-                                                        }}
-                                                        disabled={submitting || hasValidationErrors}
-                                                    >
-                                                        Crear Vidrio
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        )}
-                                    />
-                                </Dialog.Panel>
-                            </Transition.Child>
-                        </div>
-                    </div>
-                </Dialog>
-            </Transition>
+                <Combobox
+                    label="Tipo"
+                    name="type"
+                />
+                <Combobox
+                    label="Descripción"
+                    name="description"
+                />
+                <Numeric />
+                <TextLine />
+                <TextArea />
+            </DialogForm>
         </>
     )
 }
