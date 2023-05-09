@@ -8,22 +8,6 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Form, type FormRenderProps } from 'react-final-form'
 import createDecorator, { type Calculation } from 'final-form-calculate'
 
-/*
-interface Calculation {
-    field: string | RegExp | (string | RegExp)[]
-    //eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
-    isEqual?: (a: any, b: any) => boolean
-    updates: UpdatesByName | UpdatesForAll
-}
-interface UpdatesByName {
-    //eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
-    [FieldName: string]: (value: any, allValues: object, prevValues: object) => Promise<any> | any
-}
-interface UpdatesForAll {
-    //eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
-    (value: any, field: string, allValues: object, prevValues: object): Promise<any>
-}*/
-
 interface dialogFormProps {
     title?: string
     buttonText?: string
