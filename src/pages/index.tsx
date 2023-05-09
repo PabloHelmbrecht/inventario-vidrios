@@ -23,10 +23,10 @@ import { Form } from 'react-final-form'
 import createDecorator from 'final-form-calculate'
 
 //Custom components
-import Combobox, { type Option } from '../components/comboboxField'
-import Numeric from '../components/numericField'
-import TextArea from '../components/textareaField'
-import TextLine from '../components/textlineField'
+import Combobox, { type Option } from '../components/inputFields/comboboxField'
+import Numeric from '../components/inputFields/numericField'
+import TextArea from '../components/inputFields/textareaField'
+import TextLine from '../components/inputFields/textlineField'
 
 const rows: GridRowsProp = [
     { id: 1, col1: 'Hello', col2: 'World' },
