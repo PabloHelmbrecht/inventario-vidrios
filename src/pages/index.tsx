@@ -35,7 +35,7 @@ const rows: GridRowsProp = [
 ]
 
 const columns: GridColDef[] = [
-    { field: 'col1', headerName: 'Columna Pablo', width: 150 },
+    { field: 'col1', headerName: 'Columna Pablo2', width: 150 },
     { field: 'col2', headerName: 'Column 2', width: 150 },
 ]
 
