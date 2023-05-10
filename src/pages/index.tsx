@@ -13,7 +13,14 @@ import { type NextPage } from 'next'
 import Head from 'next/head'
 
 //Material UI
-import { DataGrid, GridToolbar, type GridRowsProp, type GridColDef } from '@mui/x-data-grid'
+import {
+    DataGrid,
+    GridToolbar,
+    type GridRowsProp,
+    type GridColDef,
+    type GridRenderCellParams,
+    type GridValidRowModel,
+} from '@mui/x-data-grid'
 
 //Final Form
 import { type Calculation } from 'final-form-calculate'
@@ -25,6 +32,16 @@ import TextArea from '../components/inputFields/textareaField'
 import TextLine from '../components/inputFields/textlineField'
 import DialogForm from '../components/dialogForm'
 
+//Functions
+const onGlassCreation = (values: string) => {
+    console.log(values)
+}
+const onDelete = (e: React.MouseEvent<HTMLButtonElement>, row: GridValidRowModel) => {
+    console.log(e)
+    console.log(row)
+}
+
+//DataGrid Definitions
 const rows: GridRowsProp = [
     { id: 1, col1: 'Hello', col2: 'World' },
     { id: 2, col1: 'DataGridPro', col2: 'is Awesome' },
@@ -34,9 +51,19 @@ const rows: GridRowsProp = [
 const columns: GridColDef[] = [
     { field: 'col1', headerName: 'Columna Pablo2', width: 150 },
     { field: 'col2', headerName: 'Column 2', width: 150 },
+    {
+        field: 'deleteButton',
+        headerName: 'Actions',
+        description: 'Actions column.',
+        sortable: false,
+        width: 160,
+        renderCell: ({ row }: GridRenderCellParams<GridValidRowModel>) => {
+            return <button onClick={(e) => onDelete(e, row)}>Delete</button>
+        },
+    },
 ]
 
-//Decorator
+//Form Decorations
 const decorator: Calculation[] = [
     {
         field: 'type',
@@ -54,10 +81,6 @@ const decorator: Calculation[] = [
 
 const Home: NextPage = () => {
     const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
-
-    const onGlassCreation = (values: string) => {
-        console.log(values)
-    }
 
     return (
         <>
