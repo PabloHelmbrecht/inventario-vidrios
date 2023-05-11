@@ -137,7 +137,7 @@ const Home: NextPage = () => {
                             </button>
                             <button
                                 onClick={() => {
-                                    setSnackbar({ type: 'info', message: 'mensaje' })
+                                    setSnackbar({ type: 'success', message: 'mensaje' })
                                 }}
                                 className=" rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
                             >

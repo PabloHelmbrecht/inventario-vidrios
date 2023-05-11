@@ -6,6 +6,18 @@ import { CheckCircleIcon, ExclamationTriangleIcon, InformationCircleIcon } from 
 
 //MUI
 import Snackbar from '@mui/material/Snackbar'
+import Slide, { type SlideProps } from '@mui/material/Slide'
+
+type TransitionProps = Omit<SlideProps, 'direction'>
+
+function TransitionUp(props: TransitionProps) {
+    return (
+        <Slide
+            {...props}
+            direction="up"
+        />
+    )
+}
 
 export type AlertProps = {
     type: 'info' | 'warning' | 'success' | string
@@ -26,50 +38,53 @@ export const Alert: React.FC<AlertProps> = ({ type, message }) => {
 
     switch (type) {
         case 'info':
-            icon = <InformationCircleIcon className="mr-2" />
-            bgColor = 'bg-blue-100'
-            borderColor = 'border-blue-500'
+            icon = <InformationCircleIcon className="mr-2 w-5" />
+            bgColor = 'bg-blue-200'
+            borderColor = 'border-blue-600'
             textColor = 'text-blue-800'
             break
         case 'warning':
-            icon = <ExclamationTriangleIcon className="mr-2" />
-            bgColor = 'bg-yellow-100'
-            borderColor = 'border-yellow-500'
-            textColor = 'text-yellow-800'
+            icon = <ExclamationTriangleIcon className="mr-2 w-5" />
+            bgColor = 'bg-red-200'
+            borderColor = 'border-red-600'
+            textColor = 'text-red-800'
             break
         case 'success':
-            icon = <CheckCircleIcon className="mr-2" />
-            bgColor = 'bg-green-100'
-            borderColor = 'border-green-500'
-            textColor = 'text-green-800'
+            icon = <CheckCircleIcon className="mr-2 w-5" />
+            bgColor = 'bg-emerald-200'
+            borderColor = 'border-emerald-600'
+            textColor = 'text-emerald-800'
             break
         default:
             icon = null
-            bgColor = 'bg-gray-100'
-            borderColor = 'border-gray-500'
+            bgColor = 'bg-gray-200'
+            borderColor = 'border-gray-600'
             textColor = 'text-gray-800'
             break
     }
 
     return (
-        <div className={`rounded-md border-l-4 p-4 ${bgColor} ${borderColor} ${textColor}`}>
+        <div className={`flex items-center rounded-md p-3 ${bgColor} ${borderColor} ${textColor}`}>
             {icon}
             <span>{message}</span>
         </div>
     )
 }
 
-export const SnackbarAlert: React.FC<SnackbarProps> = ({ state, setState, autoHideDuration = 6000 }) => {
+export const SnackbarAlert: React.FC<SnackbarProps> = ({ state, setState, autoHideDuration = 2000 }) => {
     return (
         <>
             {!!state && (
                 <Snackbar
+                    TransitionComponent={TransitionUp}
                     open
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                     onClose={() => setState(null)}
                     autoHideDuration={autoHideDuration}
                 >
-                    <Alert {...state} />
+                    <div className="mb-4">
+                        <Alert {...state} />
+                    </div>
                 </Snackbar>
             )}
         </>
