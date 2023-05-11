@@ -23,6 +23,7 @@ import {
     type GridColDef,
     type GridRenderCellParams,
     type GridValidRowModel,
+    type GridRowModel,
 } from '@mui/x-data-grid'
 
 //Final Form
@@ -39,9 +40,25 @@ import DialogForm from '../components/dialogForm'
 const onGlassCreation = (values: string) => {
     console.log(values)
 }
-const onDelete = (e: React.MouseEvent<HTMLButtonElement>, row: GridValidRowModel) => {
-    console.log(e)
+const onDelete = (row: GridValidRowModel) => {
     console.log(row)
+}
+
+const onProcessRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
+    console.log(newRow)
+    console.log(oldRow)
+
+    return new Promise((resolve, reject) => {
+        if (newRow.col1 === 'error') {
+            reject(new Error('error'))
+        } else {
+            resolve(newRow)
+        }
+    })
+}
+
+const handleProcessRowError = (e: Error) => {
+    console.log(e)
 }
 
 //DataGrid Definitions
@@ -52,7 +69,7 @@ const rows: GridRowsProp = [
 ]
 
 const columns: GridColDef[] = [
-    { field: 'col1', headerName: 'Columna Pablo2' },
+    { field: 'col1', headerName: 'Columna Pablo2', editable: true },
     { field: 'col2', headerName: 'Column 2' },
     {
         field: 'action',
@@ -68,7 +85,7 @@ const columns: GridColDef[] = [
                 <div className="flex w-full justify-center">
                     <button
                         className="flex items-center justify-center rounded-md border border-gray-300 bg-gray-100 px-1 py-1 text-gray-500 transition-colors duration-300 hover:border-red-200 hover:bg-red-200 hover:text-red-600"
-                        onClick={(e) => onDelete(e, row)}
+                        onClick={() => onDelete(row)}
                     >
                         <TrashIcon className="w-4" />
                     </button>
@@ -146,6 +163,8 @@ const Home: NextPage = () => {
                             rows={rows}
                             columns={columns}
                             slots={{ toolbar: GridToolbar }}
+                            processRowUpdate={onProcessRowUpdate}
+                            onProcessRowUpdateError={handleProcessRowError}
                             slotProps={{
                                 toolbar: {
                                     showQuickFilter: true,
