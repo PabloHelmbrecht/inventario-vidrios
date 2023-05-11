@@ -28,6 +28,7 @@ import TextArea from '../components/inputFields/textareaField'
 import TextLine from '../components/inputFields/textlineField'
 import DialogForm from '../components/dialogForm'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
+import SimpleCombobox from '../components/simpleCombobox'
 
 //Types and Interfaces
 interface Glass {
@@ -109,8 +110,9 @@ const columns: GridColDef[] = [
         headerName: 'Descripción',
         field: 'type',
         editable: true,
+        width: 200,
         valueFormatter: ({ value }: { value: { description: string } }) => value?.description,
-        //renderEditCell: (param) => console.log(param),
+        renderEditCell: () => <SimpleCombobox className="w-3/4 overflow-visible" />,
     },
     {
         field: 'actions',

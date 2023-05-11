@@ -9,6 +9,16 @@
     body {
         @apply h-full;
     }
+    .MuiDataGrid-main {
+        overflow: visible;
+    }
+
+    .css-axafay-MuiDataGrid-virtualScroller {
+        overflow: visible;
+    }
+    .css-wz3c3n-MuiDataGrid-root .MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight) > .MuiDataGrid-cell {
+        overflow: visible;
+    }
 }
 
 .w-fit {

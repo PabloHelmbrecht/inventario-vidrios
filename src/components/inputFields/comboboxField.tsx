@@ -23,10 +23,10 @@ export default function ComboboxField({
     label = 'Insert label',
     name = 'combobox',
     options = [
-        { id: '1', value: 'Insert options' },
-        { id: '2', value: 'Insert options' },
+        { id: '1', name: 'glasstype1', description: 'Glass Type 1' },
+        { id: '2', name: 'glasstype2', description: 'Glass Type 2' },
     ],
-    inputField = 'value',
+    inputField = 'description',
     className = '',
 }: {
     label?: string
