@@ -12,6 +12,9 @@ import React, { Fragment, useState } from 'react'
 import { type NextPage } from 'next'
 import Head from 'next/head'
 
+//Hero Icons
+import { TrashIcon } from '@heroicons/react/24/outline'
+
 //Material UI
 import {
     DataGrid,
@@ -45,20 +48,32 @@ const onDelete = (e: React.MouseEvent<HTMLButtonElement>, row: GridValidRowModel
 const rows: GridRowsProp = [
     { id: 1, col1: 'Hello', col2: 'World' },
     { id: 2, col1: 'DataGridPro', col2: 'is Awesome' },
-    { id: 3, col1: 'MUI', col2: 'is Amazing' },
+    { id: 3, col1: 'MUI', col2: 'is Amazi dfrger rgdtr g grgegrtgtrgr ng' },
 ]
 
 const columns: GridColDef[] = [
-    { field: 'col1', headerName: 'Columna Pablo2', width: 150 },
-    { field: 'col2', headerName: 'Column 2', width: 150 },
+    { field: 'col1', headerName: 'Columna Pablo2' },
+    { field: 'col2', headerName: 'Column 2' },
     {
         field: 'deleteButton',
-        headerName: 'Actions',
-        description: 'Actions column.',
+        headerName: '',
+        filterable: false,
+        hideable: false,
         sortable: false,
-        width: 160,
+        disableColumnMenu: true,
+        disableExport: true,
+        width: 40,
         renderCell: ({ row }: GridRenderCellParams<GridValidRowModel>) => {
-            return <button onClick={(e) => onDelete(e, row)}>Delete</button>
+            return (
+                <div className="flex w-full justify-center">
+                    <button
+                        className="flex items-center justify-center rounded-md border border-gray-300 bg-gray-100 px-1 py-1 text-gray-500 transition-colors duration-300 hover:border-red-200 hover:bg-red-200 hover:text-red-600"
+                        onClick={(e) => onDelete(e, row)}
+                    >
+                        <TrashIcon className="w-4" />
+                    </button>
+                </div>
+            )
         },
     },
 ]
