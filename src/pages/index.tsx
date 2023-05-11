@@ -9,14 +9,7 @@ import Head from 'next/head'
 import { TrashIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import {
-    DataGrid,
-    GridToolbar,
-    type GridRowsProp,
-    type GridColDef,
-    type GridRenderCellParams,
-    type GridRowModel,
-} from '@mui/x-data-grid'
+import { DataGrid, GridToolbar, type GridColDef, type GridRenderCellParams, type GridRowModel } from '@mui/x-data-grid'
 
 //Final Form
 import { type Calculation } from 'final-form-calculate'
@@ -28,6 +21,35 @@ import TextArea from '../components/inputFields/textareaField'
 import TextLine from '../components/inputFields/textlineField'
 import DialogForm from '../components/dialogForm'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
+
+//Types and Interfaces
+interface Glass {
+    id: number
+    type: {
+        id: string
+        name: string
+        description: string
+    }
+    status: string
+    quantity: number
+    createdAt: Date
+    updatedAt: Date
+    location: {
+        id: string
+        position: string
+        warehouse: string
+    }
+    width: number
+    height: number
+    vendor: {
+        id: string
+        name: string
+    }
+    lastComment: {
+        id: string
+        comment: string
+    }
+}
 
 //Functions
 const onGlassCreation = (values: string) => {
@@ -55,15 +77,41 @@ const handleProcessRowError = (e: Error) => {
 }
 
 //DataGrid Definitions
-const rows: GridRowsProp = [
-    { id: 1, col1: 'Hello', col2: 'World' },
-    { id: 2, col1: 'DataGridPro', col2: 'is Awesome' },
-    { id: 3, col1: 'MUI', col2: 'is Amazi dfrger rgdtr g grgegrtgtrgr ng' },
+const rows: Glass[] = [
+    {
+        id: 1,
+        type: { id: '1', name: 'INC', description: 'ICNOLORO BLANCO' },
+        status: 'TRANSIT',
+        quantity: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        location: {
+            id: '1',
+            position: 'A123',
+            warehouse: 'A',
+        },
+        width: 1000,
+        height: 1000,
+        vendor: { id: '1', name: 'VASA' },
+        lastComment: { id: '2', comment: 'comentario' },
+    },
 ]
 
 const columns: GridColDef[] = [
-    { field: 'col1', headerName: 'Columna Pablo2', editable: true },
-    { field: 'col2', headerName: 'Column 2' },
+    {
+        headerName: 'Descripción',
+        field: 'type',
+        valueFormatter: ({
+            value,
+        }: {
+            value: {
+                description: string
+            }
+        }) => {
+            return value?.description
+        },
+        editable: true,
+    },
     {
         field: 'action',
         headerName: 'Acción',
@@ -73,6 +121,7 @@ const columns: GridColDef[] = [
         disableColumnMenu: true,
         disableExport: true,
         width: 70,
+
         renderCell: ({ row }: GridRenderCellParams<GridRowModel>) => {
             return (
                 <div className="flex w-full justify-center">
