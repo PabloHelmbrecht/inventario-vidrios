@@ -112,6 +112,7 @@ const columns: GridColDef[] = [
         editable: true,
         width: 200,
         valueFormatter: ({ value }: { value: { description: string } }) => value?.description,
+        //Agregar value como tiene arriba
         renderEditCell: () => <SimpleCombobox className="w-3/4 overflow-visible" />,
     },
     {
