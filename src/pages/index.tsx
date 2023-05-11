@@ -55,14 +55,14 @@ const columns: GridColDef[] = [
     { field: 'col1', headerName: 'Columna Pablo2' },
     { field: 'col2', headerName: 'Column 2' },
     {
-        field: 'deleteButton',
-        headerName: '',
+        field: 'action',
+        headerName: 'Acción',
         filterable: false,
         hideable: false,
         sortable: false,
         disableColumnMenu: true,
         disableExport: true,
-        width: 40,
+        width: 70,
         renderCell: ({ row }: GridRenderCellParams<GridValidRowModel>) => {
             return (
                 <div className="flex w-full justify-center">
