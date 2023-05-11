@@ -22,9 +22,9 @@ import {
     type GridRowsProp,
     type GridColDef,
     type GridRenderCellParams,
-    type GridValidRowModel,
     type GridRowModel,
 } from '@mui/x-data-grid'
+
 
 //Final Form
 import { type Calculation } from 'final-form-calculate'
@@ -40,7 +40,7 @@ import DialogForm from '../components/dialogForm'
 const onGlassCreation = (values: string) => {
     console.log(values)
 }
-const onDelete = (row: GridValidRowModel) => {
+const onDelete = (row: GridRowModel) => {
     console.log(row)
 }
 
@@ -80,7 +80,7 @@ const columns: GridColDef[] = [
         disableColumnMenu: true,
         disableExport: true,
         width: 70,
-        renderCell: ({ row }: GridRenderCellParams<GridValidRowModel>) => {
+        renderCell: ({ row }: GridRenderCellParams<GridRowModel>) => {
             return (
                 <div className="flex w-full justify-center">
                     <button
