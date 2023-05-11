@@ -14,7 +14,7 @@ import { Field } from 'react-final-form'
 
 export type Option = {
     id: string
-    [inputValue: string]: string
+    [inputField: string]: string
 }
 
 const required = (value: string) => (value ? undefined : 'Requerido')
@@ -26,13 +26,13 @@ export default function ComboboxField({
         { id: '1', value: 'Insert options' },
         { id: '2', value: 'Insert options' },
     ],
-    inputValue = 'value',
+    inputField = 'value',
     className = '',
 }: {
     label?: string
     name?: string
     options?: Option[]
-    inputValue?: string
+    inputField?: string
     className?: string
 }) {
     const [query, setQuery] = useState<string>('')
@@ -40,7 +40,7 @@ export default function ComboboxField({
         query === ''
             ? options
             : options.filter((option) =>
-                  option[inputValue]
+                  option[inputField]
                       ?.toLowerCase()
                       .replace(/\s+/g, '')
                       .includes(query.toLowerCase().replace(/\s+/g, '')),
@@ -72,7 +72,7 @@ export default function ComboboxField({
                                 <div className="relative w-full cursor-default  overflow-hidden rounded-lg bg-white text-left  sm:text-sm">
                                     <Combobox.Input
                                         className="m-px w-fit rounded-md border-0 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 focus-visible:outline-0 sm:text-sm sm:leading-6 "
-                                        displayValue={(option: Option) => option[inputValue] as string}
+                                        displayValue={(option: Option) => option[inputField] as string}
                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                                             setQuery(event.target.value)
                                         }
@@ -115,7 +115,7 @@ export default function ComboboxField({
                                                                     selected ? 'font-medium' : 'font-normal'
                                                                 }`}
                                                             >
-                                                                {option[inputValue]}
+                                                                {option[inputField]}
                                                             </span>
                                                             {selected ? (
                                                                 <span
