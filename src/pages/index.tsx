@@ -1,10 +1,3 @@
-/*
- * Agregar un botón de consumir y mover vidrio y para agrupar paquetes
- * Cada botón abre una interfaz para
- * Agregar la funcionalidad de poder editar los vidrios en la tabla
- * Selecciono el vidrio por su código o su descripción, luego por sus dimensiones y por último por su ubicación y id, luego selecciono las cantidades y la posición final
- */
-
 //React
 import React, { Fragment, useState } from 'react'
 
@@ -24,7 +17,7 @@ import {
     type GridRenderCellParams,
     type GridRowModel,
 } from '@mui/x-data-grid'
-
+import { Snackbar, Alert, type AlertProps } from '@mui/material'
 
 //Final Form
 import { type Calculation } from 'final-form-calculate'
@@ -114,6 +107,8 @@ const decorator: Calculation[] = [
 const Home: NextPage = () => {
     const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
 
+    const [snackbar, setSnackbar] = useState<Pick<AlertProps, 'children' | 'severity'> | null>(null)
+
     return (
         <>
             <Head>
@@ -183,6 +178,20 @@ const Home: NextPage = () => {
                     </div>
                 </div>
             </main>
+
+            {!!snackbar && (
+                <Snackbar
+                    open
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    onClose={() => setSnackbar(null)}
+                    autoHideDuration={6000}
+                >
+                    <Alert
+                        {...snackbar}
+                        onClose={() => setSnackbar(null)}
+                    />
+                </Snackbar>
+            )}
 
             <DialogForm
                 title="Prueba"
