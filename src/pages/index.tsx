@@ -108,8 +108,9 @@ const columns: GridColDef[] = [
     {
         headerName: 'Descripción',
         field: 'type',
-        valueFormatter: ({ value }: { value: { description: string } }) => value?.description,
         editable: true,
+        valueFormatter: ({ value }: { value: { description: string } }) => value?.description,
+        //renderEditCell: (param) => console.log(param),
     },
     {
         field: 'actions',

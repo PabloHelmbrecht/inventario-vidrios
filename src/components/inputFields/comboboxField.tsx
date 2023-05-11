@@ -13,7 +13,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Field } from 'react-final-form'
 
 export type Option = {
-    id: number
+    id: string
     value: string
 }
 
@@ -23,8 +23,8 @@ export default function ComboboxField({
     label = 'Insert label',
     name = 'combobox',
     options = [
-        { id: 1, value: 'Insert options' },
-        { id: 2, value: 'Insert options' },
+        { id: '1', value: 'Insert options' },
+        { id: '2', value: 'Insert options' },
     ],
     className = '',
 }: {
@@ -38,7 +38,7 @@ export default function ComboboxField({
         query === ''
             ? options
             : options.filter((option) =>
-                  option.value.toLowerCase().replace(/\s+/g, '').includes(query.toLowerCase().replace(/\s+/g, '')),
+                  option.value?.toLowerCase().replace(/\s+/g, '').includes(query.toLowerCase().replace(/\s+/g, '')),
               )
 
     return (
