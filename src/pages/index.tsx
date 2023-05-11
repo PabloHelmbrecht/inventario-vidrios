@@ -9,7 +9,14 @@ import Head from 'next/head'
 import { TrashIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import { DataGrid, GridToolbar, type GridColDef, type GridRenderCellParams, type GridRowModel } from '@mui/x-data-grid'
+import {
+    DataGrid,
+    GridToolbar,
+    GridActionsCellItem,
+    type GridColDef,
+    type GridValidRowModel,
+    type GridRowModel,
+} from '@mui/x-data-grid'
 
 //Final Form
 import { type Calculation } from 'final-form-calculate'
@@ -101,39 +108,21 @@ const columns: GridColDef[] = [
     {
         headerName: 'Descripción',
         field: 'type',
-        valueFormatter: ({
-            value,
-        }: {
-            value: {
-                description: string
-            }
-        }) => {
-            return value?.description
-        },
+        valueFormatter: ({ value }: { value: { description: string } }) => value?.description,
         editable: true,
     },
     {
-        field: 'action',
-        headerName: 'Acción',
-        filterable: false,
-        hideable: false,
-        sortable: false,
-        disableColumnMenu: true,
-        disableExport: true,
-        width: 70,
-
-        renderCell: ({ row }: GridRenderCellParams<GridRowModel>) => {
-            return (
-                <div className="flex w-full justify-center">
-                    <button
-                        className="flex items-center justify-center rounded-md border border-gray-300 bg-gray-100 px-1 py-1 text-gray-500 transition-colors duration-300 hover:border-red-200 hover:bg-red-200 hover:text-red-600"
-                        onClick={() => onDelete(row)}
-                    >
-                        <TrashIcon className="w-4" />
-                    </button>
-                </div>
-            )
-        },
+        field: 'actions',
+        type: 'actions',
+        width: 40,
+        getActions: ({ row }: { row: GridValidRowModel }) => [
+            <GridActionsCellItem
+                key={1}
+                icon={<TrashIcon className="w-4" />}
+                label="Delete"
+                onClick={() => onDelete(row)}
+            />,
+        ],
     },
 ]
 
