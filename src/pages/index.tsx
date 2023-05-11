@@ -17,7 +17,6 @@ import {
     type GridRenderCellParams,
     type GridRowModel,
 } from '@mui/x-data-grid'
-import { Snackbar, Alert, type AlertProps } from '@mui/material'
 
 //Final Form
 import { type Calculation } from 'final-form-calculate'
@@ -28,6 +27,7 @@ import Numeric from '../components/inputFields/numericField'
 import TextArea from '../components/inputFields/textareaField'
 import TextLine from '../components/inputFields/textlineField'
 import DialogForm from '../components/dialogForm'
+import Snackbar, { type AlertProps } from '../components/snackbarAlert'
 
 //Functions
 const onGlassCreation = (values: string) => {
@@ -107,7 +107,7 @@ const decorator: Calculation[] = [
 const Home: NextPage = () => {
     const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
 
-    const [snackbar, setSnackbar] = useState<Pick<AlertProps, 'children' | 'severity'> | null>(null)
+    const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
 
     return (
         <>
@@ -178,20 +178,10 @@ const Home: NextPage = () => {
                     </div>
                 </div>
             </main>
-
-            {!!snackbar && (
-                <Snackbar
-                    open
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                    onClose={() => setSnackbar(null)}
-                    autoHideDuration={6000}
-                >
-                    <Alert
-                        {...snackbar}
-                        onClose={() => setSnackbar(null)}
-                    />
-                </Snackbar>
-            )}
+            <Snackbar
+                state={snackbar}
+                setState={setSnackbar}
+            />
 
             <DialogForm
                 title="Prueba"
