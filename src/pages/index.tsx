@@ -22,22 +22,18 @@ import Head from 'next/head'
 import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import {
-    DataGrid,
-    GridToolbar,
-    GridActionsCellItem,
-    type GridColDef,
-    type GridValidRowModel,
-    type GridRowModel,
-} from '@mui/x-data-grid'
+import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid'
 
-//Custom components
+//Custom Components
 import Combobox from '../components/inputFields/comboboxField'
-//import  { type Option } from '../components/inputFields/comboboxField'
 import Numeric from '../components/inputFields/numericField'
 import TextArea from '../components/inputFields/textareaField'
+import TextLine from '../components/inputFields/textlineField'
 import DialogForm from '../components/dialogForm'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
+
+//Cusom Functions
+import { isNotNullUndefinedOrEmpty } from '../server/variableChecker'
 
 //Types and Interfaces
 interface Glass {
@@ -84,19 +80,19 @@ const Home: NextPage = () => {
     const onGlassCreation = (values: string) => {
         console.log(values)
     }
-    /*
-    REACTIVAR
-    const onDelete = (row: GridRowModel) => {
-        console.log(row)
-    }*/
-
-    const onRowClick = ({ row }: { row: GridRowModel }) => {
-        console.log(row)
+    const onGlassMovement = (values: string) => {
+        console.log(values)
+    }
+    const onGlassConsumption = (values: string) => {
+        console.log(values)
     }
 
-    console.log(glassToDelete)
-    console.log(glassToEdit)
-    console.log(glassSelection)
+    const onGlassDelete = (values: string) => {
+        console.log(values)
+    }
+    const onGlassEdit = (values: string) => {
+        console.log(values)
+    }
 
     //DataGrid Definitions
     const rows: Glass[] = [
@@ -161,6 +157,7 @@ const Home: NextPage = () => {
                     href="/favicon.ico"
                 />
             </Head>
+
             <main className="flex flex-col justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
@@ -194,7 +191,6 @@ const Home: NextPage = () => {
                             rows={rows}
                             columns={columns}
                             slots={{ toolbar: GridToolbar }}
-                            onRowClick={onRowClick}
                             onRowSelectionModelChange={(ids) =>
                                 setGlassSelection(rows.find((row) => row.id === ids[0]) as Glass)
                             }
@@ -226,8 +222,8 @@ const Home: NextPage = () => {
             {/*Formulario de Carga*/}
             <DialogForm
                 title="Carga de Vidrios"
-                buttonText={'Crear'}
-                buttonColor={'emerald-500'}
+                buttonText="Cargar"
+                buttonStyles="bg-emerald-500 hover:bg-emerald-600"
                 isOpen={isGlassCreatorOpen}
                 setIsOpen={setIsGlassCreatorOpen}
                 onSubmit={onGlassCreation}
@@ -240,6 +236,7 @@ const Home: NextPage = () => {
                 <Combobox
                     label="Descripción"
                     name="type"
+                    inputField="description"
                 />
                 <Numeric
                     label="Ancho"
@@ -260,16 +257,18 @@ const Home: NextPage = () => {
 
                 <Combobox
                     label="Almacén"
-                    name="position"
-                    inputField="name"
+                    name="location"
+                    inputField="position"
                 />
                 <Combobox
                     label="Posición"
-                    name="position"
+                    name="location"
+                    inputField="warehouse"
                 />
                 <Combobox
                     label="Proovedor"
                     name="vendor"
+                    inputField="name"
                 />
 
                 <TextArea
@@ -278,13 +277,14 @@ const Home: NextPage = () => {
                 />
             </DialogForm>
 
-            {/*Formulario de Modificación*/}
+            {/*Formulario de Movimiento*/}
             <DialogForm
-                title="Carga de Vidrios"
+                title="Movimiento de Vidrios"
                 buttonText="Mover"
+                buttonStyles="bg-sky-600 hover:bg-sky-700"
                 isOpen={isGlassMoverOpen}
                 setIsOpen={setIsGlassMoverOpen}
-                onSubmit={onGlassCreation}
+                onSubmit={onGlassMovement}
                 initialValues={glassSelection}>
                 <Combobox
                     label="Tipo"
@@ -294,6 +294,7 @@ const Home: NextPage = () => {
                 <Combobox
                     label="Descripción"
                     name="type"
+                    inputField="description"
                 />
                 <Numeric
                     label="Ancho"
@@ -314,16 +315,18 @@ const Home: NextPage = () => {
 
                 <Combobox
                     label="Almacén"
-                    name="position"
-                    inputField="name"
+                    name="location"
+                    inputField="position"
                 />
                 <Combobox
                     label="Posición"
-                    name="position"
+                    name="location"
+                    inputField="warehouse"
                 />
                 <Combobox
                     label="Proovedor"
                     name="vendor"
+                    inputField="name"
                 />
 
                 <TextArea
@@ -336,9 +339,10 @@ const Home: NextPage = () => {
             <DialogForm
                 title="Consumo de Vidrios"
                 buttonText="Consumir"
+                buttonStyles="bg-red-500 hover:bg-red-600"
                 isOpen={isGlassConsumerOpen}
                 setIsOpen={setIsGlassConsumerOpen}
-                onSubmit={onGlassCreation}
+                onSubmit={onGlassConsumption}
                 initialValues={glassSelection}>
                 <Combobox
                     label="Tipo"
@@ -348,6 +352,7 @@ const Home: NextPage = () => {
                 <Combobox
                     label="Descripción"
                     name="type"
+                    inputField="description"
                 />
                 <Numeric
                     label="Ancho"
@@ -368,16 +373,18 @@ const Home: NextPage = () => {
 
                 <Combobox
                     label="Almacén"
-                    name="position"
-                    inputField="name"
+                    name="location"
+                    inputField="position"
                 />
                 <Combobox
                     label="Posición"
-                    name="position"
+                    name="location"
+                    inputField="warehouse"
                 />
                 <Combobox
                     label="Proovedor"
                     name="vendor"
+                    inputField="name"
                 />
 
                 <TextArea
@@ -388,11 +395,14 @@ const Home: NextPage = () => {
 
             {/*Formulario de Edición*/}
             <DialogForm
-                title="Carga de Vidrios"
-                isOpen={isGlassCreatorOpen}
-                setIsOpen={setIsGlassCreatorOpen}
-                onSubmit={onGlassCreation}
-                initialValues={glassSelection}>
+                title="Edición de Vidrios"
+                buttonText="Editar"
+                isOpen={isNotNullUndefinedOrEmpty(glassToEdit)}
+                setIsOpen={(value) => {
+                    value || setGlassToEdit(null)
+                }}
+                onSubmit={onGlassEdit}
+                initialValues={glassToEdit}>
                 <Combobox
                     label="Tipo"
                     name="type"
@@ -401,6 +411,7 @@ const Home: NextPage = () => {
                 <Combobox
                     label="Descripción"
                     name="type"
+                    inputField="description"
                 />
                 <Numeric
                     label="Ancho"
@@ -421,16 +432,18 @@ const Home: NextPage = () => {
 
                 <Combobox
                     label="Almacén"
-                    name="position"
-                    inputField="name"
+                    name="location"
+                    inputField="position"
                 />
                 <Combobox
                     label="Posición"
-                    name="position"
+                    name="location"
+                    inputField="warehouse"
                 />
                 <Combobox
                     label="Proovedor"
                     name="vendor"
+                    inputField="name"
                 />
 
                 <TextArea
@@ -441,54 +454,32 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title="Carga de Vidrios"
-                isOpen={isGlassCreatorOpen}
-                setIsOpen={setIsGlassCreatorOpen}
-                onSubmit={onGlassCreation}
-                initialValues={glassSelection}>
-                <Combobox
-                    label="Tipo"
-                    name="type"
-                    inputField="name"
-                />
-                <Combobox
-                    label="Descripción"
-                    name="type"
-                />
-                <Numeric
-                    label="Ancho"
-                    name="width"
-                    className=" sm:col-span-2"
-                />
-                <Numeric
-                    label="Alto"
-                    name="height"
-                    className=" sm:col-span-2"
-                />
-
-                <Numeric
-                    label="Cantidad"
-                    name="quantity"
-                    className=" sm:col-span-2"
-                />
-
-                <Combobox
-                    label="Almacén"
-                    name="position"
-                    inputField="name"
-                />
-                <Combobox
-                    label="Posición"
-                    name="position"
-                />
-                <Combobox
-                    label="Proovedor"
-                    name="vendor"
-                />
-
-                <TextArea
-                    label="Comentarios"
-                    name="comment"
+                title={`¿Desea eliminar el vidrio ${
+                    isNotNullUndefinedOrEmpty(glassToDelete)
+                        ? `${glassToDelete?.type?.description ?? ''} ${glassToDelete?.width ?? ''}X${
+                              glassToDelete?.height ?? ''
+                          }`.toLowerCase()
+                        : ''
+                }?`}
+                titleStyles="text-center"
+                buttonText={`Eliminar ${
+                    isNotNullUndefinedOrEmpty(glassToDelete)
+                        ? `${glassToDelete?.type?.description ?? ''} ${glassToDelete?.width ?? ''}X${
+                              glassToDelete?.height ?? ''
+                          }`.toLowerCase()
+                        : 'vidrio'
+                }`}
+                buttonStyles="bg-red-500 hover:bg-red-600 w-full"
+                isOpen={isNotNullUndefinedOrEmpty(glassToDelete)}
+                setIsOpen={(value) => {
+                    value || setGlassToDelete(null)
+                }}
+                onSubmit={onGlassDelete}
+                initialValues={glassToDelete}>
+                <TextLine
+                    label="Id"
+                    name="id"
+                    className="hidden"
                 />
             </DialogForm>
         </>

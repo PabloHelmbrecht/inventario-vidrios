@@ -10,8 +10,9 @@ import createDecorator, { type Calculation } from 'final-form-calculate'
 
 interface dialogFormProps {
     title?: string
+    titleStyles?: string
     buttonText?: string
-    buttonColor?: string
+    buttonStyles?: string
     initialValues?: object | null
     children: React.ReactNode
     isOpen: boolean
@@ -27,8 +28,9 @@ export const useDialogFormContext = () => useContext(DialogFormContext)
 
 export default function DialogForm({
     title = 'Título del Form',
+    titleStyles,
     buttonText = 'Enviar',
-    buttonColor = 'sky-600',
+    buttonStyles = 'bg-sky-600 hover:bg-sky-700',
     children,
     isOpen,
     setIsOpen,
@@ -66,7 +68,7 @@ export default function DialogForm({
                             leave="ease-in duration-200"
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95">
-                            <Dialog.Panel className="min-h-102 w-full max-w-md transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
+                            <Dialog.Panel className=" w-full max-w-md transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
                                 <Form
                                     onSubmit={onSubmit}
                                     /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
@@ -78,7 +80,7 @@ export default function DialogForm({
                                             <form>
                                                 <Dialog.Title
                                                     as="h3"
-                                                    className="text-lg font-medium leading-6 text-gray-900">
+                                                    className={` ${titleStyles??''} text-lg font-medium leading-6 text-gray-900`}>
                                                     {title}
                                                 </Dialog.Title>
 
@@ -87,7 +89,7 @@ export default function DialogForm({
                                                 <div className="mt-4">
                                                     <button
                                                         type="button"
-                                                        className={` rounded-md border border-transparent bg-${buttonColor} px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-400 `}
+                                                        className={` rounded-md border border-transparent ${buttonStyles} px-4 py-2 text-sm font-medium text-white disabled:bg-slate-400 `}
                                                         onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                                                             if (e) {
                                                                 props
