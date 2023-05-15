@@ -5,10 +5,12 @@ export default function TextareaField({
     label = 'Insert label',
     name = 'textarea',
     placeholder = '',
+    className = '',
 }: {
     label?: string
     name?: string
     placeholder?: string
+    className?: string
 }) {
     return (
         <Field
@@ -16,7 +18,7 @@ export default function TextareaField({
             placeholder={placeholder}
         >
             {({ input, meta }) => (
-                <div className="col-span-full">
+                <div className={className}>
                     <label
                         htmlFor="about"
                         className="block text-sm font-medium leading-6 text-gray-900"
@@ -24,7 +26,7 @@ export default function TextareaField({
                         {label}
                         {meta.error ? <span className="text-xs italic  text-slate-500"> *{meta.error}</span> : ''}
                     </label>
-                    <div className="mt-2s	">
+                    <div className="mt-2	">
                         <textarea
                             {...input}
                             rows={3}
