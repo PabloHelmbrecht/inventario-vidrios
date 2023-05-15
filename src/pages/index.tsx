@@ -39,7 +39,7 @@ import { isNotNullUndefinedOrEmpty } from '../server/variableChecker'
 interface Glass {
     id: number
     type: {
-        id: string
+        id: number
         name: string
         description: string
     }
@@ -48,20 +48,17 @@ interface Glass {
     createdAt: Date
     updatedAt: Date
     location: {
-        id: string
+        id: number
         position: string
         warehouse: string
     }
     width: number
     height: number
     vendor: {
-        id: string
+        id: number
         name: string
     }
-    lastComment: {
-        id: string
-        comment: string
-    }
+    lastComment: string
 }
 
 const Home: NextPage = () => {
@@ -98,20 +95,20 @@ const Home: NextPage = () => {
     const rows: Glass[] = [
         {
             id: 1,
-            type: { id: '1', name: 'INC', description: 'ICNOLORO BLANCO' },
+            type: { id: 1, name: 'INC', description: 'ICNOLORO BLANCO' },
             status: 'TRANSIT',
             quantity: 2,
             createdAt: new Date(),
             updatedAt: new Date(),
             location: {
-                id: '1',
+                id: 1,
                 position: 'A123',
                 warehouse: 'A',
             },
             width: 1000,
             height: 1000,
-            vendor: { id: '1', name: 'VASA' },
-            lastComment: { id: '2', comment: 'comentario' },
+            vendor: { id: 1, name: 'VASA' },
+            lastComment:  'comentario',
         },
     ]
 
