@@ -1,8 +1,15 @@
 /*
 - Dialog de ¿Seguro quieres eliminar el vidrio?
-- Dialog para 
-*/
+- Dialog para editar vidrio
+- Dialog para cargar vidrio
+- Dialog para mover vidrio
+- Dialog para borrar vidrio
+- Dialog para consumir vidrio
 
+- Funcion de editar vidrio
+- Función de mover vidrio (que al estar parado sobre un vidrio me seleccione ese por defecto)
+- Función de consumir vidrio (que al estar parado sobre un vidrio me seleccione ese)
+*/
 
 //React
 import React, { Fragment, useState } from 'react'
@@ -75,6 +82,10 @@ const Home: NextPage = () => {
         console.log(values)
     }
     const onDelete = (row: GridRowModel) => {
+        console.log(row)
+    }
+
+    const onRowClick = ({ row }: { row: GridRowModel }) => {
         console.log(row)
     }
 
@@ -193,6 +204,7 @@ const Home: NextPage = () => {
                             rows={rows}
                             columns={columns}
                             slots={{ toolbar: GridToolbar }}
+                            onRowClick={onRowClick}
                             slotProps={{
                                 toolbar: {
                                     showQuickFilter: true,
