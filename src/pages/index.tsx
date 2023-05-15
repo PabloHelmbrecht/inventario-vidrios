@@ -256,9 +256,11 @@ const Home: NextPage = () => {
                 <Combobox
                     label="Descripción"
                     name="description"
+                    className="col-span-full"
                 />
-                <Numeric className="" />
-                <TextLine className="" />
+
+                <Numeric className="col-span-3" />
+                <TextLine className="col-span-3" />
                 <TextArea className="col-span-full" />
             </DialogForm>
         </>

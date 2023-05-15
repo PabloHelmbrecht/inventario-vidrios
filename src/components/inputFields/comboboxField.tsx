@@ -103,7 +103,11 @@ export default function ComboboxField({
                                                     key={option.id}
                                                     className={({ active }: { active: boolean }) =>
                                                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                            active ? 'bg-sky-600 text-white' : 'text-gray-900'
+                                                            active
+                                                                ? `bg-${
+                                                                      option.color ? option.color : 'sky-600'
+                                                                  } text-white`
+                                                                : 'text-gray-900'
                                                         }`
                                                     }
                                                     value={option}

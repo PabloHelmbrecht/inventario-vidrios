@@ -82,7 +82,7 @@ export default function DialogForm({
                                                     {title}
                                                 </Dialog.Title>
 
-                                                <div className="mt-2 grid grid-cols-2 gap-4">{children}</div>
+                                                <div className="mt-2 grid grid-cols-6 gap-4">{children}</div>
 
                                                 <div className="mt-4">
                                                     <button
