@@ -79,13 +79,15 @@ const Home: NextPage = () => {
 
     const [glassToDelete, setGlassToDelete] = useState<Glass | null>(null)
     const [glassToEdit, setGlassToEdit] = useState<Glass | null>(null)
-    //const [glassSelection, setGlassSelection] = useState<Glass | null>(null)
+    const [glassSelection, setGlassSelection] = useState<Glass | null>(null)
 
     //Functions
     const onGlassCreation = (values: string) => {
         console.log(values)
     }
-    /*const onDelete = (row: GridRowModel) => {
+    /*
+    REACTIVAR
+    const onDelete = (row: GridRowModel) => {
         console.log(row)
     }*/
 
@@ -93,13 +95,9 @@ const Home: NextPage = () => {
         console.log(row)
     }
 
-    /*const onRowsSelectionHandler = (ids) => {
-        const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id))
-        console.log(selectedRowsData)
-    }*/
-
     console.log(glassToDelete)
     console.log(glassToEdit)
+    console.log(glassSelection)
 
     //DataGrid Definitions
     const rows: Glass[] = [
@@ -217,7 +215,9 @@ const Home: NextPage = () => {
                             columns={columns}
                             slots={{ toolbar: GridToolbar }}
                             onRowClick={onRowClick}
-                            //onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
+                            onRowSelectionModelChange={(ids) =>
+                                setGlassSelection(rows.find((row) => row.id === ids[0]) as Glass)
+                            }
                             slotProps={{
                                 toolbar: {
                                     showQuickFilter: true,
