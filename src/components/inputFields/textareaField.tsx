@@ -15,14 +15,12 @@ export default function TextareaField({
     return (
         <Field
             name={name}
-            placeholder={placeholder}
-        >
+            placeholder={placeholder}>
             {({ input, meta }) => (
                 <div className={`col-span-full ${className}`}>
                     <label
                         htmlFor="about"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
+                        className="block text-sm font-medium leading-6 text-gray-900">
                         {label}
                         {meta.error ? <span className="text-xs italic  text-slate-500"> *{meta.error}</span> : ''}
                     </label>

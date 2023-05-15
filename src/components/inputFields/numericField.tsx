@@ -34,14 +34,12 @@ export default function NumericField({
             type="number"
             min="1"
             placeholder={placeholder}
-            validate={composeValidators(required, mustBeNumber, minValue(1))}
-        >
+            validate={composeValidators(required, mustBeNumber, minValue(1))}>
             {({ input, meta }) => (
                 <div className={`col-span-full ${className}`}>
                     <label
                         htmlFor="about"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
+                        className="block text-sm font-medium leading-6 text-gray-900">
                         {label}
                         {meta.error ? <span className="text-xs italic  text-slate-500"> *{meta.error}</span> : ''}
                     </label>

@@ -11,6 +11,7 @@ import createDecorator, { type Calculation } from 'final-form-calculate'
 interface dialogFormProps {
     title?: string
     buttonText?: string
+    buttonColor?: string
     initialValues?: object | null
     children: React.ReactNode
     isOpen: boolean
@@ -27,6 +28,7 @@ export const useDialogFormContext = () => useContext(DialogFormContext)
 export default function DialogForm({
     title = 'Título del Form',
     buttonText = 'Enviar',
+    buttonColor = 'sky-600',
     children,
     isOpen,
     setIsOpen,
@@ -38,13 +40,11 @@ export default function DialogForm({
         <Transition
             appear
             show={isOpen}
-            as={Fragment}
-        >
+            as={Fragment}>
             <Dialog
                 as="div"
                 className="relative z-10"
-                onClose={() => setIsOpen(false)}
-            >
+                onClose={() => setIsOpen(false)}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -52,8 +52,7 @@ export default function DialogForm({
                     enterTo="opacity-100"
                     leave="ease-in duration-200"
                     leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
+                    leaveTo="opacity-0">
                     <div className="fixed inset-0 bg-black bg-opacity-25" />
                 </Transition.Child>
 
@@ -66,8 +65,7 @@ export default function DialogForm({
                             enterTo="opacity-100 scale-100"
                             leave="ease-in duration-200"
                             leaveFrom="opacity-100 scale-100"
-                            leaveTo="opacity-0 scale-95"
-                        >
+                            leaveTo="opacity-0 scale-95">
                             <Dialog.Panel className="min-h-102 w-full max-w-md transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
                                 <Form
                                     onSubmit={onSubmit}
@@ -80,8 +78,7 @@ export default function DialogForm({
                                             <form>
                                                 <Dialog.Title
                                                     as="h3"
-                                                    className="text-lg font-medium leading-6 text-gray-900"
-                                                >
+                                                    className="text-lg font-medium leading-6 text-gray-900">
                                                     {title}
                                                 </Dialog.Title>
 
@@ -90,7 +87,7 @@ export default function DialogForm({
                                                 <div className="mt-4">
                                                     <button
                                                         type="button"
-                                                        className="rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-400"
+                                                        className={` rounded-md border border-transparent bg-${buttonColor} px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-400 `}
                                                         onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                                                             if (e) {
                                                                 props
@@ -103,8 +100,7 @@ export default function DialogForm({
                                                                 setIsOpen(false)
                                                             }
                                                         }}
-                                                        disabled={props.submitting || props.hasValidationErrors}
-                                                    >
+                                                        disabled={props.submitting || props.hasValidationErrors}>
                                                         {buttonText}
                                                     </button>
                                                 </div>

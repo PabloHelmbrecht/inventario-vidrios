@@ -18,14 +18,12 @@ export default function TextlineField({
         <Field
             name={name}
             placeholder={placeholder}
-            validate={required}
-        >
+            validate={required}>
             {({ input, meta }) => (
                 <div className={`col-span-full ${className}`}>
                     <label
                         htmlFor="about"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
+                        className="block text-sm font-medium leading-6 text-gray-900">
                         {label}
                         {meta.error ? <span className="text-xs italic  text-slate-500"> *{meta.error}</span> : ''}
                     </label>

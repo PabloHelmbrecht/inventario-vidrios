@@ -79,8 +79,7 @@ export const SnackbarAlert: React.FC<SnackbarProps> = ({ state, setState, autoHi
                     open
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                     onClose={() => setState(null)}
-                    autoHideDuration={autoHideDuration}
-                >
+                    autoHideDuration={autoHideDuration}>
                     <div className="mb-4">
                         <Alert {...state} />
                     </div>

@@ -70,13 +70,15 @@ interface Glass {
 
 const Home: NextPage = () => {
     //States
-    const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
-
+    const [glassSelection, setGlassSelection] = useState<Glass | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
+
+    const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
+    const [isGlassMoverOpen, setIsGlassMoverOpen] = useState<boolean>(false)
+    const [isGlassConsumerOpen, setIsGlassConsumerOpen] = useState<boolean>(false)
 
     const [glassToDelete, setGlassToDelete] = useState<Glass | null>(null)
     const [glassToEdit, setGlassToEdit] = useState<Glass | null>(null)
-    const [glassSelection, setGlassSelection] = useState<Glass | null>(null)
 
     //Functions
     const onGlassCreation = (values: string) => {
@@ -168,25 +170,22 @@ const Home: NextPage = () => {
                                 onClick={() => {
                                     setIsGlassCreatorOpen(true)
                                 }}
-                                className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600"
-                            >
+                                className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600">
                                 Cargar
                             </button>
                             <button
                                 onClick={() => {
-                                    setSnackbar({ type: 'success', message: 'mensaje' })
+                                    setIsGlassMoverOpen(true)
                                 }}
-                                className=" rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
-                            >
+                                className=" rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700">
                                 Mover
                             </button>
 
                             <button
                                 onClick={() => {
-                                    setIsGlassCreatorOpen(true)
+                                    setIsGlassConsumerOpen(true)
                                 }}
-                                className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
-                            >
+                                className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600">
                                 Consumir
                             </button>
                         </div>
@@ -217,6 +216,8 @@ const Home: NextPage = () => {
                     </div>
                 </div>
             </main>
+
+            {/*Snackbar de alertar, información y más*/}
             <Snackbar
                 state={snackbar}
                 setState={setSnackbar}
@@ -225,11 +226,226 @@ const Home: NextPage = () => {
             {/*Formulario de Carga*/}
             <DialogForm
                 title="Carga de Vidrios"
+                buttonText={'Crear'}
+                buttonColor={'emerald-500'}
                 isOpen={isGlassCreatorOpen}
                 setIsOpen={setIsGlassCreatorOpen}
                 onSubmit={onGlassCreation}
-                initialValues={glassSelection}
-            >
+                initialValues={glassSelection}>
+                <Combobox
+                    label="Tipo"
+                    name="type"
+                    inputField="name"
+                />
+                <Combobox
+                    label="Descripción"
+                    name="type"
+                />
+                <Numeric
+                    label="Ancho"
+                    name="width"
+                    className=" sm:col-span-2"
+                />
+                <Numeric
+                    label="Alto"
+                    name="height"
+                    className=" sm:col-span-2"
+                />
+
+                <Numeric
+                    label="Cantidad"
+                    name="quantity"
+                    className=" sm:col-span-2"
+                />
+
+                <Combobox
+                    label="Almacén"
+                    name="position"
+                    inputField="name"
+                />
+                <Combobox
+                    label="Posición"
+                    name="position"
+                />
+                <Combobox
+                    label="Proovedor"
+                    name="vendor"
+                />
+
+                <TextArea
+                    label="Comentarios"
+                    name="comment"
+                />
+            </DialogForm>
+
+            {/*Formulario de Modificación*/}
+            <DialogForm
+                title="Carga de Vidrios"
+                buttonText="Mover"
+                isOpen={isGlassMoverOpen}
+                setIsOpen={setIsGlassMoverOpen}
+                onSubmit={onGlassCreation}
+                initialValues={glassSelection}>
+                <Combobox
+                    label="Tipo"
+                    name="type"
+                    inputField="name"
+                />
+                <Combobox
+                    label="Descripción"
+                    name="type"
+                />
+                <Numeric
+                    label="Ancho"
+                    name="width"
+                    className=" sm:col-span-2"
+                />
+                <Numeric
+                    label="Alto"
+                    name="height"
+                    className=" sm:col-span-2"
+                />
+
+                <Numeric
+                    label="Cantidad"
+                    name="quantity"
+                    className=" sm:col-span-2"
+                />
+
+                <Combobox
+                    label="Almacén"
+                    name="position"
+                    inputField="name"
+                />
+                <Combobox
+                    label="Posición"
+                    name="position"
+                />
+                <Combobox
+                    label="Proovedor"
+                    name="vendor"
+                />
+
+                <TextArea
+                    label="Comentarios"
+                    name="comment"
+                />
+            </DialogForm>
+
+            {/*Formulario de Consumo*/}
+            <DialogForm
+                title="Consumo de Vidrios"
+                buttonText="Consumir"
+                isOpen={isGlassConsumerOpen}
+                setIsOpen={setIsGlassConsumerOpen}
+                onSubmit={onGlassCreation}
+                initialValues={glassSelection}>
+                <Combobox
+                    label="Tipo"
+                    name="type"
+                    inputField="name"
+                />
+                <Combobox
+                    label="Descripción"
+                    name="type"
+                />
+                <Numeric
+                    label="Ancho"
+                    name="width"
+                    className=" sm:col-span-2"
+                />
+                <Numeric
+                    label="Alto"
+                    name="height"
+                    className=" sm:col-span-2"
+                />
+
+                <Numeric
+                    label="Cantidad"
+                    name="quantity"
+                    className=" sm:col-span-2"
+                />
+
+                <Combobox
+                    label="Almacén"
+                    name="position"
+                    inputField="name"
+                />
+                <Combobox
+                    label="Posición"
+                    name="position"
+                />
+                <Combobox
+                    label="Proovedor"
+                    name="vendor"
+                />
+
+                <TextArea
+                    label="Comentarios"
+                    name="comment"
+                />
+            </DialogForm>
+
+            {/*Formulario de Edición*/}
+            <DialogForm
+                title="Carga de Vidrios"
+                isOpen={isGlassCreatorOpen}
+                setIsOpen={setIsGlassCreatorOpen}
+                onSubmit={onGlassCreation}
+                initialValues={glassSelection}>
+                <Combobox
+                    label="Tipo"
+                    name="type"
+                    inputField="name"
+                />
+                <Combobox
+                    label="Descripción"
+                    name="type"
+                />
+                <Numeric
+                    label="Ancho"
+                    name="width"
+                    className=" sm:col-span-2"
+                />
+                <Numeric
+                    label="Alto"
+                    name="height"
+                    className=" sm:col-span-2"
+                />
+
+                <Numeric
+                    label="Cantidad"
+                    name="quantity"
+                    className=" sm:col-span-2"
+                />
+
+                <Combobox
+                    label="Almacén"
+                    name="position"
+                    inputField="name"
+                />
+                <Combobox
+                    label="Posición"
+                    name="position"
+                />
+                <Combobox
+                    label="Proovedor"
+                    name="vendor"
+                />
+
+                <TextArea
+                    label="Comentarios"
+                    name="comment"
+                />
+            </DialogForm>
+
+            {/*Formulario de Eliminación*/}
+            <DialogForm
+                title="Carga de Vidrios"
+                isOpen={isGlassCreatorOpen}
+                setIsOpen={setIsGlassCreatorOpen}
+                onSubmit={onGlassCreation}
+                initialValues={glassSelection}>
                 <Combobox
                     label="Tipo"
                     name="type"

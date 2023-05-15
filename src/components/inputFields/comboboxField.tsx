@@ -50,14 +50,12 @@ export default function ComboboxField({
         <Field
             name={name}
             type="text"
-            validate={required}
-        >
+            validate={required}>
             {({ input, meta }) => (
                 <div className={`col-span-full ${className}`}>
                     <label
                         htmlFor="about"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                    >
+                        className="block text-sm font-medium leading-6 text-gray-900">
                         {label}
                         {meta.error ? <span className="text-xs italic  text-slate-500"> *{meta.error}</span> : ''}
                     </label>
@@ -66,8 +64,7 @@ export default function ComboboxField({
                             name={input.name}
                             /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
                             value={input.value}
-                            onChange={input.onChange}
-                        >
+                            onChange={input.onChange}>
                             <div className="relative mt-1">
                                 <div className="relative w-full cursor-default  overflow-hidden rounded-lg bg-white text-left  sm:text-sm">
                                     <Combobox.Input
@@ -90,8 +87,7 @@ export default function ComboboxField({
                                     leave="transition ease-in duration-100"
                                     leaveFrom="opacity-100"
                                     leaveTo="opacity-0"
-                                    afterLeave={() => setQuery('')}
-                                >
+                                    afterLeave={() => setQuery('')}>
                                     <Combobox.Options className="absolute z-40 mt-1 max-h-64 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                         {filteredOptions.length === 0 && query !== '' ? (
                                             <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
@@ -110,23 +106,20 @@ export default function ComboboxField({
                                                                 : 'text-gray-900'
                                                         }`
                                                     }
-                                                    value={option}
-                                                >
+                                                    value={option}>
                                                     {({ selected, active }) => (
                                                         <>
                                                             <span
                                                                 className={`block truncate ${
                                                                     selected ? 'font-medium' : 'font-normal'
-                                                                }`}
-                                                            >
+                                                                }`}>
                                                                 {option[inputField]}
                                                             </span>
                                                             {selected ? (
                                                                 <span
                                                                     className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
                                                                         active ? 'text-white' : 'text-sky-600'
-                                                                    }`}
-                                                                >
+                                                                    }`}>
                                                                     <CheckIcon
                                                                         className="h-5 w-5"
                                                                         aria-hidden="true"
