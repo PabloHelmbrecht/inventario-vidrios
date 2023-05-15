@@ -223,7 +223,7 @@ const Home: NextPage = () => {
             />
 
             <DialogForm
-                title="Prueba"
+                title="Carga de Vidrios"
                 isOpen={isGlassCreatorOpen}
                 setIsOpen={setIsGlassCreatorOpen}
                 onSubmit={onGlassCreation}
@@ -240,18 +240,18 @@ const Home: NextPage = () => {
                 <Numeric
                     label="Ancho"
                     name="width"
-                    className=" sm:col-span-3"
+                    className=" sm:col-span-2"
                 />
                 <Numeric
                     label="Alto"
                     name="height"
-                    className=" sm:col-span-3"
+                    className=" sm:col-span-2"
                 />
 
                 <Numeric
                     label="Cantidad"
                     name="quantity"
-                    className=" sm:col-span-3"
+                    className=" sm:col-span-2"
                 />
 
                 <Combobox
