@@ -89,6 +89,11 @@ const Home: NextPage = () => {
         console.log(row)
     }
 
+    /*const onRowsSelectionHandler = (ids) => {
+        const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id))
+        console.log(selectedRowsData)
+    }*/
+
     //DataGrid Definitions
     const rows: Glass[] = [
         {
@@ -205,6 +210,7 @@ const Home: NextPage = () => {
                             columns={columns}
                             slots={{ toolbar: GridToolbar }}
                             onRowClick={onRowClick}
+                            //onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
                             slotProps={{
                                 toolbar: {
                                     showQuickFilter: true,
