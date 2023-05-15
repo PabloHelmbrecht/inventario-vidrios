@@ -58,75 +58,75 @@ interface Glass {
     }
 }
 
-//Functions
-const onGlassCreation = (values: string) => {
-    console.log(values)
-}
-const onDelete = (row: GridRowModel) => {
-    console.log(row)
-}
-
-//DataGrid Definitions
-const rows: Glass[] = [
-    {
-        id: 1,
-        type: { id: '1', name: 'INC', description: 'ICNOLORO BLANCO' },
-        status: 'TRANSIT',
-        quantity: 2,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        location: {
-            id: '1',
-            position: 'A123',
-            warehouse: 'A',
-        },
-        width: 1000,
-        height: 1000,
-        vendor: { id: '1', name: 'VASA' },
-        lastComment: { id: '2', comment: 'comentario' },
-    },
-]
-
-const columns: GridColDef[] = [
-    {
-        headerName: 'Descripción',
-        field: 'type',
-        width: 200,
-        valueFormatter: ({ value }: { value: { description: string } }) => value?.description,
-        //Agregar value como tiene arriba,
-    },
-    {
-        field: 'actions',
-        type: 'actions',
-        width: 40,
-        getActions: ({ row }: { row: GridValidRowModel }) => [
-            <GridActionsCellItem
-                key={1}
-                icon={<TrashIcon className="w-4" />}
-                label="Delete"
-                onClick={() => onDelete(row)}
-            />,
-        ],
-    },
-]
-
-//Form Decorations
-const decorator: Calculation[] = [
-    {
-        field: 'type',
-        updates: {
-            description: (typeValue: Option) => typeValue,
-        },
-    },
-    {
-        field: 'description',
-        updates: {
-            type: (descriptionValue: Option) => descriptionValue,
-        },
-    },
-]
-
 const Home: NextPage = () => {
+    //Functions
+    const onGlassCreation = (values: string) => {
+        console.log(values)
+    }
+    const onDelete = (row: GridRowModel) => {
+        console.log(row)
+    }
+
+    //DataGrid Definitions
+    const rows: Glass[] = [
+        {
+            id: 1,
+            type: { id: '1', name: 'INC', description: 'ICNOLORO BLANCO' },
+            status: 'TRANSIT',
+            quantity: 2,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            location: {
+                id: '1',
+                position: 'A123',
+                warehouse: 'A',
+            },
+            width: 1000,
+            height: 1000,
+            vendor: { id: '1', name: 'VASA' },
+            lastComment: { id: '2', comment: 'comentario' },
+        },
+    ]
+
+    const columns: GridColDef[] = [
+        {
+            headerName: 'Descripción',
+            field: 'type',
+            width: 200,
+            valueFormatter: ({ value }: { value: { description: string } }) => value?.description,
+            //Agregar value como tiene arriba,
+        },
+        {
+            field: 'actions',
+            type: 'actions',
+            width: 40,
+            getActions: ({ row }: { row: GridValidRowModel }) => [
+                <GridActionsCellItem
+                    key={1}
+                    icon={<TrashIcon className="w-4" />}
+                    label="Delete"
+                    onClick={() => onDelete(row)}
+                />,
+            ],
+        },
+    ]
+
+    //Form Decorations
+    const decorator: Calculation[] = [
+        {
+            field: 'type',
+            updates: {
+                description: (typeValue: Option) => typeValue,
+            },
+        },
+        {
+            field: 'description',
+            updates: {
+                type: (descriptionValue: Option) => descriptionValue,
+            },
+        },
+    ]
+
     const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
 
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
