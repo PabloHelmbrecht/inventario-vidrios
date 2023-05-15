@@ -227,6 +227,7 @@ const Home: NextPage = () => {
                 isOpen={isGlassCreatorOpen}
                 setIsOpen={setIsGlassCreatorOpen}
                 onSubmit={onGlassCreation}
+                initialValues={glassSelection}
             >
                 <Combobox
                     label="Tipo"
