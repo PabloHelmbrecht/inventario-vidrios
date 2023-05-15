@@ -77,13 +77,17 @@ const Home: NextPage = () => {
 
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
 
+    const [glassToDelete, setGlassToDelete] = useState<Glass | null>(null)
+    const [glassToEdit, setGlassToEdit] = useState<Glass | null>(null)
+    //const [glassSelection, setGlassSelection] = useState<Glass | null>(null)
+
     //Functions
     const onGlassCreation = (values: string) => {
         console.log(values)
     }
-    const onDelete = (row: GridRowModel) => {
+    /*const onDelete = (row: GridRowModel) => {
         console.log(row)
-    }
+    }*/
 
     const onRowClick = ({ row }: { row: GridRowModel }) => {
         console.log(row)
@@ -93,6 +97,9 @@ const Home: NextPage = () => {
         const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id))
         console.log(selectedRowsData)
     }*/
+
+    console.log(glassToDelete)
+    console.log(glassToEdit)
 
     //DataGrid Definitions
     const rows: Glass[] = [
@@ -132,13 +139,13 @@ const Home: NextPage = () => {
                     key={1}
                     icon={<TrashIcon className="w-4" />}
                     label="Delete"
-                    onClick={() => onDelete(row)}
+                    onClick={() => setGlassToDelete(row as Glass)}
                 />,
                 <GridActionsCellItem
                     key={1}
                     icon={<PencilSquareIcon className="w-4" />}
                     label="Delete"
-                    onClick={() => onDelete(row)}
+                    onClick={() => setGlassToEdit(row as Glass)}
                 />,
             ],
         },
