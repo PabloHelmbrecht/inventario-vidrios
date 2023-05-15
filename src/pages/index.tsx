@@ -251,17 +251,29 @@ const Home: NextPage = () => {
                 <Combobox
                     label="Tipo"
                     name="type"
-                    className="col-span-full"
+                    inputField="name"
                 />
                 <Combobox
                     label="Descripción"
-                    name="description"
-                    className="col-span-full"
+                    name="type"
                 />
 
-                <Numeric className="col-span-3" />
-                <TextLine className="col-span-3" />
-                <TextArea className="col-span-full" />
+                <Numeric
+                    label="Cantidad"
+                    name="quantity"
+                    className=" sm:col-span-3"
+                />
+                <Combobox
+                    label="Almacén"
+                    name="position"
+                    inputField="name"
+                />
+                <Combobox
+                    label="Posición"
+                    name="position"
+                />
+                <TextLine className="sm:col-span-3" />
+                <TextArea />
             </DialogForm>
         </>
     )

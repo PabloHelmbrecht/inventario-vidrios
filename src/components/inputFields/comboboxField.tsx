@@ -53,7 +53,7 @@ export default function ComboboxField({
             validate={required}
         >
             {({ input, meta }) => (
-                <div className={className}>
+                <div className={`col-span-full ${className}`}>
                     <label
                         htmlFor="about"
                         className="block text-sm font-medium leading-6 text-gray-900"
