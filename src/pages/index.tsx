@@ -1,3 +1,9 @@
+/*
+- Dialog de ¿Seguro quieres eliminar el vidrio?
+- Dialog para 
+*/
+
+
 //React
 import React, { Fragment, useState } from 'react'
 
