@@ -6,7 +6,7 @@ import { type NextPage } from 'next'
 import Head from 'next/head'
 
 //Hero Icons
-import { TrashIcon } from '@heroicons/react/24/outline'
+import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
 import {
@@ -59,6 +59,11 @@ interface Glass {
 }
 
 const Home: NextPage = () => {
+    //States
+    const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
+
+    const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
+
     //Functions
     const onGlassCreation = (values: string) => {
         console.log(values)
@@ -99,11 +104,17 @@ const Home: NextPage = () => {
         {
             field: 'actions',
             type: 'actions',
-            width: 40,
+            width: 80,
             getActions: ({ row }: { row: GridValidRowModel }) => [
                 <GridActionsCellItem
                     key={1}
                     icon={<TrashIcon className="w-4" />}
+                    label="Delete"
+                    onClick={() => onDelete(row)}
+                />,
+                <GridActionsCellItem
+                    key={1}
+                    icon={<PencilSquareIcon className="w-4" />}
                     label="Delete"
                     onClick={() => onDelete(row)}
                 />,
@@ -126,10 +137,6 @@ const Home: NextPage = () => {
             },
         },
     ]
-
-    const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
-
-    const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
 
     return (
         <>
