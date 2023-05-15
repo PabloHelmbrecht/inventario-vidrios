@@ -222,6 +222,7 @@ const Home: NextPage = () => {
                 setState={setSnackbar}
             />
 
+            {/*Formulario de Carga*/}
             <DialogForm
                 title="Carga de Vidrios"
                 isOpen={isGlassCreatorOpen}

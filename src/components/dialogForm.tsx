@@ -11,7 +11,7 @@ import createDecorator, { type Calculation } from 'final-form-calculate'
 interface dialogFormProps {
     title?: string
     buttonText?: string
-    initialValues?: object
+    initialValues?: object | null
     children: React.ReactNode
     isOpen: boolean
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -74,7 +74,7 @@ export default function DialogForm({
                                     /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
                                     //@ts-ignore
                                     decorators={decorator ? [createDecorator(...decorator)] : null}
-                                    initialValues={initialValues}
+                                    initialValues={{ ...initialValues }}
                                     render={(props) => (
                                         <DialogFormContext.Provider value={props}>
                                             <form>
