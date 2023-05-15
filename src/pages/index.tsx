@@ -28,7 +28,6 @@ import TextArea from '../components/inputFields/textareaField'
 import TextLine from '../components/inputFields/textlineField'
 import DialogForm from '../components/dialogForm'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
-import SimpleCombobox from '../components/simpleCombobox'
 
 //Types and Interfaces
 interface Glass {
@@ -67,23 +66,6 @@ const onDelete = (row: GridRowModel) => {
     console.log(row)
 }
 
-const onProcessRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-    console.log(newRow)
-    console.log(oldRow)
-
-    return new Promise((resolve, reject) => {
-        if (newRow.col1 === 'error') {
-            reject(new Error('error'))
-        } else {
-            resolve(newRow)
-        }
-    })
-}
-
-const handleProcessRowError = (e: Error) => {
-    console.log(e)
-}
-
 //DataGrid Definitions
 const rows: Glass[] = [
     {
@@ -109,11 +91,9 @@ const columns: GridColDef[] = [
     {
         headerName: 'Descripción',
         field: 'type',
-        editable: true,
         width: 200,
         valueFormatter: ({ value }: { value: { description: string } }) => value?.description,
-        //Agregar value como tiene arriba
-        renderEditCell: () => <SimpleCombobox className="w-3/4 overflow-visible" />,
+        //Agregar value como tiene arriba,
     },
     {
         field: 'actions',
@@ -200,8 +180,6 @@ const Home: NextPage = () => {
                             rows={rows}
                             columns={columns}
                             slots={{ toolbar: GridToolbar }}
-                            processRowUpdate={onProcessRowUpdate}
-                            onProcessRowUpdateError={handleProcessRowError}
                             slotProps={{
                                 toolbar: {
                                     showQuickFilter: true,
