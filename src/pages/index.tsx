@@ -11,6 +11,8 @@
 - Función de consumir vidrio (que al estar parado sobre un vidrio me seleccione ese)
 */
 
+/*Terminar de configurar estilos de títulos */
+
 //React
 import React, { Fragment, useState } from 'react'
 
@@ -95,7 +97,11 @@ const Home: NextPage = () => {
     const rows: Glass[] = [
         {
             id: 1,
-            type: { id: 1, name: 'INC', description: 'ICNOLORO BLANCO' },
+            type: {
+                id: 1,
+                name: 'GL060.CL.LAMI.-',
+                description: '8 mm (5/16") INCOLORO + PVB 038 ESMERILADO + INCOLORO',
+            },
             status: 'TRANSIT',
             quantity: 2,
             createdAt: new Date(),
@@ -105,10 +111,10 @@ const Home: NextPage = () => {
                 position: 'A123',
                 warehouse: 'A',
             },
-            width: 1000,
-            height: 1000,
+            width: 11000,
+            height: 11000,
             vendor: { id: 1, name: 'VASA' },
-            lastComment:  'comentario',
+            lastComment: 'comentario',
         },
     ]
 
@@ -334,7 +340,18 @@ const Home: NextPage = () => {
 
             {/*Formulario de Consumo*/}
             <DialogForm
-                title="Consumo de Vidrios"
+                title={
+                    <>
+                        Consumir
+                        {isNotNullUndefinedOrEmpty(glassSelection) ? (
+                            <span className="text-slate-400">{`${` #${glassSelection?.id ?? ''} ${
+                                glassSelection?.type?.name ?? ''
+                            } ${glassSelection?.width ?? ''}X${glassSelection?.height ?? ''}`}`}</span>
+                        ) : (
+                            ' Vidrio'
+                        )}
+                    </>
+                }
                 buttonText="Consumir"
                 buttonStyles="bg-red-500 hover:bg-red-600"
                 isOpen={isGlassConsumerOpen}
@@ -392,7 +409,18 @@ const Home: NextPage = () => {
 
             {/*Formulario de Edición*/}
             <DialogForm
-                title="Edición de Vidrios"
+                title={
+                    <>
+                        Editar
+                        {isNotNullUndefinedOrEmpty(glassToEdit) ? (
+                            <span className="text-sky-600">{`${` #${glassToEdit?.id ?? ''} ${
+                                glassToEdit?.type?.name ?? ''
+                            } ${glassToEdit?.width ?? ''}X${glassToEdit?.height ?? ''}`}`}</span>
+                        ) : (
+                            ' Vidrio'
+                        )}
+                    </>
+                }
                 buttonText="Editar"
                 isOpen={isNotNullUndefinedOrEmpty(glassToEdit)}
                 setIsOpen={(value) => {
@@ -451,19 +479,15 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title={`¿Desea eliminar el vidrio ${
-                    isNotNullUndefinedOrEmpty(glassToDelete)
-                        ? `${glassToDelete?.type?.description ?? ''} ${glassToDelete?.width ?? ''}X${
-                              glassToDelete?.height ?? ''
-                          }`.toLowerCase()
-                        : ''
+                title={`¿Desea eliminar el vidrio #${
+                    isNotNullUndefinedOrEmpty(glassToDelete) ? `${glassToDelete?.id ?? ''}` : ''
                 }?`}
                 titleStyles="text-center"
-                buttonText={`Eliminar ${
+                buttonText={`Eliminar #${
                     isNotNullUndefinedOrEmpty(glassToDelete)
-                        ? `${glassToDelete?.type?.description ?? ''} ${glassToDelete?.width ?? ''}X${
-                              glassToDelete?.height ?? ''
-                          }`.toLowerCase()
+                        ? `${glassToDelete?.id ?? ''} ${glassToDelete?.type?.name ?? ''} ${
+                              glassToDelete?.width ?? ''
+                          }X${glassToDelete?.height ?? ''}`
                         : 'vidrio'
                 }`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"

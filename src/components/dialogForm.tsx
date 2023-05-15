@@ -9,9 +9,9 @@ import { Form, type FormRenderProps } from 'react-final-form'
 import createDecorator, { type Calculation } from 'final-form-calculate'
 
 interface dialogFormProps {
-    title?: string
+    title?: string | React.ReactNode
     titleStyles?: string
-    buttonText?: string
+    buttonText?: string | React.ReactNode
     buttonStyles?: string
     initialValues?: object | null
     children: React.ReactNode
@@ -80,7 +80,9 @@ export default function DialogForm({
                                             <form>
                                                 <Dialog.Title
                                                     as="h3"
-                                                    className={` ${titleStyles??''} text-lg font-medium leading-6 text-gray-900`}>
+                                                    className={` ${
+                                                        titleStyles ?? ''
+                                                    } text-lg font-medium leading-6 text-gray-900`}>
                                                     {title}
                                                 </Dialog.Title>
 
