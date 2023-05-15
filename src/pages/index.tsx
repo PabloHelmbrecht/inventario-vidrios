@@ -31,14 +31,11 @@ import {
     type GridRowModel,
 } from '@mui/x-data-grid'
 
-//Final Form
-import { type Calculation } from 'final-form-calculate'
-
 //Custom components
-import Combobox, { type Option } from '../components/inputFields/comboboxField'
+import Combobox from '../components/inputFields/comboboxField'
+//import  { type Option } from '../components/inputFields/comboboxField'
 import Numeric from '../components/inputFields/numericField'
 import TextArea from '../components/inputFields/textareaField'
-import TextLine from '../components/inputFields/textlineField'
 import DialogForm from '../components/dialogForm'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
 
@@ -149,22 +146,6 @@ const Home: NextPage = () => {
         },
     ]
 
-    //Form Decorations
-    const decorator: Calculation[] = [
-        {
-            field: 'type',
-            updates: {
-                description: (typeValue: Option) => typeValue,
-            },
-        },
-        {
-            field: 'description',
-            updates: {
-                type: (descriptionValue: Option) => descriptionValue,
-            },
-        },
-    ]
-
     return (
         <>
             <Head>
@@ -246,7 +227,6 @@ const Home: NextPage = () => {
                 isOpen={isGlassCreatorOpen}
                 setIsOpen={setIsGlassCreatorOpen}
                 onSubmit={onGlassCreation}
-                decorator={decorator}
             >
                 <Combobox
                     label="Tipo"
@@ -257,12 +237,23 @@ const Home: NextPage = () => {
                     label="Descripción"
                     name="type"
                 />
+                <Numeric
+                    label="Ancho"
+                    name="width"
+                    className=" sm:col-span-3"
+                />
+                <Numeric
+                    label="Alto"
+                    name="height"
+                    className=" sm:col-span-3"
+                />
 
                 <Numeric
                     label="Cantidad"
                     name="quantity"
                     className=" sm:col-span-3"
                 />
+
                 <Combobox
                     label="Almacén"
                     name="position"
@@ -272,8 +263,15 @@ const Home: NextPage = () => {
                     label="Posición"
                     name="position"
                 />
-                <TextLine className="sm:col-span-3" />
-                <TextArea />
+                <Combobox
+                    label="Proovedor"
+                    name="vendor"
+                />
+
+                <TextArea
+                    label="Comentarios"
+                    name="comment"
+                />
             </DialogForm>
         </>
     )
