@@ -76,21 +76,21 @@ const Home: NextPage = () => {
     const [glassToEdit, setGlassToEdit] = useState<Glass | null>(null)
 
     //Functions
-    const onGlassCreation = (values: string) => {
-        console.log(values)
+    const onGlassCreation = (values: object) => {
+        console.log({ status: 'Vidrio Creado', ...values })
     }
-    const onGlassMovement = (values: string) => {
-        console.log(values)
+    const onGlassMovement = (values: object) => {
+        console.log({ status: 'Vidrio Movido', ...values })
     }
-    const onGlassConsumption = (values: string) => {
-        console.log(values)
+    const onGlassConsumption = (values: object) => {
+        console.log({ status: 'Vidrio Consumido', ...values })
     }
 
-    const onGlassDelete = (values: string) => {
-        console.log(values)
+    const onGlassDelete = (values: object) => {
+        console.log({ status: 'Vidrio Eliminado', ...values })
     }
-    const onGlassEdit = (values: string) => {
-        console.log(values)
+    const onGlassEdit = (values: object) => {
+        console.log({ status: 'Vidrio Editado', ...values })
     }
 
     //DataGrid Definitions
@@ -349,7 +349,7 @@ const Home: NextPage = () => {
                 />
             </DialogForm>
 
-            {/*Formulario de Consumo*/}
+            {/*Formulario de Consumo como*/}
             <DialogForm
                 title={
                     <>
