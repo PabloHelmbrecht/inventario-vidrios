@@ -222,7 +222,7 @@ const Home: NextPage = () => {
                 setState={setSnackbar}
             />
 
-            {/*Formulario de Carga tipo, descripcion, cantidad*/}
+            {/*Formulario de Carga en almacen traer solo almacen de esa posicion*/}
             <DialogForm
                 title="Carga de Vidrios"
                 buttonText="Cargar"
@@ -280,7 +280,7 @@ const Home: NextPage = () => {
                 />
             </DialogForm>
 
-            {/*Formulario de Movimiento*/}
+            {/*Formulario de Movimiento  tipo, descripcion, ,ancho, alto, posicion, almacen cantidad a mover almacen destino posicion destino (limite cantidad actual)*/}
             <DialogForm
                 title={
                     <>
