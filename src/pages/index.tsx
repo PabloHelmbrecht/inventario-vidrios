@@ -282,7 +282,18 @@ const Home: NextPage = () => {
 
             {/*Formulario de Movimiento*/}
             <DialogForm
-                title="Movimiento de Vidrios"
+                title={
+                    <>
+                        Mover Vidrio
+                        {isNotNullUndefinedOrEmpty(glassSelection) ? (
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassSelection?.id ?? ''} ${
+                                glassSelection?.type?.name ?? ''
+                            } ${glassSelection?.width ?? ''}X${glassSelection?.height ?? ''}`}`}</span>
+                        ) : (
+                            ''
+                        )}
+                    </>
+                }
                 buttonText="Mover"
                 buttonStyles="bg-sky-600 hover:bg-sky-700"
                 isOpen={isGlassMoverOpen}
@@ -342,13 +353,13 @@ const Home: NextPage = () => {
             <DialogForm
                 title={
                     <>
-                        Consumir
+                        Consumir Vidrio
                         {isNotNullUndefinedOrEmpty(glassSelection) ? (
-                            <span className="text-slate-400">{`${` #${glassSelection?.id ?? ''} ${
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassSelection?.id ?? ''} ${
                                 glassSelection?.type?.name ?? ''
                             } ${glassSelection?.width ?? ''}X${glassSelection?.height ?? ''}`}`}</span>
                         ) : (
-                            ' Vidrio'
+                            ''
                         )}
                     </>
                 }
@@ -411,13 +422,13 @@ const Home: NextPage = () => {
             <DialogForm
                 title={
                     <>
-                        Editar
+                        Editar Vidrio
                         {isNotNullUndefinedOrEmpty(glassToEdit) ? (
-                            <span className="text-sky-600">{`${` #${glassToEdit?.id ?? ''} ${
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassToEdit?.id ?? ''} ${
                                 glassToEdit?.type?.name ?? ''
                             } ${glassToEdit?.width ?? ''}X${glassToEdit?.height ?? ''}`}`}</span>
                         ) : (
-                            ' Vidrio'
+                            ''
                         )}
                     </>
                 }
