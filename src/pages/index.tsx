@@ -77,20 +77,20 @@ const Home: NextPage = () => {
 
     //Functions
     const onGlassCreation = (values: object) => {
-        console.log({ status: 'Vidrio Creado', ...values })
+        console.log({ evento: 'Vidrio Creado', ...values })
     }
     const onGlassMovement = (values: object) => {
-        console.log({ status: 'Vidrio Movido', ...values })
+        console.log({ evento: 'Vidrio Movido', ...values })
     }
     const onGlassConsumption = (values: object) => {
-        console.log({ status: 'Vidrio Consumido', ...values })
+        console.log({ evento: 'Vidrio Consumido', ...values })
     }
 
     const onGlassDelete = (values: object) => {
-        console.log({ status: 'Vidrio Eliminado', ...values })
+        console.log({ evento: 'Vidrio Eliminado', ...values })
     }
     const onGlassEdit = (values: object) => {
-        console.log({ status: 'Vidrio Editado', ...values })
+        console.log({ evento: 'Vidrio Editado', ...values })
     }
 
     //DataGrid Definitions
