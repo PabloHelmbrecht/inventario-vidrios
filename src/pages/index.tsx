@@ -222,7 +222,7 @@ const Home: NextPage = () => {
                 setState={setSnackbar}
             />
 
-            {/*Formulario de Carga*/}
+            {/*Formulario de Carga tipo, descripcion, cantidad*/}
             <DialogForm
                 title="Carga de Vidrios"
                 buttonText="Cargar"
