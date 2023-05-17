@@ -4,7 +4,13 @@ const prisma = new PrismaClient()
 
 async function obtenerTodosLosVidrios() {
     try {
-        const vidrios = await prisma.glass.findMany()
+        const vidrios = await prisma.glass.findMany({
+            include: {
+                type: true,
+                vendor: true,
+                location: true,
+            },
+        })
 
         console.log('Lista de vidrios:')
         console.log(vidrios)
