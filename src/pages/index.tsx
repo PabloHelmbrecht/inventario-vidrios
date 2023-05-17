@@ -34,8 +34,11 @@ import TextLine from '../components/inputFields/textlineField'
 import DialogForm from '../components/dialogForm'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
 
-//Cusom Functions
+//Custom Functions
 import { isNotNullUndefinedOrEmpty } from '../server/variableChecker'
+
+//Custom Constants
+import GRID_DEFAULT_LOCALE_TEXT from '../constants/localeTextConstants'
 
 //Types and Interfaces
 interface Glass {
@@ -304,6 +307,7 @@ const Home: NextPage = () => {
                         </div>
                         <DataGrid
                             disableDensitySelector
+                            localeText={GRID_DEFAULT_LOCALE_TEXT}
                             rows={rows}
                             columns={columns}
                             slots={{ toolbar: GridToolbar }}
