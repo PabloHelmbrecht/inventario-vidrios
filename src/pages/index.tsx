@@ -223,6 +223,11 @@ const Home: NextPage = () => {
             valueFormatter: ({ value }: { value: { name: string } }) => value?.name,
         },
         {
+            headerName: 'Comentario',
+            field: 'lastComment',
+            width: 100,
+        },
+        {
             headerName: 'Creado En',
             field: 'createdAt',
             width: 150,
