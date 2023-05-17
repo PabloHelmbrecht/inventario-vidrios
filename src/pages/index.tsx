@@ -14,7 +14,10 @@
 /*Terminar de configurar estilos de títulos */
 
 //React
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
+
+//Next Auth
+import { useSession } from 'next-auth/react'
 
 //Next
 import { type NextPage } from 'next'
@@ -67,6 +70,13 @@ interface Glass {
 }
 
 const Home: NextPage = () => {
+    const session = useSession()
+    //useEffect
+    useEffect(() => {
+        console.log('Sesión')
+        console.log(session)
+    }, [])
+
     //States
     const [glassSelection, setGlassSelection] = useState<Glass | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
