@@ -206,6 +206,40 @@ const Home: NextPage = () => {
             type: 'number',
         },
         {
+            headerName: 'Almacén',
+            width: 100,
+            field: '',
+            valueGetter: ({ row }: { row: Record<string, Record<string, string>> }) => row?.location?.warehouse,
+            //Agregar value como tiene arriba,
+        },
+
+        {
+            headerName: 'Posición',
+            field: 'location',
+            width: 100,
+            valueFormatter: ({ value }: { value: { position: string } }) => value?.position,
+            //Agregar value como tiene arriba,
+        },
+        {
+            headerName: 'Proovedor',
+            field: 'vendor',
+            width: 100,
+            valueFormatter: ({ value }: { value: { name: string } }) => value?.name,
+            //Agregar value como tiene arriba,
+        },
+        {
+            headerName: 'Creado En',
+            field: 'createdAt',
+            width: 150,
+            type: 'dateTime',
+        },
+        {
+            headerName: 'Actualizado En',
+            field: 'updatedAt',
+            width: 150,
+            type: 'dateTime',
+        },
+        {
             field: 'Acciones',
             type: 'actions',
             width: 80,
@@ -240,10 +274,10 @@ const Home: NextPage = () => {
                 />
             </Head>
 
-            <main className="flex flex-col justify-center px-4 py-16">
+            <main className="flex flex-col justify-center items-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
-                    <div className="flex flex-col justify-center gap-4">
+                    <div className="flex w-full flex-col justify-center gap-4">
                         <div className="flex w-full justify-end gap-3">
                             <button
                                 onClick={() => {
