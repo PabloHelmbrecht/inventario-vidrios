@@ -430,14 +430,16 @@ const Home: NextPage = () => {
                     name="type"
                     inputField="description"
                 />
-                <Numeric
+                <Combobox
                     label="Ancho"
                     name="width"
+                    inputField="width"
                     className=" sm:col-span-3"
                 />
-                <Numeric
+                <Combobox
                     label="Alto"
                     name="height"
+                    inputField="height"
                     className=" sm:col-span-3"
                 />
 
@@ -507,14 +509,16 @@ const Home: NextPage = () => {
                     name="type"
                     inputField="description"
                 />
-                <Numeric
+                <Combobox
                     label="Ancho"
                     name="width"
+                    inputField="width"
                     className=" sm:col-span-3"
                 />
-                <Numeric
+                <Combobox
                     label="Alto"
                     name="height"
+                    inputField="height"
                     className=" sm:col-span-3"
                 />
 
@@ -587,6 +591,7 @@ const Home: NextPage = () => {
 
                 <Numeric
                     label="Cantidad"
+                    disabled={true}
                     name="quantity"
                     className=" sm:col-span-3"
                 />

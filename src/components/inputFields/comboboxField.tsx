@@ -28,12 +28,14 @@ export default function ComboboxField({
     ],
     inputField = 'description',
     className = '',
+    disabled = false,
 }: {
     label?: string
     name?: string
     options?: Option[]
     inputField?: string
     className?: string
+    disabled?: boolean
 }) {
     const [query, setQuery] = useState<string>('')
     const filteredOptions: Option[] =
@@ -62,6 +64,7 @@ export default function ComboboxField({
                     <div className="mt-2">
                         <Combobox
                             name={input.name}
+                            disabled={disabled ?? false}
                             /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
                             value={input.value}
                             onChange={input.onChange}>
