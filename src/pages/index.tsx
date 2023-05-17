@@ -102,7 +102,9 @@ const Home: NextPage = () => {
                 name: 'GL060.CL.LAMI.-',
                 description: '8 mm (5/16") INCOLORO + PVB 038 ESMERILADO + INCOLORO',
             },
-            status: 'TRANSIT',
+            width: 11000,
+            height: 11000,
+            status: 'STORED',
             quantity: 2,
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -111,14 +113,70 @@ const Home: NextPage = () => {
                 position: 'A123',
                 warehouse: 'A',
             },
-            width: 11000,
-            height: 11000,
             vendor: { id: 1, name: 'VASA' },
             lastComment: 'comentario',
         },
     ]
 
     const columns: GridColDef[] = [
+        {
+            headerName: 'Id',
+            field: 'id',
+            width: 40,
+            type: 'number',
+            valueFormatter: (params) => `#${(params?.value as string) ?? ''}`,
+        },
+        {
+            headerName: 'Estado',
+            field: 'status',
+            width: 100,
+            renderCell: (params) => {
+                let text: string
+                let ringColor: string
+                let backgroundColor: string
+                let textColor: string
+                switch (params?.value as string) {
+                    case 'TRANSIT':
+                        text = 'En Tránsito'
+                        ringColor = 'ring-yellow-700/10'
+                        backgroundColor = 'bg-yellow-50'
+                        textColor = 'text-yellow-800'
+                        break
+                    case 'STORED':
+                        text = 'Almacenado'
+                        ringColor = 'ring-emerald-700/10'
+                        backgroundColor = 'bg-emerald-50'
+                        textColor = 'text-emerald-800'
+                        break
+                    case 'CONSUMED':
+                        text = 'Consumido'
+                        ringColor = 'ring-red-700/10'
+                        backgroundColor = 'bg-red-50'
+                        textColor = 'text-red-800'
+                        break
+                    default:
+                        text = (params?.value as string) ?? ''
+                        ringColor = 'ring-slate-700/10'
+                        backgroundColor = 'bg-slate-50'
+                        textColor = 'text-slate-800'
+                }
+
+                return (
+                    <div
+                        className={` ${ringColor} ${backgroundColor} ${textColor} inline-flex items-center  rounded-md  px-2 py-1 align-middle text-xs font-medium ring ring-1 ring-inset`}>
+                        {text}
+                    </div>
+                )
+            },
+        },
+        {
+            headerName: 'Código',
+            width: 140,
+            field: '',
+            valueGetter: ({ row }: { row: Record<string, Record<string, string>> }) => row?.type?.name,
+            //Agregar value como tiene arriba,
+        },
+
         {
             headerName: 'Descripción',
             field: 'type',
@@ -127,7 +185,28 @@ const Home: NextPage = () => {
             //Agregar value como tiene arriba,
         },
         {
-            field: 'actions',
+            headerName: 'Ancho',
+            field: 'width',
+            width: 100,
+            type: 'number',
+            valueFormatter: ({ value }: { value: string }) => `${value} mm`,
+        },
+        {
+            headerName: 'Alto',
+            field: 'width',
+            width: 100,
+            type: 'number',
+            valueFormatter: ({ value }: { value: string }) => `${value} mm`,
+        },
+
+        {
+            headerName: 'Cantidad',
+            field: 'quantity',
+            width: 100,
+            type: 'number',
+        },
+        {
+            field: 'Acciones',
             type: 'actions',
             width: 80,
             getActions: ({ row }: { row: GridValidRowModel }) => [

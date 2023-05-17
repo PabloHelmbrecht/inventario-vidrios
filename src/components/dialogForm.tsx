@@ -64,7 +64,7 @@ export default function DialogForm({
                             leave="ease-in duration-200"
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95">
-                            <Dialog.Panel className=" w-full max-w-md transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
+                            <Dialog.Panel className=" w-full max-w-xl transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
                                 <Form
                                     onSubmit={onSubmit}
                                     /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
