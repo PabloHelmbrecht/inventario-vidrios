@@ -30,7 +30,7 @@ export interface GlassMovement {
     glass: Glass
     glassId: number
     column: string
-    oldValue: string
+    oldValue?: string
     newValue: string
     updatedAt: Date
     userId: number

@@ -46,7 +46,7 @@ model GlassMovement {
   glass     Glass    @relation(fields: [glassId], references: [id])
   glassId   Int
   column    String
-  oldValue  String
+  oldValue  String?
   newValue  String
   updatedAt DateTime @default(now())
   userId    Int
