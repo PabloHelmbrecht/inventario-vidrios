@@ -455,19 +455,19 @@ const Home: NextPage = () => {
                 />
                 <Combobox
                     label="Almacén Destino"
-                    name="location"
+                    name="destinyLocation"
                     inputField="position"
                     className=" sm:col-span-3"
                 />
                 <Combobox
                     label="Posición Destino"
-                    name="location"
+                    name="destinyLocation"
                     inputField="warehouse"
                     className=" sm:col-span-3"
                 />
                 <Numeric
                     label="Cantidad a Mover"
-                    name="quantity"
+                    name="difQuantity"
                     className=""
                 />
 
@@ -533,7 +533,7 @@ const Home: NextPage = () => {
 
                 <Numeric
                     label="Cantidad a Consumir"
-                    name="quantity"
+                    name="difQuantity"
                     className=""
                 />
 
