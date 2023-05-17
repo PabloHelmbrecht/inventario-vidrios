@@ -169,12 +169,12 @@ const Home: NextPage = () => {
                 )
             },
         },
-        /*{
+        {
             headerName: 'Código',
             width: 140,
-            field: 'type',
-            valueFormatter: ({ value }: { value: { name: string } }) => value?.name,
-        },*/
+            field: 'type.code',
+            valueGetter: ({ row }: { row: Record<string, Record<string, string>> }) => row?.type?.name,
+        },
 
         {
             headerName: 'Descripción',
@@ -203,12 +203,12 @@ const Home: NextPage = () => {
             width: 100,
             type: 'number',
         },
-        /*{
+        {
             headerName: 'Almacén',
             width: 100,
-            field: 'location',
-            valueFormatter: ({ value }: { value: { warehouse: string } }) => value?.warehouse,
-        },*/
+            field: 'location.warehouse',
+            valueGetter: ({ row }: { row: Record<string, Record<string, string>> }) => row?.location?.warehouse,
+        },
 
         {
             headerName: 'Posición',
