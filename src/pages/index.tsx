@@ -441,29 +441,34 @@ const Home: NextPage = () => {
                     className=" sm:col-span-3"
                 />
 
-                <Numeric
-                    label="Cantidad"
-                    name="quantity"
-                    className=" sm:col-span-3"
-                />
                 <Combobox
-                    label="Proovedor"
-                    name="vendor"
-                    inputField="name"
-                    className=" sm:col-span-3"
-                />
-
-                <Combobox
-                    label="Almacén"
+                    label="Almacén Origen"
                     name="location"
                     inputField="position"
                     className=" sm:col-span-3"
                 />
                 <Combobox
-                    label="Posición"
+                    label="Posición Origen"
                     name="location"
                     inputField="warehouse"
                     className=" sm:col-span-3"
+                />
+                <Combobox
+                    label="Almacén Destino"
+                    name="location"
+                    inputField="position"
+                    className=" sm:col-span-3"
+                />
+                <Combobox
+                    label="Posición Destino"
+                    name="location"
+                    inputField="warehouse"
+                    className=" sm:col-span-3"
+                />
+                <Numeric
+                    label="Cantidad a Mover"
+                    name="quantity"
+                    className=""
                 />
 
                 <TextArea
@@ -513,18 +518,6 @@ const Home: NextPage = () => {
                     className=" sm:col-span-3"
                 />
 
-                <Numeric
-                    label="Cantidad"
-                    name="quantity"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Proovedor"
-                    name="vendor"
-                    inputField="name"
-                    className=" sm:col-span-3"
-                />
-
                 <Combobox
                     label="Almacén"
                     name="location"
@@ -536,6 +529,12 @@ const Home: NextPage = () => {
                     name="location"
                     inputField="warehouse"
                     className=" sm:col-span-3"
+                />
+
+                <Numeric
+                    label="Cantidad a Consumir"
+                    name="quantity"
+                    className=""
                 />
 
                 <TextArea
