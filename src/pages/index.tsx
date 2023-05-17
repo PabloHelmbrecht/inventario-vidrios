@@ -17,7 +17,7 @@
 import React, { Fragment, useState } from 'react'
 
 //Next Auth
-import { useSession } from 'next-auth/react'
+//import { useSession } from 'next-auth/react'
 
 //Next
 import { type NextPage } from 'next'
@@ -70,10 +70,6 @@ interface Glass {
 }
 
 const Home: NextPage = () => {
-    const { data: session } = useSession()
-    console.log('Sesión')
-    console.log(session)
-
     //States
     const [glassSelection, setGlassSelection] = useState<Glass | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
