@@ -57,10 +57,10 @@ const config = {
         '@typescript-eslint/explicit-module-boundary-types': ['off'],
         '@typescript-eslint/no-non-null-assertion': ['off'],
         '@typescript-eslint/member-delimiter-style': [
-            'error',
+            'warn',
             {
                 multiline: {
-                    delimiter: 'comma',
+                    delimiter: 'none',
                     requireLast: false,
                 },
                 singleline: {
