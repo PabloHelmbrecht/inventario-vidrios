@@ -36,12 +36,10 @@ import GRID_DEFAULT_LOCALE_TEXT from '../constants/localeTextConstants'
 
 //Custom Types
 interface SuperGlass extends Glass {
-  type?: GlassType | null,
-  location?: GlassLocation | null,
-  vendor?: GlassVendor | null
+    type?: GlassType | null
+    location?: GlassLocation | null
+    vendor?: GlassVendor | null
 }
-
-
 
 const Home: NextPage = () => {
     //States
@@ -79,7 +77,7 @@ const Home: NextPage = () => {
         try {
             //eslint-disable-next-line @typescript-eslint/no-floating-promises
             const response = await axios.get('/api/glass')
-            if(response.data !== null) throw new Error('No hay vidrios')
+            if (response.data === null) throw new Error('No hay vidrios')
             setGlassData(response.data as SuperGlass[])
             setSnackbar({ type: 'success', message: 'Vidrios actualizados' })
         } catch (error) {
@@ -465,7 +463,7 @@ const Home: NextPage = () => {
                         Consumir Vidrio
                         {isNotNullUndefinedOrEmpty(glassSelection) ? (
                             <span className="text-sm font-normal text-slate-500">{`${` #${glassSelection?.id ?? ''} ${
-                                (glassSelection?.type?.name ?? '')
+                                glassSelection?.type?.name ?? ''
                             } ${glassSelection?.width ?? ''}X${glassSelection?.height ?? ''}`}`}</span>
                         ) : (
                             ''
