@@ -1,20 +1,5 @@
-/*
-- Dialog de ¿Seguro quieres eliminar el vidrio?
-- Dialog para editar vidrio
-- Dialog para cargar vidrio
-- Dialog para mover vidrio
-- Dialog para borrar vidrio
-- Dialog para consumir vidrio
-
-- Funcion de editar vidrio
-- Función de mover vidrio (que al estar parado sobre un vidrio me seleccione ese por defecto)
-- Función de consumir vidrio (que al estar parado sobre un vidrio me seleccione ese)
-*/
-
-/*Terminar de configurar estilos de títulos */
-
 //React
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 
 //Next Auth
 //import { useSession } from 'next-auth/react'
@@ -28,6 +13,9 @@ import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
 import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid'
+
+//Axios
+import axios from 'axios'
 
 //Custom Components
 import Combobox from '../components/inputFields/comboboxField'
@@ -81,6 +69,8 @@ const Home: NextPage = () => {
     const [glassToDelete, setGlassToDelete] = useState<Glass | null>(null)
     const [glassToEdit, setGlassToEdit] = useState<Glass | null>(null)
 
+    const [glassData, setGlassData] = useState<Glass | null>(null)
+
     //Functions
     const onGlassCreation = (formResponse: object) => {
         console.log({ evento: 'Vidrio Creado', ...formResponse })
@@ -98,6 +88,23 @@ const Home: NextPage = () => {
     const onGlassEdit = (formResponse: object) => {
         console.log({ evento: 'Vidrio Editado', ...formResponse })
     }
+
+    const fetchGlassData = async () => {
+        try {
+            //eslint-disable-next-line @typescript-eslint/no-floating-promises
+            const response = await axios.get('/api/glass')
+            setGlassData(response.data as Glass)
+        } catch (error) {
+            console.error('Error fetching data:', error)
+            setSnackbar({ type: 'warning', message: 'Error al obtener los vidrios' })
+        }
+    }
+    //useEffect
+    useEffect(() => {
+        //eslint-disable-next-line @typescript-eslint/no-floating-promises
+        fetchGlassData()
+        console.log(glassData)
+    }, [])
 
     //DataGrid Definitions
     const rows: Glass[] = [
