@@ -1,5 +1,5 @@
 //React
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 
 //Next Auth
 //import { useSession } from 'next-auth/react'
@@ -17,6 +17,9 @@ import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridV
 //Axios
 import axios from 'axios'
 
+//Prisma
+import { type Glass, type GlassType, type GlassLocation, type GlassVendor } from '@prisma/client'
+
 //Custom Components
 import Combobox from '../components/inputFields/comboboxField'
 import Numeric from '../components/inputFields/numericField'
@@ -31,45 +34,28 @@ import { isNotNullUndefinedOrEmpty } from '../server/variableChecker'
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../constants/localeTextConstants'
 
-//Types and Interfaces
-interface Glass {
-    id: number
-    type: {
-        id: number
-        name: string
-        description: string
-    }
-    status: string
-    quantity: number
-    createdAt: Date
-    updatedAt: Date
-    location: {
-        id: number
-        position: string
-        warehouse: string
-    }
-    width: number
-    height: number
-    vendor: {
-        id: number
-        name: string
-    }
-    lastComment: string
+//Custom Types
+interface SuperGlass extends Glass {
+  type?: GlassType | null,
+  location?: GlassLocation | null,
+  vendor?: GlassVendor | null
 }
+
+
 
 const Home: NextPage = () => {
     //States
-    const [glassSelection, setGlassSelection] = useState<Glass | null>(null)
+    const [glassSelection, setGlassSelection] = useState<SuperGlass | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
 
     const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
     const [isGlassMoverOpen, setIsGlassMoverOpen] = useState<boolean>(false)
     const [isGlassConsumerOpen, setIsGlassConsumerOpen] = useState<boolean>(false)
 
-    const [glassToDelete, setGlassToDelete] = useState<Glass | null>(null)
-    const [glassToEdit, setGlassToEdit] = useState<Glass | null>(null)
+    const [glassToDelete, setGlassToDelete] = useState<SuperGlass | null>(null)
+    const [glassToEdit, setGlassToEdit] = useState<SuperGlass | null>(null)
 
-    const [glassData, setGlassData] = useState<Glass | null>(null)
+    const [glassData, setGlassData] = useState<SuperGlass[] | null>(null)
 
     //Functions
     const onGlassCreation = (formResponse: object) => {
@@ -93,7 +79,9 @@ const Home: NextPage = () => {
         try {
             //eslint-disable-next-line @typescript-eslint/no-floating-promises
             const response = await axios.get('/api/glass')
-            setGlassData(response.data as Glass)
+            if(response.data !== null) throw new Error('No hay vidrios')
+            setGlassData(response.data as SuperGlass[])
+            setSnackbar({ type: 'success', message: 'Vidrios actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
             setSnackbar({ type: 'warning', message: 'Error al obtener los vidrios' })
@@ -104,32 +92,11 @@ const Home: NextPage = () => {
         //eslint-disable-next-line @typescript-eslint/no-floating-promises
         fetchGlassData()
         console.log(glassData)
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     //DataGrid Definitions
-    const rows: Glass[] = [
-        {
-            id: 1,
-            type: {
-                id: 1,
-                name: 'GL060.CL.LAMI.-',
-                description: '8 mm (5/16") INCOLORO + PVB 038 ESMERILADO + INCOLORO',
-            },
-            width: 11000,
-            height: 11000,
-            status: 'STORED',
-            quantity: 2,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            location: {
-                id: 1,
-                position: 'A123',
-                warehouse: 'A',
-            },
-            vendor: { id: 1, name: 'VASA' },
-            lastComment: 'comentario',
-        },
-    ]
+    const rows: SuperGlass[] = useMemo(() => glassData as SuperGlass[], [glassData])
 
     const columns: GridColDef[] = [
         {
@@ -261,13 +228,13 @@ const Home: NextPage = () => {
                     key={1}
                     icon={<TrashIcon className="w-4" />}
                     label="Delete"
-                    onClick={() => setGlassToDelete(row as Glass)}
+                    onClick={() => setGlassToDelete(row as SuperGlass)}
                 />,
                 <GridActionsCellItem
                     key={1}
                     icon={<PencilSquareIcon className="w-4" />}
                     label="Delete"
-                    onClick={() => setGlassToEdit(row as Glass)}
+                    onClick={() => setGlassToEdit(row as SuperGlass)}
                 />,
             ],
         },
@@ -315,30 +282,32 @@ const Home: NextPage = () => {
                                 Consumir
                             </button>
                         </div>
-                        <DataGrid
-                            disableDensitySelector
-                            localeText={GRID_DEFAULT_LOCALE_TEXT}
-                            rows={rows}
-                            columns={columns}
-                            slots={{ toolbar: GridToolbar }}
-                            onRowSelectionModelChange={(ids) =>
-                                setGlassSelection(rows.find((row) => row.id === ids[0]) as Glass)
-                            }
-                            slotProps={{
-                                toolbar: {
-                                    showQuickFilter: true,
-                                    quickFilterProps: { debounceMs: 500 },
-                                },
-                            }}
-                            sx={{
-                                backgroundColor: 'white',
-                                p: 3,
-                                borderRadius: '0.5rem',
-                                '& .MuiButtonBase-root': {
-                                    color: 'rgb(2 132 199)',
-                                },
-                            }}
-                        />
+                        {glassData && (
+                            <DataGrid
+                                disableDensitySelector
+                                localeText={GRID_DEFAULT_LOCALE_TEXT}
+                                rows={rows}
+                                columns={columns}
+                                slots={{ toolbar: GridToolbar }}
+                                onRowSelectionModelChange={(ids) =>
+                                    setGlassSelection(rows.find((row) => row.id === ids[0]) as SuperGlass)
+                                }
+                                slotProps={{
+                                    toolbar: {
+                                        showQuickFilter: true,
+                                        quickFilterProps: { debounceMs: 500 },
+                                    },
+                                }}
+                                sx={{
+                                    backgroundColor: 'white',
+                                    p: 3,
+                                    borderRadius: '0.5rem',
+                                    '& .MuiButtonBase-root': {
+                                        color: 'rgb(2 132 199)',
+                                    },
+                                }}
+                            />
+                        )}
                     </div>
                 </div>
             </main>
@@ -496,7 +465,7 @@ const Home: NextPage = () => {
                         Consumir Vidrio
                         {isNotNullUndefinedOrEmpty(glassSelection) ? (
                             <span className="text-sm font-normal text-slate-500">{`${` #${glassSelection?.id ?? ''} ${
-                                glassSelection?.type?.name ?? ''
+                                (glassSelection?.type?.name ?? '')
                             } ${glassSelection?.width ?? ''}X${glassSelection?.height ?? ''}`}`}</span>
                         ) : (
                             ''
