@@ -210,12 +210,14 @@ const Home: NextPage = () => {
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
+            valueGetter: ({ value }: { value: string }) => new Date(value),
         },
         {
             headerName: 'Actualizado En',
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
+            valueGetter: ({ value }: { value: string }) => new Date(value),
         },
         {
             field: 'Acciones',
