@@ -69,7 +69,7 @@ const config = {
                 },
             },
         ],
-        '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
+        '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
 
         '@typescript-eslint/consistent-type-imports': [
             'warn',
