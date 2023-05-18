@@ -1,4 +1,4 @@
-//React
+//Reacts
 import React, { useState, useEffect, useMemo } from 'react'
 
 //Next Auth
