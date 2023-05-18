@@ -26,6 +26,7 @@ import Numeric from '../components/inputFields/numericField'
 import TextArea from '../components/inputFields/textareaField'
 import TextLine from '../components/inputFields/textlineField'
 import DialogForm from '../components/dialogForm'
+// import {useDialogFormContext} from '../components/dialogForm'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
 
 //Custom Functions
@@ -134,14 +135,11 @@ const Home: NextPage = () => {
     useEffect(() => {
         /*eslint-disable @typescript-eslint/no-floating-promises*/
         fetchGlassData()
-
         fetchTypesData()
         fetchLocationsData()
         fetchVendorsData()
-        console.log(glassData)
-        console.log(typesData)
-        console.log(locationsData)
-        console.log(vendorsData)
+        console.log({ glassData, typesData, locationsData, vendorsData })
+
         /*eslint-enable @typescript-eslint/no-floating-promises*/
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
