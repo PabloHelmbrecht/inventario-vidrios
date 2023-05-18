@@ -54,8 +54,12 @@ const Home: NextPage = () => {
     const [glassToEdit, setGlassToEdit] = useState<SuperGlass | null>(null)
 
     const [glassData, setGlassData] = useState<SuperGlass[] | null>(null)
+    const [typesData, setTypesData] = useState<GlassType[] | null>(null)
+    const [locationsData, setLocationsData] = useState<GlassLocation[] | null>(null)
+    const [vendorsData, setVendorsData] = useState<GlassVendor[] | null>(null)
 
     //Functions
+    //- Submit Functions
     const onGlassCreation = (formResponse: object) => {
         console.log({ evento: 'Vidrio Creado', ...formResponse })
     }
@@ -73,23 +77,72 @@ const Home: NextPage = () => {
         console.log({ evento: 'Vidrio Editado', ...formResponse })
     }
 
+    //- Fetch Functions
     const fetchGlassData = async () => {
         try {
             //eslint-disable-next-line @typescript-eslint/no-floating-promises
             const response = await axios.get('/api/glass')
             if (response.data === null) throw new Error('No hay vidrios')
             setGlassData(response.data as SuperGlass[])
-            setSnackbar({ type: 'success', message: 'Vidrios actualizados' })
+            setSnackbar({ type: 'success', message: 'Vidrios Actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
             setSnackbar({ type: 'warning', message: 'Error al obtener los vidrios' })
         }
     }
+
+    const fetchTypesData = async () => {
+        try {
+            //eslint-disable @typescript-eslint/no-floating-promises
+            const response = await axios.get('/api/types')
+            if (response.data === null) throw new Error('No hay tipos')
+            setTypesData(response.data as GlassType[])
+            setSnackbar({ type: 'success', message: 'Tipos de Vidrio Actualizados' })
+        } catch (error) {
+            console.error('Error fetching data:', error)
+            setSnackbar({ type: 'warning', message: 'Error al obtener los tipos de vidrio' })
+        }
+    }
+
+    const fetchLocationsData = async () => {
+        try {
+            //eslint-disable @typescript-eslint/no-floating-promises
+            const response = await axios.get('/api/locations')
+            if (response.data === null) throw new Error('No hay ubicaciones')
+            setLocationsData(response.data as GlassLocation[])
+            setSnackbar({ type: 'success', message: 'Ubicaciones Actualizadas' })
+        } catch (error) {
+            console.error('Error fetching data:', error)
+            setSnackbar({ type: 'warning', message: 'Error al obtener las posiciones del almacén' })
+        }
+    }
+
+    const fetchVendorsData = async () => {
+        try {
+            //eslint-disable @typescript-eslint/no-floating-promises
+            const response = await axios.get('/api/vendors')
+            if (response.data === null) throw new Error('No hay proovedores')
+            setVendorsData(response.data as GlassType[])
+            setSnackbar({ type: 'success', message: 'Proovedores Actualizados' })
+        } catch (error) {
+            console.error('Error fetching data:', error)
+            setSnackbar({ type: 'warning', message: 'Error al obtener los proovedores de vidrio' })
+        }
+    }
+
     //useEffect
     useEffect(() => {
-        //eslint-disable-next-line @typescript-eslint/no-floating-promises
+        /*eslint-disable @typescript-eslint/no-floating-promises*/
         fetchGlassData()
+
+        fetchTypesData()
+        fetchLocationsData()
+        fetchVendorsData()
         console.log(glassData)
+        console.log(typesData)
+        console.log(locationsData)
+        console.log(vendorsData)
+        /*eslint-enable @typescript-eslint/no-floating-promises*/
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
