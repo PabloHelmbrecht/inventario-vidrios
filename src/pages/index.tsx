@@ -393,7 +393,7 @@ const Home: NextPage = () => {
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
-                                //options={typesData}
+                                options={typesData as GlassType[]}
                             />
                             <Numeric
                                 label="Ancho"
@@ -416,7 +416,7 @@ const Home: NextPage = () => {
                                 name="vendor"
                                 inputField="name"
                                 className=" sm:col-span-3"
-                                //options={vendorsData}
+                                options={vendorsData as GlassVendor[]}
                             />
 
                             <Combobox
@@ -424,12 +424,14 @@ const Home: NextPage = () => {
                                 name="location"
                                 inputField="position"
                                 className=" sm:col-span-3"
+                                options={locationsData as GlassLocation[]}
                             />
                             <Combobox
                                 label="Posición"
                                 name="location"
                                 inputField="warehouse"
                                 className=" sm:col-span-3"
+                                options={locationsData as GlassLocation[]}
                             />
 
                             <TextArea
