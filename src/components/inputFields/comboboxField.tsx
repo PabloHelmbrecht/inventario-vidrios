@@ -13,8 +13,8 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { Field } from 'react-final-form'
 
 export type Option = {
-    id: string
-    [inputField: string]: string
+    id: number
+    [inputField: string]: string | number | Date
 }
 
 const required = (value: string) => (value ? undefined : 'Requerido')
@@ -23,8 +23,8 @@ export default function ComboboxField({
     label = 'Insert label',
     name = 'combobox',
     options = [
-        { id: '1', name: 'glasstype1', description: 'Glass Type 1' },
-        { id: '2', name: 'glasstype2', description: 'Glass Type 2' },
+        { id: 1, name: 'glasstype1', description: 'Glass Type 1' },
+        { id: 2, name: 'glasstype2', description: 'Glass Type 2' },
     ],
     inputField = 'description',
     className = '',
@@ -42,7 +42,8 @@ export default function ComboboxField({
         query === ''
             ? options
             : options.filter((option) =>
-                  option[inputField]
+                  //eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+                  (option[inputField] + '')
                       ?.toLowerCase()
                       .replace(/\s+/g, '')
                       .includes(query.toLowerCase().replace(/\s+/g, '')),
@@ -102,11 +103,7 @@ export default function ComboboxField({
                                                     key={option.id}
                                                     className={({ active }: { active: boolean }) =>
                                                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                            active
-                                                                ? `bg-${
-                                                                      option.color ? option.color : 'sky-600'
-                                                                  } text-white`
-                                                                : 'text-gray-900'
+                                                            active ? `bg-sky-600 text-white` : 'text-gray-900'
                                                         }`
                                                     }
                                                     value={option}>
@@ -116,7 +113,10 @@ export default function ComboboxField({
                                                                 className={`block truncate ${
                                                                     selected ? 'font-medium' : 'font-normal'
                                                                 }`}>
-                                                                {option[inputField]}
+                                                                {
+                                                                    //eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+                                                                    option[inputField] + ''
+                                                                }
                                                             </span>
                                                             {selected ? (
                                                                 <span

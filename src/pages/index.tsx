@@ -379,7 +379,7 @@ const Home: NextPage = () => {
                 onSubmit={onGlassCreation}
                 initialValues={glassSelection}
                 render={(props) => {
-                    console.log(props)
+                    console.log(props?.values)
 
                     return (
                         <>
@@ -387,11 +387,13 @@ const Home: NextPage = () => {
                                 label="Tipo"
                                 name="type"
                                 inputField="name"
+                                options={typesData as GlassType[]}
                             />
                             <Combobox
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
+                                //options={typesData}
                             />
                             <Numeric
                                 label="Ancho"
@@ -414,6 +416,7 @@ const Home: NextPage = () => {
                                 name="vendor"
                                 inputField="name"
                                 className=" sm:col-span-3"
+                                //options={vendorsData}
                             />
 
                             <Combobox
