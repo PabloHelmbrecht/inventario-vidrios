@@ -378,7 +378,9 @@ const Home: NextPage = () => {
                 setIsOpen={setIsGlassCreatorOpen}
                 onSubmit={onGlassCreation}
                 initialValues={glassSelection}
-                render={() => {
+                render={(props) => {
+                    console.log(props)
+
                     return (
                         <>
                             <Combobox
