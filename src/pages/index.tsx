@@ -377,58 +377,64 @@ const Home: NextPage = () => {
                 isOpen={isGlassCreatorOpen}
                 setIsOpen={setIsGlassCreatorOpen}
                 onSubmit={onGlassCreation}
-                initialValues={glassSelection}>
-                <Combobox
-                    label="Tipo"
-                    name="type"
-                    inputField="name"
-                />
-                <Combobox
-                    label="Descripción"
-                    name="type"
-                    inputField="description"
-                />
-                <Numeric
-                    label="Ancho"
-                    name="width"
-                    className=" sm:col-span-3"
-                />
-                <Numeric
-                    label="Alto"
-                    name="height"
-                    className=" sm:col-span-3"
-                />
+                initialValues={glassSelection}
+                render={() => {
+                    return (
+                        <>
+                            <Combobox
+                                label="Tipo"
+                                name="type"
+                                inputField="name"
+                            />
+                            <Combobox
+                                label="Descripción"
+                                name="type"
+                                inputField="description"
+                            />
+                            <Numeric
+                                label="Ancho"
+                                name="width"
+                                className=" sm:col-span-3"
+                            />
+                            <Numeric
+                                label="Alto"
+                                name="height"
+                                className=" sm:col-span-3"
+                            />
 
-                <Numeric
-                    label="Cantidad"
-                    name="quantity"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Proovedor"
-                    name="vendor"
-                    inputField="name"
-                    className=" sm:col-span-3"
-                />
+                            <Numeric
+                                label="Cantidad"
+                                name="quantity"
+                                className=" sm:col-span-3"
+                            />
+                            <Combobox
+                                label="Proovedor"
+                                name="vendor"
+                                inputField="name"
+                                className=" sm:col-span-3"
+                            />
 
-                <Combobox
-                    label="Almacén"
-                    name="location"
-                    inputField="position"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Posición"
-                    name="location"
-                    inputField="warehouse"
-                    className=" sm:col-span-3"
-                />
+                            <Combobox
+                                label="Almacén"
+                                name="location"
+                                inputField="position"
+                                className=" sm:col-span-3"
+                            />
+                            <Combobox
+                                label="Posición"
+                                name="location"
+                                inputField="warehouse"
+                                className=" sm:col-span-3"
+                            />
 
-                <TextArea
-                    label="Comentarios"
-                    name="comment"
-                />
-            </DialogForm>
+                            <TextArea
+                                label="Comentarios"
+                                name="comment"
+                            />
+                        </>
+                    )
+                }}
+            />
 
             {/*Formulario de Movimiento  tipo, descripcion, ,ancho, alto, posicion, almacen cantidad a mover almacen destino posicion destino (limite cantidad actual)*/}
             <DialogForm
@@ -449,65 +455,71 @@ const Home: NextPage = () => {
                 isOpen={isGlassMoverOpen}
                 setIsOpen={setIsGlassMoverOpen}
                 onSubmit={onGlassMovement}
-                initialValues={glassSelection}>
-                <Combobox
-                    label="Tipo"
-                    name="type"
-                    inputField="name"
-                />
-                <Combobox
-                    label="Descripción"
-                    name="type"
-                    inputField="description"
-                />
-                <Combobox
-                    label="Ancho"
-                    name="width"
-                    inputField="width"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Alto"
-                    name="height"
-                    inputField="height"
-                    className=" sm:col-span-3"
-                />
+                initialValues={glassSelection}
+                render={() => {
+                    return (
+                        <>
+                            <Combobox
+                                label="Tipo"
+                                name="type"
+                                inputField="name"
+                            />
+                            <Combobox
+                                label="Descripción"
+                                name="type"
+                                inputField="description"
+                            />
+                            <Combobox
+                                label="Ancho"
+                                name="width"
+                                inputField="width"
+                                className=" sm:col-span-3"
+                            />
+                            <Combobox
+                                label="Alto"
+                                name="height"
+                                inputField="height"
+                                className=" sm:col-span-3"
+                            />
 
-                <Combobox
-                    label="Almacén Origen"
-                    name="location"
-                    inputField="position"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Posición Origen"
-                    name="location"
-                    inputField="warehouse"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Almacén Destino"
-                    name="destinyLocation"
-                    inputField="position"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Posición Destino"
-                    name="destinyLocation"
-                    inputField="warehouse"
-                    className=" sm:col-span-3"
-                />
-                <Numeric
-                    label="Cantidad a Mover"
-                    name="difQuantity"
-                    className=""
-                />
+                            <Combobox
+                                label="Almacén Origen"
+                                name="location"
+                                inputField="position"
+                                className=" sm:col-span-3"
+                            />
+                            <Combobox
+                                label="Posición Origen"
+                                name="location"
+                                inputField="warehouse"
+                                className=" sm:col-span-3"
+                            />
+                            <Combobox
+                                label="Almacén Destino"
+                                name="destinyLocation"
+                                inputField="position"
+                                className=" sm:col-span-3"
+                            />
+                            <Combobox
+                                label="Posición Destino"
+                                name="destinyLocation"
+                                inputField="warehouse"
+                                className=" sm:col-span-3"
+                            />
+                            <Numeric
+                                label="Cantidad a Mover"
+                                name="difQuantity"
+                                className=""
+                            />
 
-                <TextArea
-                    label="Comentarios"
-                    name="comment"
-                />
-            </DialogForm>
+                            <TextArea
+                                label="Comentarios"
+                                name="comment"
+                            />
+                        </>
+                    )
+                }}
+            />
 
             {/*Formulario de Consumo como*/}
             <DialogForm
@@ -528,54 +540,60 @@ const Home: NextPage = () => {
                 isOpen={isGlassConsumerOpen}
                 setIsOpen={setIsGlassConsumerOpen}
                 onSubmit={onGlassConsumption}
-                initialValues={glassSelection}>
-                <Combobox
-                    label="Tipo"
-                    name="type"
-                    inputField="name"
-                />
-                <Combobox
-                    label="Descripción"
-                    name="type"
-                    inputField="description"
-                />
-                <Combobox
-                    label="Ancho"
-                    name="width"
-                    inputField="width"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Alto"
-                    name="height"
-                    inputField="height"
-                    className=" sm:col-span-3"
-                />
+                initialValues={glassSelection}
+                render={() => {
+                    return (
+                        <>
+                            <Combobox
+                                label="Tipo"
+                                name="type"
+                                inputField="name"
+                            />
+                            <Combobox
+                                label="Descripción"
+                                name="type"
+                                inputField="description"
+                            />
+                            <Combobox
+                                label="Ancho"
+                                name="width"
+                                inputField="width"
+                                className=" sm:col-span-3"
+                            />
+                            <Combobox
+                                label="Alto"
+                                name="height"
+                                inputField="height"
+                                className=" sm:col-span-3"
+                            />
 
-                <Combobox
-                    label="Almacén"
-                    name="location"
-                    inputField="position"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Posición"
-                    name="location"
-                    inputField="warehouse"
-                    className=" sm:col-span-3"
-                />
+                            <Combobox
+                                label="Almacén"
+                                name="location"
+                                inputField="position"
+                                className=" sm:col-span-3"
+                            />
+                            <Combobox
+                                label="Posición"
+                                name="location"
+                                inputField="warehouse"
+                                className=" sm:col-span-3"
+                            />
 
-                <Numeric
-                    label="Cantidad a Consumir"
-                    name="difQuantity"
-                    className=""
-                />
+                            <Numeric
+                                label="Cantidad a Consumir"
+                                name="difQuantity"
+                                className=""
+                            />
 
-                <TextArea
-                    label="Comentarios"
-                    name="comment"
-                />
-            </DialogForm>
+                            <TextArea
+                                label="Comentarios"
+                                name="comment"
+                            />
+                        </>
+                    )
+                }}
+            />
 
             {/*Formulario de Edición*/}
             <DialogForm
@@ -597,59 +615,65 @@ const Home: NextPage = () => {
                     value || setGlassToEdit(null)
                 }}
                 onSubmit={onGlassEdit}
-                initialValues={glassToEdit}>
-                <Combobox
-                    label="Tipo"
-                    name="type"
-                    inputField="name"
-                />
-                <Combobox
-                    label="Descripción"
-                    name="type"
-                    inputField="description"
-                />
-                <Numeric
-                    label="Ancho"
-                    name="width"
-                    className=" sm:col-span-3"
-                />
-                <Numeric
-                    label="Alto"
-                    name="height"
-                    className=" sm:col-span-3"
-                />
+                initialValues={glassToEdit}
+                render={() => {
+                    return (
+                        <>
+                            <Combobox
+                                label="Tipo"
+                                name="type"
+                                inputField="name"
+                            />
+                            <Combobox
+                                label="Descripción"
+                                name="type"
+                                inputField="description"
+                            />
+                            <Numeric
+                                label="Ancho"
+                                name="width"
+                                className=" sm:col-span-3"
+                            />
+                            <Numeric
+                                label="Alto"
+                                name="height"
+                                className=" sm:col-span-3"
+                            />
 
-                <Numeric
-                    label="Cantidad"
-                    disabled={true}
-                    name="quantity"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Proovedor"
-                    name="vendor"
-                    inputField="name"
-                    className=" sm:col-span-3"
-                />
+                            <Numeric
+                                label="Cantidad"
+                                disabled={true}
+                                name="quantity"
+                                className=" sm:col-span-3"
+                            />
+                            <Combobox
+                                label="Proovedor"
+                                name="vendor"
+                                inputField="name"
+                                className=" sm:col-span-3"
+                            />
 
-                <Combobox
-                    label="Almacén"
-                    name="location"
-                    inputField="position"
-                    className=" sm:col-span-3"
-                />
-                <Combobox
-                    label="Posición"
-                    name="location"
-                    inputField="warehouse"
-                    className=" sm:col-span-3"
-                />
+                            <Combobox
+                                label="Almacén"
+                                name="location"
+                                inputField="position"
+                                className=" sm:col-span-3"
+                            />
+                            <Combobox
+                                label="Posición"
+                                name="location"
+                                inputField="warehouse"
+                                className=" sm:col-span-3"
+                            />
 
-                <TextArea
-                    label="Comentarios"
-                    name="comment"
-                />
-            </DialogForm>
+                            <TextArea
+                                label="Comentarios"
+                                name="comment"
+                            />
+                        </>
+                    )
+                }}
+            />
 
             {/*Formulario de Eliminación*/}
             <DialogForm
@@ -670,13 +694,19 @@ const Home: NextPage = () => {
                     value || setGlassToDelete(null)
                 }}
                 onSubmit={onGlassDelete}
-                initialValues={glassToDelete}>
-                <TextLine
-                    label="Id"
-                    name="id"
-                    className="hidden"
-                />
-            </DialogForm>
+                initialValues={glassToDelete}
+                render={() => {
+                    return (
+                        <>
+                            <TextLine
+                                label="Id"
+                                name="id"
+                                className="hidden"
+                            />
+                        </>
+                    )
+                }}
+            />
         </>
     )
 }

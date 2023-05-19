@@ -1,5 +1,5 @@
 //React
-import React, { Fragment, createContext, useContext } from 'react'
+import React, { Fragment } from 'react'
 
 //Headless UI
 import { Dialog, Transition } from '@headlessui/react'
@@ -14,29 +14,28 @@ interface dialogFormProps {
     buttonText?: string | React.ReactNode
     buttonStyles?: string
     initialValues?: object | null
-    children: React.ReactNode
+    //children: React.ReactNode
     isOpen: boolean
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
     //eslint-disable-next-line no-unused-vars
     onSubmit: (values: object) => void
     decorator?: Calculation[]
+    //eslint-disable-next-line no-unused-vars
+    render: (props: FormRenderProps) => React.ReactNode
 }
-
-const DialogFormContext = createContext<FormRenderProps<object> | null>(null)
-
-export const useDialogFormContext = () => useContext<FormRenderProps<object> | null>(DialogFormContext)
 
 export default function DialogForm({
     title = 'Título del Form',
     titleStyles,
     buttonText = 'Enviar',
     buttonStyles = 'bg-sky-600 hover:bg-sky-700',
-    children,
+    //children,
     isOpen,
     setIsOpen,
     onSubmit,
     decorator,
     initialValues = {},
+    render,
 }: dialogFormProps) {
     return (
         <Transition
@@ -76,40 +75,38 @@ export default function DialogForm({
                                     decorators={decorator ? [createDecorator(...decorator)] : null}
                                     initialValues={{ ...initialValues }}
                                     render={(props) => (
-                                        <DialogFormContext.Provider value={props}>
-                                            <form>
-                                                <Dialog.Title
-                                                    as="h3"
-                                                    className={` ${
-                                                        titleStyles ?? ''
-                                                    } text-lg font-medium leading-6 text-gray-900`}>
-                                                    {title}
-                                                </Dialog.Title>
+                                        <form>
+                                            <Dialog.Title
+                                                as="h3"
+                                                className={` ${
+                                                    titleStyles ?? ''
+                                                } text-lg font-medium leading-6 text-gray-900`}>
+                                                {title}
+                                            </Dialog.Title>
 
-                                                <div className="mt-2 grid grid-cols-6 gap-4">{children}</div>
+                                            <div className="mt-2 grid grid-cols-6 gap-4">{render(props)}</div>
 
-                                                <div className="mt-4">
-                                                    <button
-                                                        type="button"
-                                                        className={` rounded-md border border-transparent ${buttonStyles} px-4 py-2 text-sm font-medium text-white disabled:bg-slate-400 `}
-                                                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                                                            if (e) {
-                                                                props
-                                                                    .handleSubmit(e)
-                                                                    ?.then((val) => val)
-                                                                    .catch((e) => {
-                                                                        console.log(e)
-                                                                    })
+                                            <div className="mt-4">
+                                                <button
+                                                    type="button"
+                                                    className={` rounded-md border border-transparent ${buttonStyles} px-4 py-2 text-sm font-medium text-white disabled:bg-slate-400 `}
+                                                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                                                        if (e) {
+                                                            props
+                                                                .handleSubmit(e)
+                                                                ?.then((val) => val)
+                                                                .catch((e) => {
+                                                                    console.log(e)
+                                                                })
 
-                                                                setIsOpen(false)
-                                                            }
-                                                        }}
-                                                        disabled={props.submitting || props.hasValidationErrors}>
-                                                        {buttonText}
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </DialogFormContext.Provider>
+                                                            setIsOpen(false)
+                                                        }
+                                                    }}
+                                                    disabled={props.submitting || props.hasValidationErrors}>
+                                                    {buttonText}
+                                                </button>
+                                            </div>
+                                        </form>
                                     )}
                                 />
                             </Dialog.Panel>
