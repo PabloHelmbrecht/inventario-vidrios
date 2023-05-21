@@ -387,13 +387,13 @@ const Home: NextPage = () => {
                                 label="Tipo"
                                 name="type"
                                 inputField="name"
-                                options={typesData as GlassType[]}
+                                //options={typesData as GlassType[]}
                             />
                             <Combobox
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
-                                options={typesData as GlassType[]}
+                                //options={typesData as GlassType[]}
                             />
                             <Numeric
                                 label="Ancho"
@@ -416,22 +416,15 @@ const Home: NextPage = () => {
                                 name="vendor"
                                 inputField="name"
                                 className=" sm:col-span-3"
-                                options={vendorsData as GlassVendor[]}
+                                //options={vendorsData as GlassVendor[]}
                             />
 
-                            <Combobox
-                                label="Almacén"
-                                name="location"
-                                inputField="position"
-                                className=" sm:col-span-3"
-                                options={locationsData as GlassLocation[]}
-                            />
                             <Combobox
                                 label="Posición"
                                 name="location"
                                 inputField="warehouse"
                                 className=" sm:col-span-3"
-                                options={locationsData as GlassLocation[]}
+                                //options={locationsData as GlassLocation[]}
                             />
 
                             <TextArea
@@ -489,24 +482,14 @@ const Home: NextPage = () => {
                                 className=" sm:col-span-3"
                             />
 
-                            <Combobox
-                                label="Almacén Origen"
-                                name="location"
-                                inputField="position"
-                                className=" sm:col-span-3"
-                            />
+                            
                             <Combobox
                                 label="Posición Origen"
                                 name="location"
                                 inputField="warehouse"
                                 className=" sm:col-span-3"
                             />
-                            <Combobox
-                                label="Almacén Destino"
-                                name="destinyLocation"
-                                inputField="position"
-                                className=" sm:col-span-3"
-                            />
+                       
                             <Combobox
                                 label="Posición Destino"
                                 name="destinyLocation"
@@ -574,12 +557,7 @@ const Home: NextPage = () => {
                                 className=" sm:col-span-3"
                             />
 
-                            <Combobox
-                                label="Almacén"
-                                name="location"
-                                inputField="position"
-                                className=" sm:col-span-3"
-                            />
+                        
                             <Combobox
                                 label="Posición"
                                 name="location"
@@ -657,13 +635,6 @@ const Home: NextPage = () => {
                                 label="Proovedor"
                                 name="vendor"
                                 inputField="name"
-                                className=" sm:col-span-3"
-                            />
-
-                            <Combobox
-                                label="Almacén"
-                                name="location"
-                                inputField="position"
                                 className=" sm:col-span-3"
                             />
                             <Combobox
