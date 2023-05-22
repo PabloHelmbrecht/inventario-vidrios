@@ -38,6 +38,7 @@ export default function ComboboxField({
     disabled?: boolean
 }) {
     const [query, setQuery] = useState<string>('')
+
     const filteredOptions: Option[] =
         query === ''
             ? options
@@ -54,7 +55,12 @@ export default function ComboboxField({
             name={name}
             type="text"
             validate={required}>
-            {({ input, meta }) => (
+            {({ input, meta }) => {
+
+                
+
+
+                return (
                 <div className={`col-span-full ${className}`}>
                     <label
                         htmlFor="about"
@@ -64,6 +70,7 @@ export default function ComboboxField({
                     </label>
                     <div className="mt-2">
                         <Combobox
+                            nullable
                             name={input.name}
                             disabled={disabled ?? false}
                             /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
@@ -140,7 +147,7 @@ export default function ComboboxField({
                         </Combobox>
                     </div>
                 </div>
-            )}
+            )}}
         </Field>
     )
 }
