@@ -649,7 +649,9 @@ const Home: NextPage = () => {
                 buttonStyles="bg-sky-600 hover:bg-sky-700"
                 isOpen={isGlassMoverOpen}
                 setIsOpen={setIsGlassMoverOpen}
-                onSubmit={onGlassMovement}
+                onSubmit={(values)=> {
+                    const formResponse = values as {width:{width:number};height:{height:number}}                    
+                    onGlassMovement({...formResponse, width: formResponse?.width?.width,height: formResponse?.height?.height,})}}
                 initialValues={glassSelection}
                 decorator={quickFilterDecorator}
                 render={(props) => {
@@ -738,7 +740,9 @@ const Home: NextPage = () => {
                 buttonStyles="bg-red-500 hover:bg-red-600"
                 isOpen={isGlassConsumerOpen}
                 setIsOpen={setIsGlassConsumerOpen}
-                onSubmit={onGlassConsumption}
+                onSubmit={(values)=> {
+                    const formResponse = values as {width:{width:number};height:{height:number}}                    
+                    onGlassConsumption({...formResponse, width: formResponse?.width?.width,height: formResponse?.height?.height,})}}
                 initialValues={glassSelection}
                 decorator={quickFilterDecorator}
                 render={(props) => {
