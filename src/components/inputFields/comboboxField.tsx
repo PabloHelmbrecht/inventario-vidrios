@@ -41,8 +41,10 @@ export default function ComboboxField({
 
     const filteredOptions: Option[] =
         query === ''
-            ? options
-            : options.filter((option) =>
+            ? [...new Map(options.map(item =>
+                [item[inputField], item])).values()]
+            : [...new Map(options.map(item =>
+                [item[inputField], item])).values()].filter((option) =>
                   //eslint-disable-next-line @typescript-eslint/restrict-plus-operands
                   (option[inputField] + '')
                       ?.toLowerCase()
