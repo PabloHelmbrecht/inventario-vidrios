@@ -262,8 +262,8 @@ const Home: NextPage = () => {
         },
         {
             headerName: 'Comentario',
-            field: 'lastComment',
-            width: 100,
+            field: 'Comment',
+            width: 200,
         },
         {
             headerName: 'Creado En',
@@ -373,6 +373,7 @@ const Home: NextPage = () => {
             </main>
 
             {/*Snackbar de alertar, información y más*/}
+            
             <Snackbar
                 state={snackbar}
                 setState={setSnackbar}
@@ -414,12 +415,6 @@ const Home: NextPage = () => {
                                 name="height"
                                 className=" sm:col-span-3"
                             />
-
-                            <Numeric
-                                label="Cantidad"
-                                name="quantity"
-                                className=" sm:col-span-3"
-                            />
                             <Combobox
                                 label="Proovedor"
                                 name="vendor"
@@ -435,7 +430,10 @@ const Home: NextPage = () => {
                                 className=" sm:col-span-3"
                                 //options={locationsData as GlassLocation[]}
                             />
-
+                            <Numeric
+                                label="Cantidad"
+                                name="quantity"
+                            />
                             <TextArea
                                 label="Comentarios"
                                 name="comment"
@@ -507,7 +505,6 @@ const Home: NextPage = () => {
                             <Numeric
                                 label="Cantidad a Mover"
                                 name="difQuantity"
-                                className=""
                             />
 
                             <TextArea
@@ -632,12 +629,7 @@ const Home: NextPage = () => {
                                 className=" sm:col-span-3"
                             />
 
-                            <Numeric
-                                label="Cantidad"
-                                disabled={true}
-                                name="quantity"
-                                className=" sm:col-span-3"
-                            />
+                            
                             <Combobox
                                 label="Proovedor"
                                 name="vendor"
@@ -649,6 +641,11 @@ const Home: NextPage = () => {
                                 name="location"
                                 inputField="warehouse"
                                 className=" sm:col-span-3"
+                            />
+                            <Numeric
+                                label="Cantidad"
+                                disabled={true}
+                                name="quantity"
                             />
 
                             <TextArea
