@@ -101,7 +101,10 @@ const Home: NextPage = () => {
             setSnackbar({ type: 'success', message: 'Tipos de Vidrio Actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
-            setSnackbar({ type: 'warning', message: 'Error al obtener los tipos de vidrio' })
+            setSnackbar({
+                type: 'warning',
+                message: 'Error al obtener los tipos de vidrio',
+            })
         }
     }
 
@@ -114,7 +117,10 @@ const Home: NextPage = () => {
             setSnackbar({ type: 'success', message: 'Ubicaciones Actualizadas' })
         } catch (error) {
             console.error('Error fetching data:', error)
-            setSnackbar({ type: 'warning', message: 'Error al obtener las posiciones del almacén' })
+            setSnackbar({
+                type: 'warning',
+                message: 'Error al obtener las posiciones del almacén',
+            })
         }
     }
 
@@ -127,7 +133,10 @@ const Home: NextPage = () => {
             setSnackbar({ type: 'success', message: 'Proovedores Actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
-            setSnackbar({ type: 'warning', message: 'Error al obtener los proovedores de vidrio' })
+            setSnackbar({
+                type: 'warning',
+                message: 'Error al obtener los proovedores de vidrio',
+            })
         }
     }
 
@@ -192,7 +201,7 @@ const Home: NextPage = () => {
 
                 return (
                     <div
-                        className={` ${ringColor} ${backgroundColor} ${textColor} inline-flex items-center  rounded-md  px-2 py-1 align-middle text-xs font-medium ring ring-1 ring-inset`}>
+                        className={` ${ringColor} ${backgroundColor} ${textColor} inline-flex items-center  rounded-md  px-2 py-1 align-middle text-xs font-medium ring-1 ring-inset`}>
                         {text}
                     </div>
                 )
@@ -482,14 +491,13 @@ const Home: NextPage = () => {
                                 className=" sm:col-span-3"
                             />
 
-                            
                             <Combobox
                                 label="Posición Origen"
                                 name="location"
                                 inputField="warehouse"
                                 className=" sm:col-span-3"
                             />
-                       
+
                             <Combobox
                                 label="Posición Destino"
                                 name="destinyLocation"
@@ -557,7 +565,6 @@ const Home: NextPage = () => {
                                 className=" sm:col-span-3"
                             />
 
-                        
                             <Combobox
                                 label="Posición"
                                 name="location"

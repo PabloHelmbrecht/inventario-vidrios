@@ -17,7 +17,7 @@ interface dialogFormProps {
     //children: React.ReactNode
     isOpen: boolean
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-    //eslint-disable-next-line no-unused-vars 
+    //eslint-disable-next-line no-unused-vars
     onSubmit: (values: object) => void
     decorator?: Calculation[]
     //eslint-disable-next-line no-unused-vars
