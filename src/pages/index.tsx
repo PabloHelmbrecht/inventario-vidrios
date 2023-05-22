@@ -140,6 +140,46 @@ const Home: NextPage = () => {
         }
     }
 
+    //- useMemos to Filter Form Options 
+
+    const filteredTypesData = (filteredGlass : SuperGlass) => glassData?.filter((glass) =>{
+        const {location, width, height} = glass
+
+        return filteredGlass?.location?.position?filteredGlass?.location?.position===location?.position:true&&
+        filteredGlass?.width?filteredGlass?.width===width:true&&
+        filteredGlass?.height?filteredGlass?.height===height:true
+        
+    }).map(glass => glass.type)
+
+    const filteredLocationsData = (filteredGlass: SuperGlass) => glassData?.filter((glass) =>{
+        const {type, width, height} = glass
+
+        return filteredGlass?.type?.name?filteredGlass?.type?.name===type?.name:true&&
+        filteredGlass?.width?filteredGlass?.width===width:true&&
+        filteredGlass?.height?filteredGlass?.height===height:true
+        
+    }).map(glass => glass.location)
+
+    const filteredWidthData = (filteredGlass: SuperGlass) => glassData?.filter((glass) =>{
+        const {type, location, height} = glass
+
+        return filteredGlass?.type?.name?filteredGlass?.type?.name===type?.name:true&&
+        filteredGlass?.location?.position?filteredGlass?.location?.position===location?.position:true&&
+        filteredGlass?.height?filteredGlass?.height===height:true
+        
+    }).map(glass => glass.width)
+
+    const filteredHeightData = (filteredGlass: SuperGlass) => glassData?.filter((glass) =>{
+        const {type, location, width} = glass
+
+        return filteredGlass?.type?.name?filteredGlass?.type?.name===type?.name:true&&
+        filteredGlass?.location?.position?filteredGlass?.location?.position===location?.position:true&&
+        filteredGlass?.width?filteredGlass?.width===width:true
+        
+    }).map(glass => glass.height)
+
+
+
     //useEffect
     useEffect(() => {
         /*eslint-disable @typescript-eslint/no-floating-promises*/
@@ -373,7 +413,7 @@ const Home: NextPage = () => {
             </main>
 
             {/*Snackbar de alertar, información y más*/}
-            
+
             <Snackbar
                 state={snackbar}
                 setState={setSnackbar}
@@ -388,22 +428,20 @@ const Home: NextPage = () => {
                 setIsOpen={setIsGlassCreatorOpen}
                 onSubmit={onGlassCreation}
                 initialValues={glassSelection}
-                render={(props) => {
-                    console.log(props?.values)
-
+                render={() => {
                     return (
                         <>
                             <Combobox
                                 label="Tipo"
                                 name="type"
                                 inputField="name"
-                                //options={typesData as GlassType[]}
+                            //options={typesData as GlassType[]}
                             />
                             <Combobox
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
-                                //options={typesData as GlassType[]}
+                            //options={typesData as GlassType[]}
                             />
                             <Numeric
                                 label="Ancho"
@@ -420,7 +458,7 @@ const Home: NextPage = () => {
                                 name="vendor"
                                 inputField="name"
                                 className=" sm:col-span-3"
-                                //options={vendorsData as GlassVendor[]}
+                            //options={vendorsData as GlassVendor[]}
                             />
 
                             <Combobox
@@ -428,7 +466,7 @@ const Home: NextPage = () => {
                                 name="location"
                                 inputField="warehouse"
                                 className=" sm:col-span-3"
-                                //options={locationsData as GlassLocation[]}
+                            //options={locationsData as GlassLocation[]}
                             />
                             <Numeric
                                 label="Cantidad"
@@ -449,9 +487,8 @@ const Home: NextPage = () => {
                     <>
                         Mover Vidrio
                         {isNotNullUndefinedOrEmpty(glassSelection) ? (
-                            <span className="text-sm font-normal text-slate-500">{`${` #${glassSelection?.id ?? ''} ${
-                                glassSelection?.type?.name ?? ''
-                            } ${glassSelection?.width ?? ''}X${glassSelection?.height ?? ''}`}`}</span>
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassSelection?.id ?? ''} ${glassSelection?.type?.name ?? ''
+                                } ${glassSelection?.width ?? ''}X${glassSelection?.height ?? ''}`}`}</span>
                         ) : (
                             ''
                         )}
@@ -463,30 +500,44 @@ const Home: NextPage = () => {
                 setIsOpen={setIsGlassMoverOpen}
                 onSubmit={onGlassMovement}
                 initialValues={glassSelection}
-                render={() => {
+                render={(props) => {
+
+                    const width = props.values?.width as {width: number}
+                    const height = props.values?.height as {height: number}
+
+                    const filteredGlass = {
+                        ...props.values,
+                        width: width?.width ,
+                        height: height?.height 
+                    } as SuperGlass
+
                     return (
                         <>
                             <Combobox
                                 label="Tipo"
                                 name="type"
                                 inputField="name"
+                                options={filteredTypesData(filteredGlass) as GlassType[]}
                             />
                             <Combobox
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
+                                options={filteredTypesData(filteredGlass) as GlassType[]}
                             />
                             <Combobox
                                 label="Ancho"
                                 name="width"
                                 inputField="width"
                                 className=" sm:col-span-3"
+                                options={filteredWidthData(filteredGlass)?.map((width,id) => { return {id:id+1,width}})}
                             />
                             <Combobox
                                 label="Alto"
                                 name="height"
                                 inputField="height"
                                 className=" sm:col-span-3"
+                                options={filteredHeightData(filteredGlass)?.map((height,id) => { return {id:id+1,height}})}
                             />
 
                             <Combobox
@@ -494,6 +545,7 @@ const Home: NextPage = () => {
                                 name="location"
                                 inputField="warehouse"
                                 className=" sm:col-span-3"
+                                options={filteredLocationsData(filteredGlass) as GlassLocation[]}
                             />
 
                             <Combobox
@@ -501,6 +553,7 @@ const Home: NextPage = () => {
                                 name="destinyLocation"
                                 inputField="warehouse"
                                 className=" sm:col-span-3"
+                                options={locationsData as GlassLocation[]}
                             />
                             <Numeric
                                 label="Cantidad a Mover"
@@ -522,9 +575,8 @@ const Home: NextPage = () => {
                     <>
                         Consumir Vidrio
                         {isNotNullUndefinedOrEmpty(glassSelection) ? (
-                            <span className="text-sm font-normal text-slate-500">{`${` #${glassSelection?.id ?? ''} ${
-                                glassSelection?.type?.name ?? ''
-                            } ${glassSelection?.width ?? ''}X${glassSelection?.height ?? ''}`}`}</span>
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassSelection?.id ?? ''} ${glassSelection?.type?.name ?? ''
+                                } ${glassSelection?.width ?? ''}X${glassSelection?.height ?? ''}`}`}</span>
                         ) : (
                             ''
                         )}
@@ -590,9 +642,8 @@ const Home: NextPage = () => {
                     <>
                         Editar Vidrio
                         {isNotNullUndefinedOrEmpty(glassToEdit) ? (
-                            <span className="text-sm font-normal text-slate-500">{`${` #${glassToEdit?.id ?? ''} ${
-                                glassToEdit?.type?.name ?? ''
-                            } ${glassToEdit?.width ?? ''}X${glassToEdit?.height ?? ''}`}`}</span>
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassToEdit?.id ?? ''} ${glassToEdit?.type?.name ?? ''
+                                } ${glassToEdit?.width ?? ''}X${glassToEdit?.height ?? ''}`}`}</span>
                         ) : (
                             ''
                         )}
@@ -629,7 +680,7 @@ const Home: NextPage = () => {
                                 className=" sm:col-span-3"
                             />
 
-                            
+
                             <Combobox
                                 label="Proovedor"
                                 name="vendor"
@@ -659,17 +710,14 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title={`¿Desea eliminar el vidrio #${
-                    isNotNullUndefinedOrEmpty(glassToDelete) ? `${glassToDelete?.id ?? ''}` : ''
-                }?`}
+                title={`¿Desea eliminar el vidrio #${isNotNullUndefinedOrEmpty(glassToDelete) ? `${glassToDelete?.id ?? ''}` : ''
+                    }?`}
                 titleStyles="text-center"
-                buttonText={`Eliminar #${
-                    isNotNullUndefinedOrEmpty(glassToDelete)
-                        ? `${glassToDelete?.id ?? ''} ${glassToDelete?.type?.name ?? ''} ${
-                              glassToDelete?.width ?? ''
-                          }X${glassToDelete?.height ?? ''}`
+                buttonText={`Eliminar #${isNotNullUndefinedOrEmpty(glassToDelete)
+                        ? `${glassToDelete?.id ?? ''} ${glassToDelete?.type?.name ?? ''} ${glassToDelete?.width ?? ''
+                        }X${glassToDelete?.height ?? ''}`
                         : 'vidrio'
-                }`}
+                    }`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"
                 isOpen={isNotNullUndefinedOrEmpty(glassToDelete)}
                 setIsOpen={(value) => {
