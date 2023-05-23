@@ -8,14 +8,11 @@ export const config = {
     runtime: 'edge',
 }
 
-
-
 // GET /api/glass
 export async function getGlass(req: NextRequest) {
     const prisma = new PrismaClient()
 
     try {
-
         //Optengo el id y status pasados por query params
         const { searchParams } = new URL(req.url)
         const id = searchParams.get('id')
@@ -52,23 +49,19 @@ export async function getGlass(req: NextRequest) {
 
             return NextResponse.json(response)
         }
-    }
-    //Si no obtengo vidrios devuelvo error
-    catch (error) {
+    } catch (error) {
+        //Si no obtengo vidrios devuelvo error
         console.error('Error al obtener los vidrios:', error)
 
         return NextResponse.json(null, { status: 500 })
-    }
-
-    //Por último termino la conexión con prisma
-    finally {
+    } finally {
+        //Por último termino la conexión con prisma
         await prisma.$disconnect()
     }
 }
 
 // POST /api/glass
 export async function createGlass(request: NextRequest) {
-
     const prisma = new PrismaClient()
 
     try {
@@ -81,7 +74,6 @@ export async function createGlass(request: NextRequest) {
         if (requestData.quantity) requestData.quantity = Number(requestData.quantity)
         requestData.status = 'STORED'
 
-
         //Busco en la base de datos si existe un vidrio con las mismas características
         let createdGlass: Glass | null = await prisma.glass.findFirst({
             where: {
@@ -89,18 +81,15 @@ export async function createGlass(request: NextRequest) {
                 locationId: requestData.locationId ?? undefined,
                 vendorId: requestData.vendorId ?? undefined,
                 height: requestData.height ?? undefined,
-                width: requestData.width ?? undefined
-            }
+                width: requestData.width ?? undefined,
+            },
         })
-
 
         //Si existe entonces sumo las cantidades de vidrio y actualizo el vidrio ya existente
         if (createdGlass) {
-
             requestData.quantity = Number(requestData.quantity) + Number(createdGlass.quantity)
             if (requestData.quantity <= 0) requestData.status = 'CONSUMED'
             if (!requestData.locationId) requestData.status = 'TRANSIT'
-
 
             createdGlass = await prisma.glass.update({
                 where: {
@@ -108,7 +97,6 @@ export async function createGlass(request: NextRequest) {
                 },
                 data: requestData,
             })
-
         }
 
         //Si no existe creo el vidrio nuevo
@@ -120,7 +108,6 @@ export async function createGlass(request: NextRequest) {
                 data: requestData,
             })
         }
-
 
         //Luego guardo los movimientos por cada vidrio creado
         const glassMovements = Object.entries(requestData).map(([column, newValue]) => {
@@ -136,20 +123,15 @@ export async function createGlass(request: NextRequest) {
             data: glassMovements,
         })
 
-
         // Por último devuelvo el vidrio actualizado
         return NextResponse.json(createdGlass)
-    }
-
-    //En caso de errores devuelvo 500
-    catch (error) {
+    } catch (error) {
+        //En caso de errores devuelvo 500
         console.error('Error al crear el vidrio:', error)
 
         return NextResponse.json(null, { status: 500 })
-    }
-
-    //Termino la conexión con prisma
-    finally {
+    } finally {
+        //Termino la conexión con prisma
         await prisma.$disconnect()
     }
 }
@@ -171,7 +153,7 @@ export async function updateGlass(request: NextRequest) {
         //Defino el status del vidrio en base a si quedan vidrios o si está almacenado
         requestData.status = 'STORED'
 
-        //Obtengo el vidrio 
+        //Obtengo el vidrio
         const toUpdateGlass: Glass | null = await prisma.glass.findUnique({
             where: {
                 id,
@@ -184,27 +166,25 @@ export async function updateGlass(request: NextRequest) {
         }
 
         //Verifico si existe un vidrio con las mismas características pero que no sea el que ya tengo
-        let updatedGlass: Glass & { [key: string]: number | string | Date | null | GlassStatus } | null = await prisma.glass.findFirst({
-            where: {
-                id: {
-                    not: toUpdateGlass.id
+        let updatedGlass: (Glass & { [key: string]: number | string | Date | null | GlassStatus }) | null =
+            await prisma.glass.findFirst({
+                where: {
+                    id: {
+                        not: toUpdateGlass.id,
+                    },
+                    typeId: requestData.typeId ?? undefined,
+                    locationId: requestData.locationId ?? undefined,
+                    vendorId: requestData.vendorId ?? undefined,
+                    height: requestData.height ?? undefined,
+                    width: requestData.width ?? undefined,
                 },
-                typeId: requestData.typeId ?? undefined,
-                locationId: requestData.locationId ?? undefined,
-                vendorId: requestData.vendorId ?? undefined,
-                height: requestData.height ?? undefined,
-                width: requestData.width ?? undefined
-            }
-        })
-
+            })
 
         //Si existe un vidrio similar entonces sumo las cantidades, calculo el nuevo estado y actualizo los datos de este y borro el vidrio anterior
-        if(updatedGlass) {
-
+        if (updatedGlass) {
             requestData.quantity = Number(requestData.quantity) + Number(updatedGlass.quantity)
             if (requestData.quantity <= 0) requestData.status = 'CONSUMED'
             if (!requestData.locationId) requestData.status = 'TRANSIT'
-
 
             updatedGlass = await prisma.glass.update({
                 where: {
@@ -213,13 +193,11 @@ export async function updateGlass(request: NextRequest) {
                 data: requestData,
             })
 
-
             await prisma.glass.delete({
                 where: {
-                    id
-                }
+                    id,
+                },
             })
-
         }
 
         //Si no existe entonces actualizo el vidrio existente
@@ -230,13 +208,11 @@ export async function updateGlass(request: NextRequest) {
                 },
                 data: requestData,
             })
-
         }
-
 
         //Creo los movimientos de vidrio
         const glassMovements = Object.entries(requestData).reduce((movements: GlassMovement[], [column, newValue]) => {
-            const oldValue = updatedGlass?updatedGlass[column] as string:null
+            const oldValue = updatedGlass ? (updatedGlass[column] as string) : null
             if (oldValue !== newValue) {
                 movements.push({
                     glassId: updatedGlass?.id,
@@ -255,17 +231,13 @@ export async function updateGlass(request: NextRequest) {
 
         //Devuelvo el vidrio actualizado
         return NextResponse.json(updatedGlass)
-    }
-
-    //Si obtengo un error devuelvo el estado 500
-    catch (error) {
+    } catch (error) {
+        //Si obtengo un error devuelvo el estado 500
         console.error('Error al actualizar el vidrio:', error)
 
         return NextResponse.json(null, { status: 500 })
-    }
-
-    //por último cierro la conexión con prisma
-    finally {
+    } finally {
+        //por último cierro la conexión con prisma
         await prisma.$disconnect()
     }
 }

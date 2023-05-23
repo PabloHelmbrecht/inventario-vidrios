@@ -104,7 +104,9 @@ export default function DialogForm({
                                                             setIsOpen(false)
                                                         }
                                                     }}
-                                                    disabled={props.submitting || props.hasValidationErrors || buttonDisabled}>
+                                                    disabled={
+                                                        props.submitting || props.hasValidationErrors || buttonDisabled
+                                                    }>
                                                     {buttonText}
                                                 </button>
                                             </div>
