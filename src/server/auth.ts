@@ -15,7 +15,7 @@ import { prisma } from '~/server/db'
 declare module 'next-auth' {
     interface Session extends DefaultSession {
         user: {
-            id: string
+            id: string | number
             // ...other properties
             role: string
         } & DefaultSession['user']
@@ -43,6 +43,7 @@ export const authOptions: NextAuthOptions = {
         }),
     },
     adapter: PrismaAdapter(prisma),
+    debug: true,
     providers: [
         GoogleProvider({
             clientId: env.GOOGLE_CLIENT_ID,
