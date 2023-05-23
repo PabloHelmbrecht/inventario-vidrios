@@ -56,6 +56,7 @@ interface formResponseType {
 }
 
 /*eslint-disable @typescript-eslint/no-misused-promises*/
+/*eslint-disable @typescript-eslint/no-floating-promises*/
 
 const Home: NextPage = () => {
     //States
@@ -82,7 +83,6 @@ const Home: NextPage = () => {
     //Functions
     //- Submit Functions
     const onGlassCreation = async (formResponse: object) => {
-        /*eslint-disable @typescript-eslint/no-floating-promises*/
         try {
             const { type, width, height, vendor, location, quantity, newComment } = formResponse as formResponseType
 
@@ -97,7 +97,6 @@ const Home: NextPage = () => {
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Vidrio cargado exitosamente' })
-            //eslint-disable @typescript-eslint/no-floating-promises
             fetchGlassData()
         } catch (error) {
             console.error('Error creating glass:', error)
@@ -126,7 +125,6 @@ const Home: NextPage = () => {
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Vidrio eliminado exitosamente' })
-            //eslint-disable @typescript-eslint/no-floating-promises
             fetchGlassData()
         } catch (error) {
             console.error('Error deleting glass:', error)
@@ -155,7 +153,6 @@ const Home: NextPage = () => {
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Vidrio editado exitosamente' })
-            //eslint-disable @typescript-eslint/no-floating-promises
             fetchGlassData()
         } catch (error) {
             console.error('Error deleting glass:', error)
@@ -163,12 +160,10 @@ const Home: NextPage = () => {
         }
 
     }
-    /*eslint-enable @typescript-eslint/no-floating-promises*/
 
     //- Fetch Functions
     const fetchGlassData = async () => {
         try {
-            //eslint-disable-next-line @typescript-eslint/no-floating-promises
             const cachedResponse: SuperGlass[] = JSON.parse(localStorage.getItem('glassData') ?? '{}') as SuperGlass[]
             setGlassData(cachedResponse)
             const response = await axios.get('/api/glass', {
@@ -188,7 +183,6 @@ const Home: NextPage = () => {
 
     const fetchTypesData = async () => {
         try {
-            //eslint-disable @typescript-eslint/no-floating-promises
             const response = await axios.get('/api/types')
             if (response.data === null) throw new Error('No hay tipos')
             setTypesData(response.data as GlassType[])
@@ -204,7 +198,6 @@ const Home: NextPage = () => {
 
     const fetchLocationsData = async () => {
         try {
-            //eslint-disable @typescript-eslint/no-floating-promises
             const response = await axios.get('/api/locations')
             if (response.data === null) throw new Error('No hay ubicaciones')
             setLocationsData(response.data as GlassLocation[])
@@ -220,7 +213,6 @@ const Home: NextPage = () => {
 
     const fetchVendorsData = async () => {
         try {
-            //eslint-disable @typescript-eslint/no-floating-promises
             const response = await axios.get('/api/vendors')
             if (response.data === null) throw new Error('No hay proovedores')
             setVendorsData(response.data as GlassType[])
@@ -333,12 +325,10 @@ const filterGlassData = (filteredGlass: SuperGlass&{difQuantity:string}) => {
 
     //useEffect
     useEffect(() => {
-        /*eslint-disable @typescript-eslint/no-floating-promises*/
         fetchGlassData()
         fetchTypesData()
         fetchLocationsData()
         fetchVendorsData()
-        /*eslint-enable @typescript-eslint/no-floating-promises*/
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
