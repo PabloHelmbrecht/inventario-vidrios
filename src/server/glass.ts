@@ -27,7 +27,7 @@ export async function getGlass(req: NextRequest) {
                     location: true,
                 },
                 where: {
-                    id: parseInt(id),
+                    id: Number(id),
                 },
             })
 
@@ -93,7 +93,7 @@ export async function createGlass(request: NextRequest) {
 
             createdGlass = await prisma.glass.update({
                 where: {
-                    id: createdGlass.id,
+                    id: Number(createdGlass.id),
                 },
                 data: requestData,
             })
@@ -156,7 +156,7 @@ export async function updateGlass(request: NextRequest) {
         //Obtengo el vidrio
         const toUpdateGlass: Glass | null = await prisma.glass.findUnique({
             where: {
-                id,
+                id: Number(id)
             },
         })
 
@@ -170,13 +170,13 @@ export async function updateGlass(request: NextRequest) {
             await prisma.glass.findFirst({
                 where: {
                     id: {
-                        not: toUpdateGlass.id,
+                        not: Number(toUpdateGlass.id),
                     },
-                    typeId: requestData.typeId ?? undefined,
-                    locationId: requestData.locationId ?? undefined,
-                    vendorId: requestData.vendorId ?? undefined,
-                    height: requestData.height ?? undefined,
-                    width: requestData.width ?? undefined,
+                    typeId: !isNaN(Number(requestData.typeId)) ?Number(requestData.typeId): undefined,
+                    locationId: !isNaN(Number(requestData.locationId)) ?Number(requestData.locationId): undefined,
+                    vendorId: !isNaN(Number(requestData.vendorId)) ?Number(requestData.vendorId): undefined,
+                    height: !isNaN(Number(requestData.height)) ?Number(requestData.height): undefined,
+                    width: !isNaN(Number(requestData.width)) ?Number(requestData.width): undefined,
                 },
             })
 
@@ -188,20 +188,20 @@ export async function updateGlass(request: NextRequest) {
 
             updatedGlass = await prisma.glass.update({
                 where: {
-                    id: updatedGlass.id,
+                    id: Number(updatedGlass.id),
                 },
                 data: requestData,
             })
 
             await prisma.glassMovement.deleteMany({
                 where: {
-                    glassId: id,
+                    glassId: Number(id),
                 },
             })
 
             await prisma.glass.delete({
                 where: {
-                    id,
+                    id:Number(id)
                 },
             })
         }
@@ -210,7 +210,7 @@ export async function updateGlass(request: NextRequest) {
         else {
             updatedGlass = await prisma.glass.update({
                 where: {
-                    id: id,
+                    id: Number(id),
                 },
                 data: requestData,
             })
@@ -258,13 +258,13 @@ export async function deleteGlass(request: NextRequest) {
 
         await prisma.glassMovement.deleteMany({
             where: {
-                glassId: id,
+                glassId: Number(id),
             },
         })
 
         const deletedGlass = await prisma.glass.delete({
             where: {
-                id,
+                id:Number(id),
             },
             include: {
                 GlassMovement: true,
