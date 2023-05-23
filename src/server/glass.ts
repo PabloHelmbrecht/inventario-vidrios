@@ -1,4 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server'
+/*import { authOptions } from "./auth";
+import { getServerSession } from 'next-auth'*/
+
+
 import {  type Glass, type User, type GlassMovement, type GlassStatus } from '@prisma/client'
 import { PrismaClient } from '@prisma/client/edge'
 export const config = {
@@ -11,14 +15,15 @@ interface ModifiedGlass extends Glass {
 }
 
 // GET /api/glass
-export async function getGlass(request: NextRequest) {
+export async function getGlass(req: NextRequest) {
 
 
     const prisma = new PrismaClient()
+
     try {
 
         //Query Params
-        const { searchParams } = new URL(request.url)
+        const { searchParams } = new URL(req.url)
         const id = searchParams.get('id')
         const status = searchParams.get('status')?.split(',') as GlassStatus[] | null
 
