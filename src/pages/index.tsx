@@ -1420,3 +1420,4 @@ const Home: NextPage = () => {
 
 export default Home
 /*eslint-enable @typescript-eslint/no-floating-promises*/
+/*eslint-enable @typescript-eslint/no-misused-promises*/
