@@ -54,6 +54,7 @@ const config = {
         'lines-between-class-members': ['error', 'always'],
         'padding-line-between-statements': ['error', { blankLine: 'always', prev: '*', next: 'return' }],
         'react-hooks/exhaustive-deps': 'error',
+        '@typescript-eslint/no-misused-promises': ['warn'],
         '@typescript-eslint/explicit-module-boundary-types': ['off'],
         '@typescript-eslint/no-non-null-assertion': ['off'],
         '@typescript-eslint/member-delimiter-style': [

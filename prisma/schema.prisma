@@ -1,62 +1,49 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider     = "mysql"
-  // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 model Glass {
-  id   Int    @id @default(autoincrement())
-  type          GlassType?      @relation(fields: [typeId], references: [id])
+  id            Int             @id @default(autoincrement())
   typeId        Int?
   status        GlassStatus
   quantity      Int             @default(0)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  location      GlassLocation?  @relation(fields: [locationId], references: [id])
   locationId    Int?
   width         Int
   height        Int
-  vendor        GlassVendor?    @relation(fields: [vendorId], references: [id])
   vendorId      Int?
-  GlassMovement GlassMovement[]
   Comment       String?
+  type          GlassType?      @relation(fields: [typeId], references: [id])
+  location      GlassLocation?  @relation(fields: [locationId], references: [id])
+  vendor        GlassVendor?    @relation(fields: [vendorId], references: [id])
+  GlassMovement GlassMovement[]
 
   @@index([typeId, locationId, vendorId])
 }
 
-enum GlassStatus {
-  TRANSIT
-  STORED
-  CONSUMED
-}
-
 model GlassMovement {
-  id   Int    @id @default(autoincrement())
-  glass     Glass    @relation(fields: [glassId], references: [id])
+  id        Int      @id @default(autoincrement())
   glassId   Int
   column    String
   oldValue  String?
   newValue  String
   updatedAt DateTime @default(now())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  userId    String?
+  glass     Glass    @relation(fields: [glassId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
 
   @@index([glassId, userId])
 }
 
 model GlassType {
-  id   Int    @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String
   createdAt   DateTime @default(now())
@@ -65,7 +52,7 @@ model GlassType {
 }
 
 model GlassLocation {
-  id   Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   position  String
   warehouse String
   createdAt DateTime @default(now())
@@ -74,16 +61,15 @@ model GlassLocation {
 }
 
 model GlassVendor {
-  id   Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Glass     Glass[]
 }
 
-// Necessary for Next auth
 model Account {
-  id   String    @id @default(cuid())
+  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
@@ -102,7 +88,7 @@ model Account {
 }
 
 model Session {
-  id   String    @id @default(cuid())
+  id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -111,18 +97,13 @@ model Session {
   @@index([userId])
 }
 
-enum Role {
-   USER
-   ADMIN
- }
-
 model User {
-  id   String    @id @default(cuid())
+  id            String          @id @default(cuid())
   name          String?
   email         String?         @unique
   emailVerified DateTime?
   image         String?
-  role Role @default(USER)
+  role          Role            @default(USER)
   accounts      Account[]
   sessions      Session[]
   GlassMovement GlassMovement[]
@@ -134,4 +115,15 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+enum GlassStatus {
+  TRANSIT
+  STORED
+  CONSUMED
+}
+
+enum Role {
+  USER
+  ADMIN
 }
