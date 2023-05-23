@@ -1,28 +1,35 @@
+
+
 import { type NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client/edge'
+
+import { getGlass, createGlass,updateGlass, deleteGlass } from '../../server/glass';
 
 export const config = {
     runtime: 'edge',
 }
+
+
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-export default async function getAllGlass(request: NextRequest) {
-    const prisma = new PrismaClient()
-
+export default async function handler(request: NextRequest, response: NextResponse) {
     try {
-        const vidrios = await prisma.glass.findMany({
-            include: {
-                type: true,
-                vendor: true,
-                location: true,
-            },
-        })
 
-        return NextResponse.json(vidrios)
+        if (request.method === 'GET') {
+            return getGlass(request)
+        } else if (request.method === 'POST') {
+            return createGlass(request)
+        } else if (request.method === 'PATCH') {
+            return updateGlass(request)
+        } else if (request.method === 'DELETE') {
+            return deleteGlass(request)
+        } else {
+            return NextResponse.json({ error: 'Petición no procesada' }, { status: 405 })
+        }
+
     } catch (error) {
-        console.error('Error al obtener los vidrios:', error)
+        console.error('Error: ', error)
 
-        return NextResponse.json(null, { status: 500 })
-    } finally {
-        await prisma.$disconnect()
+        return NextResponse.json({error}, { status: 500 })
     }
 }
+
+
