@@ -193,6 +193,12 @@ export async function updateGlass(request: NextRequest) {
                 data: requestData,
             })
 
+            await prisma.glassMovement.deleteMany({
+                where: {
+                    glassId: id,
+                },
+            })
+
             await prisma.glass.delete({
                 where: {
                     id,

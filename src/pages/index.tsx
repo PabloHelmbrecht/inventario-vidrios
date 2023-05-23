@@ -196,11 +196,7 @@ const Home: NextPage = () => {
    
             const cachedResponse: SuperGlass[] = JSON.parse(localStorage.getItem('glassData') ?? '{}') as SuperGlass[]
             setGlassData(cachedResponse)
-            const response = await axios.get('/api/glass', {
-                params: {
-                    status: 'TRANSIT,STORED',
-                },
-            })
+            const response = await axios.get('/api/glass')
             if (response.data === null) throw new Error('No hay vidrios')
             localStorage.setItem('glassData', JSON.stringify(response.data))
             setGlassData(response.data as SuperGlass[])
