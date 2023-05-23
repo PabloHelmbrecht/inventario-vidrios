@@ -1,26 +1,28 @@
 //Final Form
 import { Field } from 'react-final-form'
 
-const required = (value: number | string): string | undefined => (value ? undefined : 'Requerido')
+const requiredDecorator = (value: number | string): string | undefined => (value ? undefined : 'Requerido')
 
 export default function TextlineField({
     label = 'Insert label',
     name = 'textline',
     placeholder = '',
     className = '',
+    required=true,
     disabled = false,
 }: {
     label?: string
     name?: string
     placeholder?: string
     className?: string
+    required?:boolean
     disabled?: boolean
 }) {
     return (
         <Field
             name={name}
             placeholder={placeholder}
-            validate={required}>
+            validate={required ? requiredDecorator : undefined}>
             {({ input, meta }) => (
                 <div className={`col-span-full ${className}`}>
                     <label
