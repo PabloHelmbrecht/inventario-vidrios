@@ -49,7 +49,7 @@ model GlassMovement {
   oldValue  String?
   newValue  String
   updatedAt DateTime @default(now())
-  userId    Int
+  userId    String
   user      User     @relation(fields: [userId], references: [id])
 
   @@index([glassId, userId])
@@ -83,8 +83,8 @@ model GlassVendor {
 
 // Necessary for Next auth
 model Account {
-  id   Int    @id @default(autoincrement())
-  userId            Int
+  id   String    @id @default(cuid())
+  userId            String
   type              String
   provider          String
   providerAccountId String
@@ -102,9 +102,9 @@ model Account {
 }
 
 model Session {
-  id   Int    @id @default(autoincrement())
+  id   String    @id @default(cuid())
   sessionToken String   @unique
-  userId       Int
+  userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id])
 
@@ -117,7 +117,7 @@ enum Role {
  }
 
 model User {
-  id   Int    @id @default(autoincrement())
+  id   String    @id @default(cuid())
   name          String?
   email         String?         @unique
   emailVerified DateTime?

@@ -162,6 +162,12 @@ export async function deleteGlass(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id'))
+        
+        await prisma.glassMovement.deleteMany({
+            where: {
+                glassId: id,
+            },
+        })
 
         const deletedGlass = await prisma.glass.delete({
             where: {
@@ -172,11 +178,6 @@ export async function deleteGlass(request: NextRequest) {
             },
         })
 
-        await prisma.glassMovement.deleteMany({
-            where: {
-                glassId: deletedGlass.id,
-            },
-        })
 
         return NextResponse.json(deletedGlass)
     } catch (error) {
