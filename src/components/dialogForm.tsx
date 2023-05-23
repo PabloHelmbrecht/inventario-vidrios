@@ -13,6 +13,7 @@ interface dialogFormProps {
     titleStyles?: string
     buttonText?: string | React.ReactNode
     buttonStyles?: string
+    buttonDisabled?: boolean
     initialValues?: object | null
     //children: React.ReactNode
     isOpen: boolean
@@ -29,6 +30,7 @@ export default function DialogForm({
     titleStyles,
     buttonText = 'Enviar',
     buttonStyles = 'bg-sky-600 hover:bg-sky-700',
+    buttonDisabled = false,
     //children,
     isOpen,
     setIsOpen,
@@ -102,7 +104,7 @@ export default function DialogForm({
                                                             setIsOpen(false)
                                                         }
                                                     }}
-                                                    disabled={props.submitting || props.hasValidationErrors}>
+                                                    disabled={props.submitting || props.hasValidationErrors || buttonDisabled}>
                                                     {buttonText}
                                                 </button>
                                             </div>

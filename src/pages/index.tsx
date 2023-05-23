@@ -60,6 +60,8 @@ interface formResponseType {
 const Home: NextPage = () => {
     //States
     const [glassSelection, setGlassSelection] = useState<SuperGlass | null>(null)
+    const [glassFiltered, setGlassFiltered] = useState<SuperGlass | null>(null)
+    const [allowQuantityChange,setAllowQuantityChange] = useState<boolean>(false)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
 
     const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
@@ -73,6 +75,9 @@ const Home: NextPage = () => {
     const [typesData, setTypesData] = useState<GlassType[] | null>(null)
     const [locationsData, setLocationsData] = useState<GlassLocation[] | null>(null)
     const [vendorsData, setVendorsData] = useState<GlassVendor[] | null>(null)
+
+
+
 
     //Functions
     //- Submit Functions
@@ -291,6 +296,41 @@ const Home: NextPage = () => {
             })
             .map((glass) => glass.height)
 
+
+const filterGlassData = (filteredGlass: SuperGlass&{difQuantity:string}) => {
+
+        const foundGlass:SuperGlass[]|undefined = glassData
+            ?.filter((glass) => {
+                const { type, location, width, height } = glass
+
+                return filteredGlass?.type?.name
+                    ? filteredGlass?.type?.name === type?.name
+                    : true && filteredGlass?.location?.position
+                        ? filteredGlass?.location?.position === location?.position
+                        : true && filteredGlass?.width
+                            ? filteredGlass?.width === width
+                            : true && filteredGlass?.height
+                                ? filteredGlass?.height === height
+                                : true
+            })
+
+            if(foundGlass?.length===1&&foundGlass) {
+                setGlassFiltered(foundGlass[0] as SuperGlass)
+            }
+            else {
+                setGlassFiltered(null)
+            }
+
+            if(glassFiltered&&foundGlass&&Number(filteredGlass?.difQuantity)<Number(foundGlass[0]?.quantity)) {
+                setAllowQuantityChange(true)
+            }
+            else {
+                setAllowQuantityChange(false)
+            }
+
+
+    }
+
     //useEffect
     useEffect(() => {
         /*eslint-disable @typescript-eslint/no-floating-promises*/
@@ -449,181 +489,7 @@ const Home: NextPage = () => {
         },
     ]
 
-    //Decorators
-    const quickFilterDecorator: Calculation[] = [
-        {
-            field: 'type',
-            updates: (_, __, allValues) => {
-                const values = allValues as {
-                    width: { width: number }
-                    height: { height: number }
-                    location?: object
-                    type?: object
-                }
-                const filteredGlass = {
-                    ...values,
-                    width: values?.width?.width,
-                    height: values?.height?.height,
-                } as SuperGlass
 
-                const filteredWidth = filteredWidthData(filteredGlass)
-                const filteredHeight = filteredHeightData(filteredGlass)
-                const filteredLocations = filteredLocationsData(filteredGlass)
-                //const filteredTypes = filteredTypesData(filteredGlass)
-
-                const newValues: {
-                    width?: { id: number; width: number | undefined }
-                    height?: { id: number; height: number | undefined }
-                    type?: object
-                    location?: object
-                } = {}
-
-                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                    newValues.width = { id: 1, width: filteredWidth[0] }
-                }
-                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                    newValues.height = { id: 1, height: filteredHeight[0] }
-                }
-                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                    newValues.location = filteredLocations[0] as GlassLocation
-                }
-                /*if(filteredTypes?.length===1&&values?.type!==filteredTypes[0]) {
-                    newValues.type = filteredTypes[0] as GlassType
-                }*/
-
-                return newValues
-            },
-        },
-        {
-            field: 'width',
-            updates: (_, __, allValues) => {
-                const values = allValues as {
-                    width: { width: number }
-                    height: { height: number }
-                    location?: object
-                    type?: object
-                }
-                const filteredGlass = {
-                    ...values,
-                    width: values?.width?.width,
-                    height: values?.height?.height,
-                } as SuperGlass
-
-                //const filteredWidth = filteredWidthData(filteredGlass)
-                const filteredHeight = filteredHeightData(filteredGlass)
-                const filteredLocations = filteredLocationsData(filteredGlass)
-                const filteredTypes = filteredTypesData(filteredGlass)
-
-                const newValues: {
-                    width?: { id: number; width: number | undefined }
-                    height?: { id: number; height: number | undefined }
-                    type?: object
-                    location?: object
-                } = {}
-
-                /*if(filteredWidth?.length===1&&values?.width?.width!==filteredWidth[0]) {
-                    newValues.width =  {id:1,width:filteredWidth[0]}
-                }*/
-                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                    newValues.height = { id: 1, height: filteredHeight[0] }
-                }
-                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                    newValues.location = filteredLocations[0] as GlassLocation
-                }
-                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                    newValues.type = filteredTypes[0] as GlassType
-                }
-
-                return newValues
-            },
-        },
-        {
-            field: 'height',
-            updates: (_, __, allValues) => {
-                const values = allValues as {
-                    width: { width: number }
-                    height: { height: number }
-                    location?: object
-                    type?: object
-                }
-                const filteredGlass = {
-                    ...values,
-                    width: values?.width?.width,
-                    height: values?.height?.height,
-                } as SuperGlass
-
-                const filteredWidth = filteredWidthData(filteredGlass)
-                //const filteredHeight = filteredHeightData(filteredGlass)
-                const filteredLocations = filteredLocationsData(filteredGlass)
-                const filteredTypes = filteredTypesData(filteredGlass)
-
-                const newValues: {
-                    width?: { id: number; width: number | undefined }
-                    height?: { id: number; height: number | undefined }
-                    type?: object
-                    location?: object
-                } = {}
-
-                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                    newValues.width = { id: 1, width: filteredWidth[0] }
-                }
-                /*if(filteredHeight?.length===1&&values?.height?.height!==filteredHeight[0]) {
-                    newValues.height =  {id:1,height:filteredHeight[0]}
-                }*/
-                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                    newValues.location = filteredLocations[0] as GlassLocation
-                }
-                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                    newValues.type = filteredTypes[0] as GlassType
-                }
-
-                return newValues
-            },
-        },
-        {
-            field: 'location',
-            updates: (_, __, allValues) => {
-                const values = allValues as {
-                    width: { width: number }
-                    height: { height: number }
-                    location?: object
-                    type?: object
-                }
-                const filteredGlass = {
-                    ...values,
-                    width: values?.width?.width,
-                    height: values?.height?.height,
-                } as SuperGlass
-
-                const filteredWidth = filteredWidthData(filteredGlass)
-                const filteredHeight = filteredHeightData(filteredGlass)
-                //const filteredLocations = filteredLocationsData(filteredGlass)
-                const filteredTypes = filteredTypesData(filteredGlass)
-
-                const newValues: {
-                    width?: { id: number; width: number | undefined }
-                    height?: { id: number; height: number | undefined }
-                    type?: object
-                    location?: object
-                } = {}
-
-                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                    newValues.width = { id: 1, width: filteredWidth[0] }
-                }
-                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                    newValues.height = { id: 1, height: filteredHeight[0] }
-                }
-                /*if(filteredLocations?.length===1&&values?.location!==filteredLocations[0]) {
-                    newValues.location = filteredLocations[0] as GlassLocation
-                }*/
-                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                    newValues.type = filteredTypes[0] as GlassType
-                }
-
-                return newValues
-            },
-        },
-    ]
 
     return (
         <>
@@ -798,7 +664,180 @@ const Home: NextPage = () => {
                     })
                 }}
                 initialValues={glassSelection}
-                decorator={quickFilterDecorator}
+                decorator={[
+                    {
+                        field: 'type',
+                        updates: (_, __, allValues) => {
+                            const values = allValues as {
+                                width: { width: number }
+                                height: { height: number }
+                                location?: object
+                                type?: object
+                            }
+                            const filteredGlass = {
+                                ...values,
+                                width: values?.width?.width,
+                                height: values?.height?.height,
+                            } as SuperGlass
+
+                            const filteredWidth = filteredWidthData(filteredGlass)
+                            const filteredHeight = filteredHeightData(filteredGlass)
+                            const filteredLocations = filteredLocationsData(filteredGlass)
+                            //const filteredTypes = filteredTypesData(filteredGlass)
+
+                            const newValues: {
+                                width?: { id: number; width: number | undefined }
+                                height?: { id: number; height: number | undefined }
+                                type?: object
+                                location?: object
+                            } = {}
+
+                            if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
+                                newValues.width = { id: 1, width: filteredWidth[0] }
+                            }
+                            if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
+                                newValues.height = { id: 1, height: filteredHeight[0] }
+                            }
+                            if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
+                                newValues.location = filteredLocations[0] as GlassLocation
+                            }
+                            /*if(filteredTypes?.length===1&&values?.type!==filteredTypes[0]) {
+                                newValues.type = filteredTypes[0] as GlassType
+                            }*/
+
+                            return newValues
+                        },
+                    },
+                    {
+                        field: 'width',
+                        updates: (_, __, allValues) => {
+                            const values = allValues as {
+                                width: { width: number }
+                                height: { height: number }
+                                location?: object
+                                type?: object
+                            }
+                            const filteredGlass = {
+                                ...values,
+                                width: values?.width?.width,
+                                height: values?.height?.height,
+                            } as SuperGlass
+
+                            //const filteredWidth = filteredWidthData(filteredGlass)
+                            const filteredHeight = filteredHeightData(filteredGlass)
+                            const filteredLocations = filteredLocationsData(filteredGlass)
+                            const filteredTypes = filteredTypesData(filteredGlass)
+
+                            const newValues: {
+                                width?: { id: number; width: number | undefined }
+                                height?: { id: number; height: number | undefined }
+                                type?: object
+                                location?: object
+                            } = {}
+
+                            /*if(filteredWidth?.length===1&&values?.width?.width!==filteredWidth[0]) {
+                                newValues.width =  {id:1,width:filteredWidth[0]}
+                            }*/
+                            if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
+                                newValues.height = { id: 1, height: filteredHeight[0] }
+                            }
+                            if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
+                                newValues.location = filteredLocations[0] as GlassLocation
+                            }
+                            if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
+                                newValues.type = filteredTypes[0] as GlassType
+                            }
+
+                            return newValues
+                        },
+                    },
+                    {
+                        field: 'height',
+                        updates: (_, __, allValues) => {
+                            const values = allValues as {
+                                width: { width: number }
+                                height: { height: number }
+                                location?: object
+                                type?: object
+                            }
+                            const filteredGlass = {
+                                ...values,
+                                width: values?.width?.width,
+                                height: values?.height?.height,
+                            } as SuperGlass
+
+                            const filteredWidth = filteredWidthData(filteredGlass)
+                            //const filteredHeight = filteredHeightData(filteredGlass)
+                            const filteredLocations = filteredLocationsData(filteredGlass)
+                            const filteredTypes = filteredTypesData(filteredGlass)
+
+                            const newValues: {
+                                width?: { id: number; width: number | undefined }
+                                height?: { id: number; height: number | undefined }
+                                type?: object
+                                location?: object
+                            } = {}
+
+                            if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
+                                newValues.width = { id: 1, width: filteredWidth[0] }
+                            }
+                            /*if(filteredHeight?.length===1&&values?.height?.height!==filteredHeight[0]) {
+                                newValues.height =  {id:1,height:filteredHeight[0]}
+                            }*/
+                            if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
+                                newValues.location = filteredLocations[0] as GlassLocation
+                            }
+                            if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
+                                newValues.type = filteredTypes[0] as GlassType
+                            }
+
+                            return newValues
+                        },
+                    },
+                    {
+                        field: 'location',
+                        updates: (_, __, allValues) => {
+                            const values = allValues as {
+                                width: { width: number }
+                                height: { height: number }
+                                location?: object
+                                type?: object
+                            }
+                            const filteredGlass = {
+                                ...values,
+                                width: values?.width?.width,
+                                height: values?.height?.height,
+                            } as SuperGlass
+
+                            const filteredWidth = filteredWidthData(filteredGlass)
+                            const filteredHeight = filteredHeightData(filteredGlass)
+                            //const filteredLocations = filteredLocationsData(filteredGlass)
+                            const filteredTypes = filteredTypesData(filteredGlass)
+
+                            const newValues: {
+                                width?: { id: number; width: number | undefined }
+                                height?: { id: number; height: number | undefined }
+                                type?: object
+                                location?: object
+                            } = {}
+
+                            if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
+                                newValues.width = { id: 1, width: filteredWidth[0] }
+                            }
+                            if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
+                                newValues.height = { id: 1, height: filteredHeight[0] }
+                            }
+                            /*if(filteredLocations?.length===1&&values?.location!==filteredLocations[0]) {
+                                newValues.location = filteredLocations[0] as GlassLocation
+                            }*/
+                            if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
+                                newValues.type = filteredTypes[0] as GlassType
+                            }
+
+                            return newValues
+                        },
+                    },
+                ] as Calculation[]}
                 render={(props) => {
                     const width = props.values?.width as { width: number }
                     const height = props.values?.height as { height: number }
@@ -876,9 +915,9 @@ const Home: NextPage = () => {
                 title={
                     <>
                         Consumir Vidrio
-                        {isNotNullUndefinedOrEmpty(glassSelection) ? (
-                            <span className="text-sm font-normal text-slate-500">{`${` #${glassSelection?.id ?? ''} ${glassSelection?.type?.name ?? ''
-                                } ${glassSelection?.width ?? ''}X${glassSelection?.height ?? ''}`}`}</span>
+                        {isNotNullUndefinedOrEmpty(glassFiltered) ? (
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassFiltered?.id ?? ''} ${glassFiltered?.type?.name ?? ''
+                                } ${glassFiltered?.width ?? ''}X${glassFiltered?.height ?? ''}`}`}</span>
                         ) : (
                             ''
                         )}
@@ -886,6 +925,7 @@ const Home: NextPage = () => {
                 }
                 buttonText="Consumir"
                 buttonStyles="bg-red-500 hover:bg-red-600"
+                buttonDisabled={!allowQuantityChange}
                 isOpen={isGlassConsumerOpen}
                 setIsOpen={setIsGlassConsumerOpen}
                 onSubmit={(values) => {
@@ -897,7 +937,198 @@ const Home: NextPage = () => {
                     })
                 }}
                 initialValues={glassSelection}
-                decorator={quickFilterDecorator}
+                decorator={[
+                    {
+                        field: 'type',
+                        updates: (_, __, allValues) => {
+                            const values = allValues as {
+                                width: { width: number }
+                                height: { height: number }
+                                location?: object
+                                type?: object
+                            }
+                            const filteredGlass = {
+                                ...values,
+                                width: values?.width?.width,
+                                height: values?.height?.height,
+                            } as SuperGlass
+
+                            const filteredWidth = filteredWidthData(filteredGlass)
+                            const filteredHeight = filteredHeightData(filteredGlass)
+                            const filteredLocations = filteredLocationsData(filteredGlass)
+                            //const filteredTypes = filteredTypesData(filteredGlass)
+
+                            const newValues: {
+                                width?: { id: number; width: number | undefined }
+                                height?: { id: number; height: number | undefined }
+                                type?: object
+                                location?: object
+                                quantity?: number
+                            } = {}
+
+                            if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
+                                newValues.width = { id: 1, width: filteredWidth[0] }
+                            }
+                            if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
+                                newValues.height = { id: 1, height: filteredHeight[0] }
+                            }
+                            if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
+                                newValues.location = filteredLocations[0] as GlassLocation
+                            }
+                            if(!isNaN(Number(glassFiltered?.quantity))) {
+                                newValues.quantity = Number(glassFiltered?.quantity)
+                            }
+                            
+
+                            return newValues
+                        },
+                    },
+                    {
+                        field: 'width',
+                        updates: (_, __, allValues) => {
+                            const values = allValues as {
+                                width: { width: number }
+                                height: { height: number }
+                                location?: object
+                                type?: object
+                            }
+                            const filteredGlass = {
+                                ...values,
+                                width: values?.width?.width,
+                                height: values?.height?.height,
+                            } as SuperGlass
+
+                            //const filteredWidth = filteredWidthData(filteredGlass)
+                            const filteredHeight = filteredHeightData(filteredGlass)
+                            const filteredLocations = filteredLocationsData(filteredGlass)
+                            const filteredTypes = filteredTypesData(filteredGlass)
+
+                            const newValues: {
+                                width?: { id: number; width: number | undefined }
+                                height?: { id: number; height: number | undefined }
+                                type?: object
+                                location?: object
+                                quantity?: number
+                            } = {}
+
+                            /*if(filteredWidth?.length===1&&values?.width?.width!==filteredWidth[0]) {
+                                newValues.width =  {id:1,width:filteredWidth[0]}
+                            }*/
+                            if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
+                                newValues.height = { id: 1, height: filteredHeight[0] }
+                            }
+                            if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
+                                newValues.location = filteredLocations[0] as GlassLocation
+                            }
+                            if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
+                                newValues.type = filteredTypes[0] as GlassType
+                            }
+
+                            if(!isNaN(Number(glassFiltered?.quantity))) {
+                                newValues.quantity = Number(glassFiltered?.quantity)
+                            }
+
+                            return newValues
+                        },
+                    },
+                    {
+                        field: 'height',
+                        updates: (_, __, allValues) => {
+                            const values = allValues as {
+                                width: { width: number }
+                                height: { height: number }
+                                location?: object
+                                type?: object
+                                quantity?: number
+                            }
+                            const filteredGlass = {
+                                ...values,
+                                width: values?.width?.width,
+                                height: values?.height?.height,
+                            } as SuperGlass
+
+                            const filteredWidth = filteredWidthData(filteredGlass)
+                            //const filteredHeight = filteredHeightData(filteredGlass)
+                            const filteredLocations = filteredLocationsData(filteredGlass)
+                            const filteredTypes = filteredTypesData(filteredGlass)
+
+                            const newValues: {
+                                width?: { id: number; width: number | undefined }
+                                height?: { id: number; height: number | undefined }
+                                type?: object
+                                location?: object
+                                quantity?: number
+                            } = {}
+
+                            if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
+                                newValues.width = { id: 1, width: filteredWidth[0] }
+                            }
+                            /*if(filteredHeight?.length===1&&values?.height?.height!==filteredHeight[0]) {
+                                newValues.height =  {id:1,height:filteredHeight[0]}
+                            }*/
+                            if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
+                                newValues.location = filteredLocations[0] as GlassLocation
+                            }
+                            if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
+                                newValues.type = filteredTypes[0] as GlassType
+                            }
+
+                            if(!isNaN(Number(glassFiltered?.quantity))) {
+                                newValues.quantity = Number(glassFiltered?.quantity)
+                            }
+
+                            return newValues
+                        },
+                    },
+                    {
+                        field: 'location',
+                        updates: (_, __, allValues) => {
+                            const values = allValues as {
+                                width: { width: number }
+                                height: { height: number }
+                                location?: object
+                                type?: object
+                            }
+                            const filteredGlass = {
+                                ...values,
+                                width: values?.width?.width,
+                                height: values?.height?.height,
+                            } as SuperGlass
+
+                            const filteredWidth = filteredWidthData(filteredGlass)
+                            const filteredHeight = filteredHeightData(filteredGlass)
+                            //const filteredLocations = filteredLocationsData(filteredGlass)
+                            const filteredTypes = filteredTypesData(filteredGlass)
+
+                            const newValues: {
+                                width?: { id: number; width: number | undefined }
+                                height?: { id: number; height: number | undefined }
+                                type?: object
+                                location?: object
+                                quantity?: number
+                            } = {}
+
+                            if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
+                                newValues.width = { id: 1, width: filteredWidth[0] }
+                            }
+                            if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
+                                newValues.height = { id: 1, height: filteredHeight[0] }
+                            }
+                            /*if(filteredLocations?.length===1&&values?.location!==filteredLocations[0]) {
+                                newValues.location = filteredLocations[0] as GlassLocation
+                            }*/
+                            if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
+                                newValues.type = filteredTypes[0] as GlassType
+                            }
+
+                            if(!isNaN(Number(glassFiltered?.quantity))) {
+                                newValues.quantity = Number(glassFiltered?.quantity)
+                            }
+
+                            return newValues
+                        },
+                    }
+                ] as Calculation[]}
                 render={(props) => {
                     const width = props.values?.width as { width: number }
                     const height = props.values?.height as { height: number }
@@ -907,6 +1138,9 @@ const Home: NextPage = () => {
                         width: width?.width,
                         height: height?.height,
                     } as SuperGlass
+
+                    filterGlassData({...filteredGlass,difQuantity:String(props.values?.difQuantity)})
+                    console.log(glassFiltered)
 
                     return (
                         <>
@@ -945,8 +1179,14 @@ const Home: NextPage = () => {
                                 label="Posición"
                                 name="location"
                                 inputField="position"
-                                className=" sm:col-span-3"
                                 options={filteredLocationsData(filteredGlass) as GlassLocation[]}
+                            />
+
+                            <Numeric
+                                label="Cantidad"
+                                disabled={true}
+                                name="quantity"
+                                className=" sm:col-span-3"
                             />
 
                             <Numeric
@@ -1046,9 +1286,9 @@ const Home: NextPage = () => {
                     }?`}
                 titleStyles="text-center"
                 buttonText={`Eliminar #${isNotNullUndefinedOrEmpty(glassToDelete)
-                        ? `${glassToDelete?.id ?? ''} ${glassToDelete?.type?.name ?? ''} ${glassToDelete?.width ?? ''
-                        }X${glassToDelete?.height ?? ''}`
-                        : 'vidrio'
+                    ? `${glassToDelete?.id ?? ''} ${glassToDelete?.type?.name ?? ''} ${glassToDelete?.width ?? ''
+                    }X${glassToDelete?.height ?? ''}`
+                    : 'vidrio'
                     }`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"
                 isOpen={isNotNullUndefinedOrEmpty(glassToDelete)}
