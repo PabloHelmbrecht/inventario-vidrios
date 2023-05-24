@@ -45,31 +45,31 @@ export default function DialogForm({
             show={isOpen}
             as={Fragment}>
             <Dialog
-                as="div"
-                className="relative z-10"
+                as='div'
+                className='relative z-10'
                 onClose={() => setIsOpen(false)}>
                 <Transition.Child
                     as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0">
-                    <div className="fixed inset-0 bg-black bg-opacity-25" />
+                    enter='ease-out duration-300'
+                    enterFrom='opacity-0'
+                    enterTo='opacity-100'
+                    leave='ease-in duration-200'
+                    leaveFrom='opacity-100'
+                    leaveTo='opacity-0'>
+                    <div className='fixed inset-0 bg-black bg-opacity-25' />
                 </Transition.Child>
 
-                <div className="fixed inset-0 overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-4 text-center">
+                <div className='fixed inset-0 overflow-y-auto'>
+                    <div className='flex min-h-full items-center justify-center p-4 text-center'>
                         <Transition.Child
                             as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0 scale-95"
-                            enterTo="opacity-100 scale-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 scale-100"
-                            leaveTo="opacity-0 scale-95">
-                            <Dialog.Panel className=" w-full max-w-xl transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
+                            enter='ease-out duration-300'
+                            enterFrom='opacity-0 scale-95'
+                            enterTo='opacity-100 scale-100'
+                            leave='ease-in duration-200'
+                            leaveFrom='opacity-100 scale-100'
+                            leaveTo='opacity-0 scale-95'>
+                            <Dialog.Panel className=' w-full max-w-xl transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all'>
                                 <Form
                                     onSubmit={onSubmit}
                                     /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
@@ -79,18 +79,18 @@ export default function DialogForm({
                                     render={(props) => (
                                         <form>
                                             <Dialog.Title
-                                                as="h3"
+                                                as='h3'
                                                 className={` ${
                                                     titleStyles ?? ''
                                                 } text-lg font-medium leading-6 text-gray-900`}>
                                                 {title}
                                             </Dialog.Title>
 
-                                            <div className="mt-2 grid grid-cols-6 gap-4">{render(props)}</div>
+                                            <div className='mt-2 grid grid-cols-6 gap-4'>{render(props)}</div>
 
-                                            <div className="mt-4">
+                                            <div className='mt-4'>
                                                 <button
-                                                    type="button"
+                                                    type='button'
                                                     className={` rounded-md border border-transparent ${buttonStyles} px-4 py-2 text-sm font-medium text-white disabled:bg-slate-400 `}
                                                     onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                                                         if (e) {
