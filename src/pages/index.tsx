@@ -273,76 +273,138 @@ const Home: NextPage = () => {
     const filteredTypesData = (filteredGlass: SuperGlass) =>
         glassData
             ?.filter((glass) => {
-                const { location, width, height } = glass
+                const { location, width, height, vendor } = glass
 
-                return filteredGlass?.location?.position
-                    ? filteredGlass?.location?.position === location?.position
-                    : true && filteredGlass?.width
-                    ? filteredGlass?.width === width
-                    : true && filteredGlass?.height
-                    ? filteredGlass?.height === height
+                const filterVendor: boolean = filteredGlass?.vendor?.name
+                    ? filteredGlass?.vendor?.name === vendor?.name
                     : true
+
+                const filterLocation: boolean = filteredGlass?.location?.position
+                    ? filteredGlass?.location?.position === location?.position
+                    : true
+
+                const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
+
+                const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
+
+                const finalFilter = filterVendor && filterLocation && filterWidth && filterHeight
+
+                return finalFilter
             })
-            .map((glass) => glass.type)
+            .map((glass) => glass.type as GlassType)
+            .filter((v,i,a)=>a.findIndex(v2=>(v2.name===v.name))===i)
 
     const filteredLocationsData = (filteredGlass: SuperGlass) =>
         glassData
             ?.filter((glass) => {
-                const { type, width, height } = glass
+                const { type, width, height, vendor } = glass
 
-                return filteredGlass?.type?.name
-                    ? filteredGlass?.type?.name === type?.name
-                    : true && filteredGlass?.width
-                    ? filteredGlass?.width === width
-                    : true && filteredGlass?.height
-                    ? filteredGlass?.height === height
+                const filterVendor: boolean = filteredGlass?.vendor?.name
+                    ? filteredGlass?.vendor?.name === vendor?.name
                     : true
+
+                const filterType: boolean = filteredGlass?.type?.name ? filteredGlass?.type?.name === type?.name : true
+
+                const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
+
+                const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
+
+                const finalFilter = filterVendor && filterType && filterWidth && filterHeight
+
+                return finalFilter
             })
-            .map((glass) => glass.location)
+            .map((glass) => glass.location as GlassLocation)
+            .filter((v,i,a)=>a.findIndex(v2=>(v2.position===v.position))===i)
+
+    const filteredVendorsData = (filteredGlass: SuperGlass) =>
+        glassData
+            ?.filter((glass) => {
+                const { type, width, height, location } = glass
+
+                const filterType: boolean = filteredGlass?.type?.name ? filteredGlass?.type?.name === type?.name : true
+
+                const filterLocation: boolean = filteredGlass?.location?.position
+                    ? filteredGlass?.location?.position === location?.position
+                    : true
+
+                const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
+
+                const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
+
+                const finalFilter = filterType && filterLocation && filterWidth && filterHeight
+
+                return finalFilter
+            })
+            .map((glass) => glass.vendor as GlassVendor)
+            .filter((v,i,a)=>a.findIndex(v2=>(v2.name===v.name))===i)
 
     const filteredWidthData = (filteredGlass: SuperGlass) =>
-        glassData
+        [...new Set(glassData
             ?.filter((glass) => {
-                const { type, location, height } = glass
+                const { type, location, height, vendor } = glass
 
-                return filteredGlass?.type?.name
-                    ? filteredGlass?.type?.name === type?.name
-                    : true && filteredGlass?.location?.position
-                    ? filteredGlass?.location?.position === location?.position
-                    : true && filteredGlass?.height
-                    ? filteredGlass?.height === height
+                const filterVendor: boolean = filteredGlass?.vendor?.name
+                    ? filteredGlass?.vendor?.name === vendor?.name
                     : true
+
+                const filterType: boolean = filteredGlass?.type?.name ? filteredGlass?.type?.name === type?.name : true
+
+                const filterLocation: boolean = filteredGlass?.location?.position
+                    ? filteredGlass?.location?.position === location?.position
+                    : true
+
+                const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
+
+                const finalFilter = filterVendor && filterType && filterLocation && filterHeight
+
+                return finalFilter
             })
-            .map((glass) => glass.width)
+            .map((glass) => glass.width))]
 
     const filteredHeightData = (filteredGlass: SuperGlass) =>
-        glassData
+        [...new Set(glassData
             ?.filter((glass) => {
-                const { type, location, width } = glass
+                const { type, location, width, vendor } = glass
 
-                return filteredGlass?.type?.name
-                    ? filteredGlass?.type?.name === type?.name
-                    : true && filteredGlass?.location?.position
-                    ? filteredGlass?.location?.position === location?.position
-                    : true && filteredGlass?.width
-                    ? filteredGlass?.width === width
+                const filterVendor: boolean = filteredGlass?.vendor?.name
+                    ? filteredGlass?.vendor?.name === vendor?.name
                     : true
+
+                const filterType: boolean = filteredGlass?.type?.name ? filteredGlass?.type?.name === type?.name : true
+
+                const filterLocation: boolean = filteredGlass?.location?.position
+                    ? filteredGlass?.location?.position === location?.position
+                    : true
+
+                const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
+
+                const finalFilter = filterVendor && filterType && filterLocation && filterWidth
+
+                return finalFilter
             })
-            .map((glass) => glass.height)
+            .map((glass) => glass.height))]
 
     const filterGlassData = (filteredGlass: SuperGlass & { difQuantity: string }) => {
         const foundGlass: SuperGlass[] | undefined = glassData?.filter((glass) => {
-            const { type, location, width, height } = glass
+            const { type, location, width, height, vendor } = glass
 
-            return filteredGlass?.type?.name
-                ? filteredGlass?.type?.name === type?.name
-                : true && filteredGlass?.location?.position
-                ? filteredGlass?.location?.position === location?.position
-                : true && filteredGlass?.width
-                ? filteredGlass?.width === width
-                : true && filteredGlass?.height
-                ? filteredGlass?.height === height
+            const filterVendor: boolean = filteredGlass?.vendor?.name
+                ? filteredGlass?.vendor?.name === vendor?.name
                 : true
+
+            const filterType: boolean = filteredGlass?.type?.name ? filteredGlass?.type?.name === type?.name : true
+
+            const filterLocation: boolean = filteredGlass?.location?.position
+                ? filteredGlass?.location?.position === location?.position
+                : true
+
+            const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
+
+            const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
+
+            const finalFilter = filterVendor && filterType && filterLocation && filterWidth && filterHeight
+
+            return finalFilter
         })
 
         if (foundGlass?.length === 1 && foundGlass) {
@@ -500,14 +562,14 @@ const Home: NextPage = () => {
             getActions: ({ row }: { row: GridValidRowModel }) => [
                 <GridActionsCellItem
                     key={1}
-                    icon={<TrashIcon className='w-4' />}
-                    label='Delete'
+                    icon={<TrashIcon className="w-4" />}
+                    label="Delete"
                     onClick={() => setGlassToDelete(row as SuperGlass)}
                 />,
                 <GridActionsCellItem
                     key={1}
-                    icon={<PencilSquareIcon className='w-4' />}
-                    label='Delete'
+                    icon={<PencilSquareIcon className="w-4" />}
+                    label="Delete"
                     onClick={() => setGlassToEdit(row as SuperGlass)}
                 />,
             ],
@@ -519,26 +581,26 @@ const Home: NextPage = () => {
             <Head>
                 <title>Inventario de Vidrios</title>
                 <meta
-                    name='description'
-                    content='Gestor de inventario'
+                    name="description"
+                    content="Gestor de inventario"
                 />
                 <link
-                    rel='icon'
-                    href='/favicon.ico'
+                    rel="icon"
+                    href="/favicon.ico"
                 />
             </Head>
 
-            <main className='flex flex-col items-center justify-center px-4 py-16'>
-                <div className='container flex flex-col items-center justify-center gap-12'>
-                    <h1 className='text-lg font-semibold text-gray-700 sm:text-[2rem]'>Inventario de Vidrios</h1>
-                    <div className='flex w-full flex-col justify-center gap-4'>
-                        <div className='flex w-full justify-end gap-3'>
+            <main className="flex flex-col items-center justify-center px-4 py-16">
+                <div className="container flex flex-col items-center justify-center gap-12">
+                    <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
+                    <div className="flex w-full flex-col justify-center gap-4">
+                        <div className="flex w-full justify-end gap-3">
                             <button
                                 onClick={() => {
                                     setIsGlassCreatorOpen(true)
                                 }}
                                 disabled={!(glassData && typesData && vendorsData && locationsData)}
-                                className=' rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500'>
+                                className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
                                 Cargar
                             </button>
                             <button
@@ -546,7 +608,7 @@ const Home: NextPage = () => {
                                     setIsGlassMoverOpen(true)
                                 }}
                                 disabled={!(glassData && typesData && vendorsData && locationsData)}
-                                className=' rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-500'>
+                                className=" rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-500">
                                 Mover
                             </button>
 
@@ -555,7 +617,7 @@ const Home: NextPage = () => {
                                     setIsGlassConsumerOpen(true)
                                 }}
                                 disabled={!(glassData && typesData && vendorsData && locationsData)}
-                                className=' rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:bg-slate-500'>
+                                className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:bg-slate-500">
                                 Consumir
                             </button>
                         </div>
@@ -598,9 +660,9 @@ const Home: NextPage = () => {
 
             {/*Formulario de Carga en almacen traer solo almacen de esa posicion*/}
             <DialogForm
-                title='Carga de Vidrios'
-                buttonText='Cargar'
-                buttonStyles='bg-emerald-500 hover:bg-emerald-600'
+                title="Carga de Vidrios"
+                buttonText="Cargar"
+                buttonStyles="bg-emerald-500 hover:bg-emerald-600"
                 isOpen={isGlassCreatorOpen}
                 setIsOpen={setIsGlassCreatorOpen}
                 onSubmit={onGlassCreation}
@@ -609,50 +671,50 @@ const Home: NextPage = () => {
                     return (
                         <>
                             <Combobox
-                                label='Tipo'
-                                name='type'
-                                inputField='name'
+                                label="Tipo"
+                                name="type"
+                                inputField="name"
                                 options={typesData as GlassType[]}
                             />
                             <Combobox
-                                label='Descripción'
-                                name='type'
-                                inputField='description'
+                                label="Descripción"
+                                name="type"
+                                inputField="description"
                                 options={typesData as GlassType[]}
                             />
                             <Numeric
-                                label='Ancho'
-                                name='width'
-                                className=' sm:col-span-3'
+                                label="Ancho"
+                                name="width"
+                                className=" sm:col-span-3"
                             />
                             <Numeric
-                                label='Alto'
-                                name='height'
-                                className=' sm:col-span-3'
+                                label="Alto"
+                                name="height"
+                                className=" sm:col-span-3"
                             />
                             <Combobox
-                                label='Proovedor'
-                                name='vendor'
-                                inputField='name'
-                                className=' sm:col-span-3'
+                                label="Proovedor"
+                                name="vendor"
+                                inputField="name"
+                                className=" sm:col-span-3"
                                 options={vendorsData as GlassVendor[]}
                             />
 
                             <Combobox
-                                label='Posición'
-                                name='location'
-                                inputField='position'
-                                className=' sm:col-span-3'
+                                label="Posición"
+                                name="location"
+                                inputField="position"
+                                className=" sm:col-span-3"
                                 required={false}
                                 options={locationsData as GlassLocation[]}
                             />
                             <Numeric
-                                label='Cantidad'
-                                name='quantity'
+                                label="Cantidad"
+                                name="quantity"
                             />
                             <TextArea
-                                label='Comentarios'
-                                name='newComment'
+                                label="Comentarios"
+                                name="newComment"
                             />
                         </>
                     )
@@ -665,7 +727,7 @@ const Home: NextPage = () => {
                     <>
                         Mover Vidrio
                         {isNotNullUndefinedOrEmpty(glassFiltered) ? (
-                            <span className='text-sm font-normal text-slate-500'>{`${` #${glassFiltered?.id ?? ''} ${
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassFiltered?.id ?? ''} ${
                                 glassFiltered?.type?.name ?? ''
                             } ${glassFiltered?.width ?? ''}X${glassFiltered?.height ?? ''}`}`}</span>
                         ) : (
@@ -673,8 +735,8 @@ const Home: NextPage = () => {
                         )}
                     </>
                 }
-                buttonText='Mover'
-                buttonStyles='bg-sky-600 hover:bg-sky-700'
+                buttonText="Mover"
+                buttonStyles="bg-sky-600 hover:bg-sky-700"
                 buttonDisabled={!allowQuantityChange}
                 isOpen={isGlassMoverOpen}
                 setIsOpen={setIsGlassMoverOpen}
@@ -696,6 +758,7 @@ const Home: NextPage = () => {
                                 const values = allValues as {
                                     width: { width: number }
                                     height: { height: number }
+                                    vendor?: object
                                     location?: object
                                     type?: object
                                 }
@@ -708,6 +771,8 @@ const Home: NextPage = () => {
                                 const filteredWidth = filteredWidthData(filteredGlass)
                                 const filteredHeight = filteredHeightData(filteredGlass)
                                 const filteredLocations = filteredLocationsData(filteredGlass)
+                                const filteredVendors = filteredVendorsData(filteredGlass)
+
                                 //const filteredTypes = filteredTypesData(filteredGlass)
 
                                 const newValues: {
@@ -716,6 +781,7 @@ const Home: NextPage = () => {
                                     type?: object
                                     location?: object
                                     quantity?: number
+                                    vendor?: object
                                     id?: number
                                 } = {}
 
@@ -728,6 +794,10 @@ const Home: NextPage = () => {
                                 if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
                                     newValues.location = filteredLocations[0] as GlassLocation
                                 }
+                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
+                                    newValues.vendor = filteredVendors[0] as GlassVendor
+                                }
+
                                 if (!isNaN(Number(glassFiltered?.quantity))) {
                                     newValues.quantity = Number(glassFiltered?.quantity)
                                 }
@@ -747,6 +817,7 @@ const Home: NextPage = () => {
                                     width: { width: number }
                                     height: { height: number }
                                     location?: object
+                                    vendor?: object
                                     type?: object
                                 }
                                 const filteredGlass = {
@@ -758,6 +829,7 @@ const Home: NextPage = () => {
                                 //const filteredWidth = filteredWidthData(filteredGlass)
                                 const filteredHeight = filteredHeightData(filteredGlass)
                                 const filteredLocations = filteredLocationsData(filteredGlass)
+                                const filteredVendors = filteredVendorsData(filteredGlass)
                                 const filteredTypes = filteredTypesData(filteredGlass)
 
                                 const newValues: {
@@ -765,6 +837,7 @@ const Home: NextPage = () => {
                                     height?: { id: number; height: number | undefined }
                                     type?: object
                                     location?: object
+                                    vendor?: object
                                     quantity?: number
                                     id?: number
                                 } = {}
@@ -780,6 +853,9 @@ const Home: NextPage = () => {
                                 }
                                 if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
                                     newValues.type = filteredTypes[0] as GlassType
+                                }
+                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
+                                    newValues.vendor = filteredVendors[0] as GlassVendor
                                 }
 
                                 if (!isNaN(Number(glassFiltered?.quantity))) {
@@ -800,6 +876,7 @@ const Home: NextPage = () => {
                                     width: { width: number }
                                     height: { height: number }
                                     location?: object
+                                    vendor?: object
                                     type?: object
                                     quantity?: number
                                 }
@@ -812,6 +889,7 @@ const Home: NextPage = () => {
                                 const filteredWidth = filteredWidthData(filteredGlass)
                                 //const filteredHeight = filteredHeightData(filteredGlass)
                                 const filteredLocations = filteredLocationsData(filteredGlass)
+                                const filteredVendors = filteredVendorsData(filteredGlass)
                                 const filteredTypes = filteredTypesData(filteredGlass)
 
                                 const newValues: {
@@ -819,6 +897,7 @@ const Home: NextPage = () => {
                                     height?: { id: number; height: number | undefined }
                                     type?: object
                                     location?: object
+                                    vendor?: object
                                     quantity?: number
                                     id?: number
                                 } = {}
@@ -834,6 +913,9 @@ const Home: NextPage = () => {
                                 }
                                 if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
                                     newValues.type = filteredTypes[0] as GlassType
+                                }
+                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
+                                    newValues.vendor = filteredVendors[0] as GlassVendor
                                 }
 
                                 if (!isNaN(Number(glassFiltered?.quantity))) {
@@ -854,6 +936,7 @@ const Home: NextPage = () => {
                                     width: { width: number }
                                     height: { height: number }
                                     location?: object
+                                    vendor?: object
                                     type?: object
                                 }
                                 const filteredGlass = {
@@ -864,7 +947,67 @@ const Home: NextPage = () => {
 
                                 const filteredWidth = filteredWidthData(filteredGlass)
                                 const filteredHeight = filteredHeightData(filteredGlass)
-                                //const filteredLocations = filteredLocationsData(filteredGlass)
+                                //const filteredLocations = filteredLocationsData(filteredGlass);const filteredVendors = filteredVendorsData(filteredGlass)
+                                const filteredTypes = filteredTypesData(filteredGlass)
+                                const filteredVendors = filteredVendorsData(filteredGlass)
+
+                                const newValues: {
+                                    width?: { id: number; width: number | undefined }
+                                    height?: { id: number; height: number | undefined }
+                                    type?: object
+                                    location?: object
+                                    vendor?: object
+                                    quantity?: number
+                                    id?: number
+                                } = {}
+
+                                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
+                                    newValues.width = { id: 1, width: filteredWidth[0] }
+                                }
+                                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
+                                    newValues.height = { id: 1, height: filteredHeight[0] }
+                                }
+                                /*if(filteredLocations?.length===1&&values?.location!==filteredLocations[0]) {
+                                newValues.location = filteredLocations[0] as GlassLocation
+                            }*/
+                                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
+                                    newValues.type = filteredTypes[0] as GlassType
+                                }
+                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
+                                    newValues.vendor = filteredVendors[0] as GlassVendor
+                                }
+
+                                if (!isNaN(Number(glassFiltered?.quantity))) {
+                                    newValues.quantity = Number(glassFiltered?.quantity)
+                                }
+                                if (!isNaN(Number(glassFiltered?.quantity))) {
+                                    newValues.quantity = Number(glassFiltered?.quantity)
+                                }
+
+                                return newValues
+                            },
+                        },
+                        {
+                            field: 'vendor',
+                            updates: (fieldValue, __, allValues) => {
+                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
+                                const values = allValues as {
+                                    width: { width: number }
+                                    height: { height: number }
+                                    vendor?: object
+                                    location?: object
+                                    type?: object
+                                }
+                                const filteredGlass = {
+                                    ...values,
+                                    width: values?.width?.width,
+                                    height: values?.height?.height,
+                                } as SuperGlass
+
+                                const filteredWidth = filteredWidthData(filteredGlass)
+                                const filteredHeight = filteredHeightData(filteredGlass)
+                                const filteredLocations = filteredLocationsData(filteredGlass)
+
                                 const filteredTypes = filteredTypesData(filteredGlass)
 
                                 const newValues: {
@@ -882,9 +1025,9 @@ const Home: NextPage = () => {
                                 if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
                                     newValues.height = { id: 1, height: filteredHeight[0] }
                                 }
-                                /*if(filteredLocations?.length===1&&values?.location!==filteredLocations[0]) {
-                                newValues.location = filteredLocations[0] as GlassLocation
-                            }*/
+                                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
+                                    newValues.location = filteredLocations[0] as GlassLocation
+                                }
                                 if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
                                     newValues.type = filteredTypes[0] as GlassType
                                 }
@@ -892,8 +1035,9 @@ const Home: NextPage = () => {
                                 if (!isNaN(Number(glassFiltered?.quantity))) {
                                     newValues.quantity = Number(glassFiltered?.quantity)
                                 }
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
+
+                                if (!isNaN(Number(glassFiltered?.id))) {
+                                    newValues.id = Number(glassFiltered?.id)
                                 }
 
                                 return newValues
@@ -916,72 +1060,79 @@ const Home: NextPage = () => {
                     return (
                         <>
                             <TextLine
-                                label='Id'
-                                name='id'
-                                className='hidden'
+                                label="Id"
+                                name="id"
+                                className="hidden"
                                 required={false}
                             />
                             <Combobox
-                                label='Tipo'
-                                name='type'
-                                inputField='name'
+                                label="Tipo"
+                                name="type"
+                                inputField="name"
                                 options={filteredTypesData(filteredGlass) as GlassType[]}
                             />
                             <Combobox
-                                label='Descripción'
-                                name='type'
-                                inputField='description'
+                                label="Descripción"
+                                name="type"
+                                inputField="description"
                                 options={filteredTypesData(filteredGlass) as GlassType[]}
                             />
                             <Combobox
-                                label='Ancho'
-                                name='width'
-                                inputField='width'
-                                className=' sm:col-span-3'
+                                label="Ancho"
+                                name="width"
+                                inputField="width"
+                                className=" sm:col-span-3"
                                 options={filteredWidthData(filteredGlass)?.map((width, id) => {
                                     return { id: id + 1, width }
                                 })}
                             />
                             <Combobox
-                                label='Alto'
-                                name='height'
-                                inputField='height'
-                                className=' sm:col-span-3'
+                                label="Alto"
+                                name="height"
+                                inputField="height"
+                                className=" sm:col-span-3"
                                 options={filteredHeightData(filteredGlass)?.map((height, id) => {
                                     return { id: id + 1, height }
                                 })}
                             />
 
                             <Combobox
-                                label='Posición Origen'
-                                name='location'
-                                inputField='position'
-                                className=' sm:col-span-3'
+                                label="Proovedor"
+                                name="vendor"
+                                inputField="name"
+                                options={filteredVendorsData(filteredGlass) as GlassVendor[]}
+                            />
+
+                            <Combobox
+                                label="Posición Origen"
+                                name="location"
+                                inputField="position"
+                                className=" sm:col-span-3"
                                 options={filteredLocationsData(filteredGlass) as GlassLocation[]}
                             />
 
                             <Combobox
-                                label='Posición Destino'
-                                name='destinyLocation'
-                                inputField='position'
-                                className=' sm:col-span-3'
+                                label="Posición Destino"
+                                name="destinyLocation"
+                                inputField="position"
+                                className=" sm:col-span-3"
                                 options={locationsData as GlassLocation[]}
                             />
                             <Numeric
-                                label='Cantidad'
+                                label="Cantidad"
                                 disabled={true}
-                                name='quantity'
-                                className=' sm:col-span-3'
+                                name="quantity"
+                                className=" sm:col-span-3"
                             />
                             <Numeric
-                                label='Cantidad a Mover'
-                                name='difQuantity'
-                                className=' sm:col-span-3'
+                                label="Cantidad a Mover"
+                                name="difQuantity"
+                                className=" sm:col-span-3"
                             />
 
                             <TextArea
-                                label='Comentarios'
-                                name='newComment'
+                                label="Comentarios"
+                                name="newComment"
                             />
                         </>
                     )
@@ -994,7 +1145,7 @@ const Home: NextPage = () => {
                     <>
                         Consumir Vidrio
                         {isNotNullUndefinedOrEmpty(glassFiltered) ? (
-                            <span className='text-sm font-normal text-slate-500'>{`${` #${glassFiltered?.id ?? ''} ${
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassFiltered?.id ?? ''} ${
                                 glassFiltered?.type?.name ?? ''
                             } ${glassFiltered?.width ?? ''}X${glassFiltered?.height ?? ''}`}`}</span>
                         ) : (
@@ -1002,8 +1153,8 @@ const Home: NextPage = () => {
                         )}
                     </>
                 }
-                buttonText='Consumir'
-                buttonStyles='bg-red-500 hover:bg-red-600'
+                buttonText="Consumir"
+                buttonStyles="bg-red-500 hover:bg-red-600"
                 buttonDisabled={!allowQuantityChange}
                 isOpen={isGlassConsumerOpen}
                 setIsOpen={setIsGlassConsumerOpen}
@@ -1026,6 +1177,7 @@ const Home: NextPage = () => {
                                     width: { width: number }
                                     height: { height: number }
                                     location?: object
+                                    vendor?: object
                                     type?: object
                                 }
                                 const filteredGlass = {
@@ -1037,6 +1189,7 @@ const Home: NextPage = () => {
                                 const filteredWidth = filteredWidthData(filteredGlass)
                                 const filteredHeight = filteredHeightData(filteredGlass)
                                 const filteredLocations = filteredLocationsData(filteredGlass)
+                                const filteredVendors = filteredVendorsData(filteredGlass)
                                 //const filteredTypes = filteredTypesData(filteredGlass)
 
                                 const newValues: {
@@ -1044,6 +1197,7 @@ const Home: NextPage = () => {
                                     height?: { id: number; height: number | undefined }
                                     type?: object
                                     location?: object
+                                    vendor?: object
                                     quantity?: number
                                     id?: number
                                 } = {}
@@ -1056,6 +1210,9 @@ const Home: NextPage = () => {
                                 }
                                 if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
                                     newValues.location = filteredLocations[0] as GlassLocation
+                                }
+                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
+                                    newValues.vendor = filteredVendors[0] as GlassVendor
                                 }
                                 if (!isNaN(Number(glassFiltered?.quantity))) {
                                     newValues.quantity = Number(glassFiltered?.quantity)
@@ -1076,6 +1233,7 @@ const Home: NextPage = () => {
                                     height: { height: number }
                                     location?: object
                                     type?: object
+                                    vendor?: object
                                 }
                                 const filteredGlass = {
                                     ...values,
@@ -1086,6 +1244,7 @@ const Home: NextPage = () => {
                                 //const filteredWidth = filteredWidthData(filteredGlass)
                                 const filteredHeight = filteredHeightData(filteredGlass)
                                 const filteredLocations = filteredLocationsData(filteredGlass)
+                                const filteredVendors = filteredVendorsData(filteredGlass)
                                 const filteredTypes = filteredTypesData(filteredGlass)
 
                                 const newValues: {
@@ -1093,6 +1252,7 @@ const Home: NextPage = () => {
                                     height?: { id: number; height: number | undefined }
                                     type?: object
                                     location?: object
+                                    vendor?: object
                                     quantity?: number
                                     id?: number
                                 } = {}
@@ -1108,6 +1268,9 @@ const Home: NextPage = () => {
                                 }
                                 if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
                                     newValues.type = filteredTypes[0] as GlassType
+                                }
+                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
+                                    newValues.vendor = filteredVendors[0] as GlassVendor
                                 }
 
                                 if (!isNaN(Number(glassFiltered?.quantity))) {
@@ -1129,6 +1292,7 @@ const Home: NextPage = () => {
                                     height: { height: number }
                                     location?: object
                                     type?: object
+                                    vendor?: object
                                     quantity?: number
                                 }
                                 const filteredGlass = {
@@ -1140,6 +1304,7 @@ const Home: NextPage = () => {
                                 const filteredWidth = filteredWidthData(filteredGlass)
                                 //const filteredHeight = filteredHeightData(filteredGlass)
                                 const filteredLocations = filteredLocationsData(filteredGlass)
+                                const filteredVendors = filteredVendorsData(filteredGlass)
                                 const filteredTypes = filteredTypesData(filteredGlass)
 
                                 const newValues: {
@@ -1147,6 +1312,7 @@ const Home: NextPage = () => {
                                     height?: { id: number; height: number | undefined }
                                     type?: object
                                     location?: object
+                                    vendor?: object
                                     quantity?: number
                                     id?: number
                                 } = {}
@@ -1162,6 +1328,9 @@ const Home: NextPage = () => {
                                 }
                                 if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
                                     newValues.type = filteredTypes[0] as GlassType
+                                }
+                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
+                                    newValues.vendor = filteredVendors[0] as GlassVendor
                                 }
 
                                 if (!isNaN(Number(glassFiltered?.quantity))) {
@@ -1183,6 +1352,7 @@ const Home: NextPage = () => {
                                     height: { height: number }
                                     location?: object
                                     type?: object
+                                    vendor?: object
                                 }
                                 const filteredGlass = {
                                     ...values,
@@ -1192,7 +1362,67 @@ const Home: NextPage = () => {
 
                                 const filteredWidth = filteredWidthData(filteredGlass)
                                 const filteredHeight = filteredHeightData(filteredGlass)
-                                //const filteredLocations = filteredLocationsData(filteredGlass)
+                                //const filteredLocations = filteredLocationsData(filteredGlass);const filteredVendors = filteredVendorsData(filteredGlass)
+                                const filteredTypes = filteredTypesData(filteredGlass)
+                                const filteredVendors = filteredVendorsData(filteredGlass)
+
+                                const newValues: {
+                                    width?: { id: number; width: number | undefined }
+                                    height?: { id: number; height: number | undefined }
+                                    type?: object
+                                    location?: object
+                                    vendor?: object
+                                    quantity?: number
+                                    id?: number
+                                } = {}
+
+                                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
+                                    newValues.width = { id: 1, width: filteredWidth[0] }
+                                }
+                                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
+                                    newValues.height = { id: 1, height: filteredHeight[0] }
+                                }
+                                /*if(filteredLocations?.length===1&&values?.location!==filteredLocations[0]) {
+                                newValues.location = filteredLocations[0] as GlassLocation
+                            }*/
+                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
+                                    newValues.vendor = filteredVendors[0] as GlassVendor
+                                }
+                                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
+                                    newValues.type = filteredTypes[0] as GlassType
+                                }
+
+                                if (!isNaN(Number(glassFiltered?.quantity))) {
+                                    newValues.quantity = Number(glassFiltered?.quantity)
+                                }
+                                if (!isNaN(Number(glassFiltered?.quantity))) {
+                                    newValues.quantity = Number(glassFiltered?.quantity)
+                                }
+
+                                return newValues
+                            },
+                        },
+                        {
+                            field: 'vendor',
+                            updates: (fieldValue, __, allValues) => {
+                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
+                                const values = allValues as {
+                                    width: { width: number }
+                                    height: { height: number }
+                                    vendor?: object
+                                    location?: object
+                                    type?: object
+                                }
+                                const filteredGlass = {
+                                    ...values,
+                                    width: values?.width?.width,
+                                    height: values?.height?.height,
+                                } as SuperGlass
+
+                                const filteredWidth = filteredWidthData(filteredGlass)
+                                const filteredHeight = filteredHeightData(filteredGlass)
+                                const filteredLocations = filteredLocationsData(filteredGlass)
+
                                 const filteredTypes = filteredTypesData(filteredGlass)
 
                                 const newValues: {
@@ -1210,9 +1440,9 @@ const Home: NextPage = () => {
                                 if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
                                     newValues.height = { id: 1, height: filteredHeight[0] }
                                 }
-                                /*if(filteredLocations?.length===1&&values?.location!==filteredLocations[0]) {
-                                newValues.location = filteredLocations[0] as GlassLocation
-                            }*/
+                                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
+                                    newValues.location = filteredLocations[0] as GlassLocation
+                                }
                                 if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
                                     newValues.type = filteredTypes[0] as GlassType
                                 }
@@ -1220,8 +1450,9 @@ const Home: NextPage = () => {
                                 if (!isNaN(Number(glassFiltered?.quantity))) {
                                     newValues.quantity = Number(glassFiltered?.quantity)
                                 }
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
+
+                                if (!isNaN(Number(glassFiltered?.id))) {
+                                    newValues.id = Number(glassFiltered?.id)
                                 }
 
                                 return newValues
@@ -1244,63 +1475,71 @@ const Home: NextPage = () => {
                     return (
                         <>
                             <TextLine
-                                label='Id'
-                                name='id'
-                                className='hidden'
+                                label="Id"
+                                name="id"
+                                className="hidden"
                                 required={false}
                             />
                             <Combobox
-                                label='Tipo'
-                                name='type'
-                                inputField='name'
+                                label="Tipo"
+                                name="type"
+                                inputField="name"
                                 options={filteredTypesData(filteredGlass) as GlassType[]}
                             />
                             <Combobox
-                                label='Descripción'
-                                name='type'
-                                inputField='description'
+                                label="Descripción"
+                                name="type"
+                                inputField="description"
                                 options={filteredTypesData(filteredGlass) as GlassType[]}
                             />
                             <Combobox
-                                label='Ancho'
-                                name='width'
-                                inputField='width'
-                                className=' sm:col-span-3'
+                                label="Ancho"
+                                name="width"
+                                inputField="width"
+                                className=" sm:col-span-3"
                                 options={filteredWidthData(filteredGlass)?.map((width, id) => {
                                     return { id: id + 1, width }
                                 })}
                             />
                             <Combobox
-                                label='Alto'
-                                name='height'
-                                inputField='height'
-                                className=' sm:col-span-3'
+                                label="Alto"
+                                name="height"
+                                inputField="height"
+                                className=" sm:col-span-3"
                                 options={filteredHeightData(filteredGlass)?.map((height, id) => {
                                     return { id: id + 1, height }
                                 })}
                             />
 
                             <Combobox
-                                label='Posición'
-                                name='location'
-                                inputField='position'
+                                label="Posición"
+                                name="location"
+                                inputField="position"
+                                className=" sm:col-span-3"
                                 options={filteredLocationsData(filteredGlass) as GlassLocation[]}
                             />
-                            <Numeric
-                                label='Cantidad'
-                                disabled={true}
-                                name='quantity'
-                                className=' sm:col-span-3'
+                            <Combobox
+                                label="Proovedor"
+                                name="vendor"
+                                inputField="name"
+                                className=" sm:col-span-3"
+                                options={filteredVendorsData(filteredGlass) as GlassVendor[]}
                             />
                             <Numeric
-                                label='Cantidad a Consumir'
-                                name='difQuantity'
-                                className=' sm:col-span-3'
+                                label="Cantidad"
+                                disabled={true}
+                                name="quantity"
+                                className=" sm:col-span-3"
+                            />
+                            <Numeric
+                                label="Cantidad a Consumir"
+                                name="difQuantity"
+                                className=" sm:col-span-3"
                             />
 
                             <TextArea
-                                label='Comentarios'
-                                name='newComment'
+                                label="Comentarios"
+                                name="newComment"
                             />
                         </>
                     )
@@ -1313,7 +1552,7 @@ const Home: NextPage = () => {
                     <>
                         Editar Vidrio
                         {isNotNullUndefinedOrEmpty(glassToEdit) ? (
-                            <span className='text-sm font-normal text-slate-500'>{`${` #${glassToEdit?.id ?? ''} ${
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassToEdit?.id ?? ''} ${
                                 glassToEdit?.type?.name ?? ''
                             } ${glassToEdit?.width ?? ''}X${glassToEdit?.height ?? ''}`}`}</span>
                         ) : (
@@ -1321,7 +1560,7 @@ const Home: NextPage = () => {
                         )}
                     </>
                 }
-                buttonText='Editar'
+                buttonText="Editar"
                 isOpen={isNotNullUndefinedOrEmpty(glassToEdit)}
                 setIsOpen={(value) => {
                     value || setGlassToEdit(null)
@@ -1332,51 +1571,51 @@ const Home: NextPage = () => {
                     return (
                         <>
                             <Combobox
-                                label='Tipo'
-                                name='type'
-                                inputField='name'
+                                label="Tipo"
+                                name="type"
+                                inputField="name"
                                 options={typesData as GlassType[]}
                             />
                             <Combobox
-                                label='Descripción'
-                                name='type'
-                                inputField='description'
+                                label="Descripción"
+                                name="type"
+                                inputField="description"
                                 options={typesData as GlassType[]}
                             />
                             <Numeric
-                                label='Ancho'
-                                name='width'
-                                className=' sm:col-span-3'
+                                label="Ancho"
+                                name="width"
+                                className=" sm:col-span-3"
                             />
                             <Numeric
-                                label='Alto'
-                                name='height'
-                                className=' sm:col-span-3'
+                                label="Alto"
+                                name="height"
+                                className=" sm:col-span-3"
                             />
 
                             <Combobox
-                                label='Proovedor'
-                                name='vendor'
-                                inputField='name'
-                                className=' sm:col-span-3'
+                                label="Proovedor"
+                                name="vendor"
+                                inputField="name"
+                                className=" sm:col-span-3"
                                 options={vendorsData as GlassVendor[]}
                             />
                             <Combobox
-                                label='Posición'
-                                name='location'
-                                inputField='position'
-                                className=' sm:col-span-3'
+                                label="Posición"
+                                name="location"
+                                inputField="position"
+                                className=" sm:col-span-3"
                                 options={locationsData as GlassLocation[]}
                             />
                             <Numeric
-                                label='Cantidad'
+                                label="Cantidad"
                                 disabled={true}
-                                name='quantity'
+                                name="quantity"
                             />
 
                             <TextArea
-                                label='Comentarios'
-                                name='newComment'
+                                label="Comentarios"
+                                name="newComment"
                             />
                         </>
                     )
@@ -1388,7 +1627,7 @@ const Home: NextPage = () => {
                 title={`¿Desea eliminar el vidrio #${
                     isNotNullUndefinedOrEmpty(glassToDelete) ? `${glassToDelete?.id ?? ''}` : ''
                 }?`}
-                titleStyles='text-center'
+                titleStyles="text-center"
                 buttonText={`Eliminar #${
                     isNotNullUndefinedOrEmpty(glassToDelete)
                         ? `${glassToDelete?.id ?? ''} ${glassToDelete?.type?.name ?? ''} ${
@@ -1396,7 +1635,7 @@ const Home: NextPage = () => {
                           }X${glassToDelete?.height ?? ''}`
                         : 'vidrio'
                 }`}
-                buttonStyles='bg-red-500 hover:bg-red-600 w-full'
+                buttonStyles="bg-red-500 hover:bg-red-600 w-full"
                 isOpen={isNotNullUndefinedOrEmpty(glassToDelete)}
                 setIsOpen={(value) => {
                     value || setGlassToDelete(null)
@@ -1407,9 +1646,9 @@ const Home: NextPage = () => {
                     return (
                         <>
                             <TextLine
-                                label='Id'
-                                name='id'
-                                className='hidden'
+                                label="Id"
+                                name="id"
+                                className="hidden"
                             />
                         </>
                     )

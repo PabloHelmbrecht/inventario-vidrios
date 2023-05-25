@@ -137,7 +137,7 @@ export async function updateGlass(request: NextRequest) {
     const prisma = new PrismaClient()
     try {
         //Obtengo el vidrio de la petición y el id de los query params
-        const glassUpdates = await request.json() as Glass
+        const glassUpdates = (await request.json()) as Glass
         const { searchParams } = new URL(request.url)
 
         const id = Number(searchParams.get('id'))

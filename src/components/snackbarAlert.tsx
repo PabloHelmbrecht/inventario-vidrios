@@ -14,7 +14,7 @@ function TransitionUp(props: TransitionProps) {
     return (
         <Slide
             {...props}
-            direction='up'
+            direction="up"
         />
     )
 }
@@ -37,19 +37,19 @@ export const Alert: React.FC<AlertProps> = ({ type, message }) => {
 
     switch (type) {
         case 'info':
-            icon = <InformationCircleIcon className='mr-2 w-5' />
+            icon = <InformationCircleIcon className="mr-2 w-5" />
             bgColor = 'bg-blue-200'
 
             textColor = 'text-blue-800'
             break
         case 'warning':
-            icon = <ExclamationTriangleIcon className='mr-2 w-5' />
+            icon = <ExclamationTriangleIcon className="mr-2 w-5" />
             bgColor = 'bg-red-200'
 
             textColor = 'text-red-800'
             break
         case 'success':
-            icon = <CheckCircleIcon className='mr-2 w-5' />
+            icon = <CheckCircleIcon className="mr-2 w-5" />
             bgColor = 'bg-emerald-200'
 
             textColor = 'text-emerald-800'
@@ -80,7 +80,7 @@ export const SnackbarAlert: React.FC<SnackbarProps> = ({ state, setState, autoHi
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                     onClose={() => setState(null)}
                     autoHideDuration={autoHideDuration}>
-                    <div className='mb-4'>
+                    <div className="mb-4">
                         <Alert {...state} />
                     </div>
                 </Snackbar>
