@@ -68,16 +68,19 @@ export async function createGlass(request: NextRequest) {
         //Obtengo el vidrio a través de request
         const requestData = (await request.json()) as Glass
 
+        if (requestData.width) requestData.width = Number(requestData.width)
+        if (requestData.height) requestData.height = Number(requestData.height)
+        if (requestData.quantity) requestData.quantity = Number(requestData.quantity)
         requestData.status = 'STORED'
 
         //Busco en la base de datos si existe un vidrio con las mismas características
         let createdGlass: Glass | null = await prisma.glass.findFirst({
             where: {
-                typeId: requestData.typeId ?? undefined,
-                locationId: requestData.locationId ?? undefined,
-                vendorId: requestData.vendorId ?? undefined,
-                height: requestData.height ?? undefined,
-                width: requestData.width ?? undefined,
+                typeId: requestData.typeId ?? null,
+                locationId: requestData.locationId ?? null,
+                vendorId: requestData.vendorId ?? null,
+                height: requestData.height ?? null,
+                width: requestData.width ?? null,
             },
         })
 
@@ -157,11 +160,11 @@ export async function updateGlass(request: NextRequest) {
                     id: {
                         not: id,
                     },
-                    typeId: glassUpdates.typeId,
-                    locationId: glassUpdates.locationId,
-                    vendorId: glassUpdates.vendorId,
-                    height: glassUpdates.height,
-                    width: glassUpdates.width,
+                    typeId: glassUpdates.typeId ?? null,
+                    locationId: glassUpdates.locationId ?? null,
+                    vendorId: glassUpdates.vendorId ?? null,
+                    height: glassUpdates.height ?? null,
+                    width: glassUpdates.width ?? null,
                 },
             })
 

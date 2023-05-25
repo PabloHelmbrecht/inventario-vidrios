@@ -102,12 +102,86 @@ const Home: NextPage = () => {
         }
     }
 
-    const onGlassMovement = (formResponse: object) => {
+    const onGlassMovement = async (formResponse: object) => {
         console.log({ evento: 'Vidrio Movido', ...formResponse })
+        try {
+            const { id, quantity, difQuantity, newComment, type, width, height, vendor, location } =
+                formResponse as formResponseType
+
+            const newQuantity = Number(quantity) - Number(difQuantity)
+
+            if (newQuantity < 0) {
+                setSnackbar({ type: 'warning', message: 'No se puede consumir más vidrio del existente' })
+
+                return
+            }
+
+            //Muevo todo el vidrio solamente cambia de posición
+            if (newQuantity === 0) {
+                const response = await axios.patch(
+                    '/api/glass',
+                    {
+                        quantity: difQuantity,
+                        Comment: newComment,
+                        typeId: type.id,
+                        width,
+                        height,
+                        vendorId: vendor.id,
+                        locationId: location?.id,
+                    },
+                    {
+                        params: {
+                            id,
+                        },
+                    },
+                )
+
+                if (response.data === null) throw new Error('No se obtuvo respuesta')
+            }
+            //Creo un vidrio nuevo igual pero con difquantity y modifico el vidrio anterior con newquantity
+            else {
+                const oldGlass = await axios.patch(
+                    '/api/glass',
+                    {
+                        typeId: type.id,
+                        quantity: newQuantity,
+                        height,
+                        width,
+                        locationId: location?.id,
+                        vendorId: vendor.id,
+                        Comment: newComment,
+                    },
+                    {
+                        params: {
+                            id,
+                        },
+                    },
+                )
+
+                const newGlass = await axios.post('/api/glass', {
+                    typeId: type.id,
+                    quantity: difQuantity,
+                    height,
+                    width,
+                    vendorId: vendor.id,
+                    locationId: location?.id,
+                    Comment: newComment,
+                })
+                if (newGlass.data === null || oldGlass.data === null) throw new Error('No se obtuvo respuesta')
+            }
+
+            setSnackbar({ type: 'success', message: 'Vidrio movido exitosamente' })
+
+            fetchGlassData()
+        } catch (error) {
+            console.error('Error moving glass:', error)
+            setSnackbar({ type: 'warning', message: 'Error al mover el vidrio' })
+        }
     }
     const onGlassConsumption = async (formResponse: object) => {
         try {
-            const { id, quantity, difQuantity, newComment } = formResponse as formResponseType
+            const { id, quantity, difQuantity, newComment, type, width, height, vendor, location } =
+                formResponse as formResponseType
 
             const newQuantity = Number(quantity) - Number(difQuantity)
 
@@ -122,6 +196,11 @@ const Home: NextPage = () => {
                 {
                     quantity: newQuantity,
                     Comment: newComment,
+                    typeId: type.id,
+                    width,
+                    height,
+                    vendorId: vendor.id,
+                    locationId: location?.id,
                 },
                 {
                     params: {
@@ -172,7 +251,7 @@ const Home: NextPage = () => {
                     height,
                     quantity,
                     vendorId: vendor.id,
-                    locationId: location?.id !== null ? location?.id : undefined,
+                    locationId: location?.id,
                     Comment: newComment,
                 },
                 {
@@ -292,7 +371,7 @@ const Home: NextPage = () => {
                 return finalFilter
             })
             .map((glass) => glass.type as GlassType)
-            .filter((v,i,a)=>a.findIndex(v2=>(v2.name===v.name))===i)
+            .filter((v, i, a) => a.findIndex((v2) => v2.name === v.name) === i)
 
     const filteredLocationsData = (filteredGlass: SuperGlass) =>
         glassData
@@ -314,7 +393,7 @@ const Home: NextPage = () => {
                 return finalFilter
             })
             .map((glass) => glass.location as GlassLocation)
-            .filter((v,i,a)=>a.findIndex(v2=>(v2.position===v.position))===i)
+            .filter((v, i, a) => a.findIndex((v2) => v2.position === v.position) === i)
 
     const filteredVendorsData = (filteredGlass: SuperGlass) =>
         glassData
@@ -336,53 +415,63 @@ const Home: NextPage = () => {
                 return finalFilter
             })
             .map((glass) => glass.vendor as GlassVendor)
-            .filter((v,i,a)=>a.findIndex(v2=>(v2.name===v.name))===i)
+            .filter((v, i, a) => a.findIndex((v2) => v2.name === v.name) === i)
 
-    const filteredWidthData = (filteredGlass: SuperGlass) =>
-        [...new Set(glassData
-            ?.filter((glass) => {
-                const { type, location, height, vendor } = glass
+    const filteredWidthData = (filteredGlass: SuperGlass) => [
+        ...new Set(
+            glassData
+                ?.filter((glass) => {
+                    const { type, location, height, vendor } = glass
 
-                const filterVendor: boolean = filteredGlass?.vendor?.name
-                    ? filteredGlass?.vendor?.name === vendor?.name
-                    : true
+                    const filterVendor: boolean = filteredGlass?.vendor?.name
+                        ? filteredGlass?.vendor?.name === vendor?.name
+                        : true
 
-                const filterType: boolean = filteredGlass?.type?.name ? filteredGlass?.type?.name === type?.name : true
+                    const filterType: boolean = filteredGlass?.type?.name
+                        ? filteredGlass?.type?.name === type?.name
+                        : true
 
-                const filterLocation: boolean = filteredGlass?.location?.position
-                    ? filteredGlass?.location?.position === location?.position
-                    : true
+                    const filterLocation: boolean = filteredGlass?.location?.position
+                        ? filteredGlass?.location?.position === location?.position
+                        : true
 
-                const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
+                    const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
 
-                const finalFilter = filterVendor && filterType && filterLocation && filterHeight
+                    const finalFilter = filterVendor && filterType && filterLocation && filterHeight
 
-                return finalFilter
-            })
-            .map((glass) => glass.width))]
+                    return finalFilter
+                })
+                .map((glass) => glass.width),
+        ),
+    ]
 
-    const filteredHeightData = (filteredGlass: SuperGlass) =>
-        [...new Set(glassData
-            ?.filter((glass) => {
-                const { type, location, width, vendor } = glass
+    const filteredHeightData = (filteredGlass: SuperGlass) => [
+        ...new Set(
+            glassData
+                ?.filter((glass) => {
+                    const { type, location, width, vendor } = glass
 
-                const filterVendor: boolean = filteredGlass?.vendor?.name
-                    ? filteredGlass?.vendor?.name === vendor?.name
-                    : true
+                    const filterVendor: boolean = filteredGlass?.vendor?.name
+                        ? filteredGlass?.vendor?.name === vendor?.name
+                        : true
 
-                const filterType: boolean = filteredGlass?.type?.name ? filteredGlass?.type?.name === type?.name : true
+                    const filterType: boolean = filteredGlass?.type?.name
+                        ? filteredGlass?.type?.name === type?.name
+                        : true
 
-                const filterLocation: boolean = filteredGlass?.location?.position
-                    ? filteredGlass?.location?.position === location?.position
-                    : true
+                    const filterLocation: boolean = filteredGlass?.location?.position
+                        ? filteredGlass?.location?.position === location?.position
+                        : true
 
-                const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
+                    const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
 
-                const finalFilter = filterVendor && filterType && filterLocation && filterWidth
+                    const finalFilter = filterVendor && filterType && filterLocation && filterWidth
 
-                return finalFilter
-            })
-            .map((glass) => glass.height))]
+                    return finalFilter
+                })
+                .map((glass) => glass.height),
+        ),
+    ]
 
     const filterGlassData = (filteredGlass: SuperGlass & { difQuantity: string }) => {
         const foundGlass: SuperGlass[] | undefined = glassData?.filter((glass) => {
