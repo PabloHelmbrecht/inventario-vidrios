@@ -26,7 +26,7 @@ import Numeric from '../components/inputFields/numericField'
 import TextArea from '../components/inputFields/textareaField'
 import TextLine from '../components/inputFields/textlineField'
 import DialogForm from '../components/dialogForm'
-// import {useDialogFormContext} from '../components/dialogForm'
+import Toggle from '../components/toggle'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
 
 //Custom Functions
@@ -64,6 +64,7 @@ const Home: NextPage = () => {
     const [glassFiltered, setGlassFiltered] = useState<SuperGlass | null>(null)
     const [allowQuantityChange, setAllowQuantityChange] = useState<boolean>(false)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
+    const [seeConsumedGlass, setSeeConsumedGlass] = useState<boolean>(false)
 
     const [isGlassCreatorOpen, setIsGlassCreatorOpen] = useState<boolean>(false)
     const [isGlassMoverOpen, setIsGlassMoverOpen] = useState<boolean>(false)
@@ -683,6 +684,16 @@ const Home: NextPage = () => {
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
                     <div className="flex w-full flex-col justify-center gap-4">
+                        <div className="flex w-full justify-between items-end">
+                        <div className="flex items-center justify-start gap-2 w-1/2 pl-2">
+                            <span className="text-sm font-medium text-gray-700">Ver consumidos</span>
+                            <Toggle
+                            text='test'
+                            enabled={seeConsumedGlass}
+                            setEnabled={setSeeConsumedGlass}
+                            color='bg-red-500'
+                            />
+                            </div>
                         <div className="flex w-full justify-end gap-3">
                             <button
                                 onClick={() => {
@@ -709,6 +720,7 @@ const Home: NextPage = () => {
                                 className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:bg-slate-500">
                                 Consumir
                             </button>
+                        </div>
                         </div>
                         {glassData && (
                             <DataGrid
