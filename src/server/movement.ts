@@ -98,7 +98,7 @@ export async function PATCH(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id'))
         const movementData = (await request.json()) as GlassMovement
-        const updatedMovement = prisma.glassMovement.update({
+        const updatedMovement = await prisma.glassMovement.update({
             where: {
                 id: id,
             },

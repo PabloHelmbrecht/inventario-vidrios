@@ -507,7 +507,7 @@ const Home: NextPage = () => {
         {
             headerName: 'Id',
             field: 'id',
-            width: 40,
+            width: 70,
             type: 'number',
             valueFormatter: (params) => `#${(params?.value as string) ?? ''}`,
         },

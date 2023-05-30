@@ -55,7 +55,7 @@ export async function PATCH(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id'))
         const vendorData = (await request.json()) as GlassVendor
-        const updatedVendor = prisma.glassVendor.update({
+        const updatedVendor = await prisma.glassVendor.update({
             where: {
                 id: id,
             },

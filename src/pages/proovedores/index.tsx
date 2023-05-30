@@ -18,7 +18,7 @@ import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridV
 import axios from 'axios'
 
 //Prisma
-import { type GlassType } from '@prisma/client'
+import { type GlassVendor } from '@prisma/client'
 
 //Custom Components
 import TextLine from '../../components/inputFields/textlineField'
@@ -34,7 +34,6 @@ import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
 interface formResponseType {
     id?: number
     name: string
-    description: string
 }
 
 /*eslint-disable @typescript-eslint/no-misused-promises*/
@@ -42,97 +41,97 @@ interface formResponseType {
 
 const Home: NextPage = () => {
     //States
-    const [typeSelection, setTypeSelection] = useState<GlassType | null>(null)
+    const [vendorSelection, setVendorSelection] = useState<GlassVendor | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
 
-    const [isTypeCreatorOpen, setIsTypeCreatorOpen] = useState<boolean>(false)
+    const [isVendorCreatorOpen, setIsVendorCreatorOpen] = useState<boolean>(false)
 
-    const [typeToDelete, setTypeToDelete] = useState<GlassType | null>(null)
-    const [typeToEdit, setTypeToEdit] = useState<GlassType | null>(null)
+    const [vendorToDelete, setVendorToDelete] = useState<GlassVendor | null>(null)
+    const [vendorToEdit, setVendorToEdit] = useState<GlassVendor | null>(null)
 
-    const [typesData, setTypesData] = useState<GlassType[] | null>(null)
+    const [vendorsData, setVendorsData] = useState<GlassVendor[] | null>(null)
 
     //Functions
     //- Submit Functions
-    const onTypeCreation = async (formResponse: object) => {
+    const onVendorCreation = async (formResponse: object) => {
         try {
-            const { name, description } = formResponse as formResponseType
+            const { name } = formResponse as formResponseType
 
-            const response = await axios.post(`/api/type`, {
+            const response = await axios.post(`/api/vendor`, {
                 name,
-                description,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
-            setSnackbar({ type: 'success', message: 'Tipo cargado exitosamente' })
+            setSnackbar({ type: 'success', message: 'Proovedor cargado exitosamente' })
 
-            fetchTypesData()
+            fetchVendorsData()
         } catch (error) {
             console.error('Error creating type:', error)
-            setSnackbar({ type: 'warning', message: 'Error al crear el tipo' })
+            setSnackbar({ type: 'warning', message: 'Error al crear el proovedor' })
         }
     }
 
-    const onTypeDelete = async (formResponse: object) => {
+    const onVendorDelete = async (formResponse: object) => {
         try {
             const { id } = formResponse as formResponseType
-            const response = await axios.delete(`/api/type/${Number(id)}`)
+            const response = await axios.delete(`/api/vendor/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
-            setSnackbar({ type: 'success', message: 'Tipo eliminado exitosamente' })
+            setSnackbar({ type: 'success', message: 'Proovedor eliminado exitosamente' })
 
-            fetchTypesData()
+            fetchVendorsData()
         } catch (error) {
             console.error('Error deleting type:', error)
-            setSnackbar({ type: 'warning', message: 'Error al eliminar el tipo' })
+            setSnackbar({ type: 'warning', message: 'Error al eliminar el proovedor' })
         }
     }
 
-    const onTypeEdit = async (formResponse: object) => {
+    const onVendorEdit = async (formResponse: object) => {
         try {
-            const { id, name, description } = formResponse as formResponseType
+            const { id, name } = formResponse as formResponseType
 
-            const response = await axios.patch(`/api/type/${Number(id)}`, {
+            const response = await axios.patch(`/api/vendor/${Number(id)}`, {
                 name,
-                description,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
-            setSnackbar({ type: 'success', message: 'Tipo editado exitosamente' })
+            setSnackbar({ type: 'success', message: 'Proovedor editado exitosamente' })
 
-            fetchTypesData()
+            fetchVendorsData()
         } catch (error) {
             console.error('Error deleting glass:', error)
-            setSnackbar({ type: 'warning', message: 'Error al editar el tipo de vidrio' })
+            setSnackbar({ type: 'warning', message: 'Error al editar el proovedor' })
         }
     }
 
     //- Fetch Functions
 
-    const fetchTypesData = async () => {
+    const fetchVendorsData = async () => {
         try {
-            const cachedResponse: GlassType[] = JSON.parse(localStorage.getItem('typesData') ?? '{}') as GlassType[]
-            setTypesData(cachedResponse)
+            const cachedResponse: GlassVendor[] = JSON.parse(
+                localStorage.getItem('vendorsData') ?? '{}',
+            ) as GlassVendor[]
+            setVendorsData(cachedResponse)
 
-            const response = await axios.get(`/api/type`)
-            if (response.data === null) throw new Error('No hay tipos')
-            localStorage.setItem('typesData', JSON.stringify(response.data))
-            setTypesData(response.data as GlassType[])
-            setSnackbar({ type: 'success', message: 'Tipos de Vidrio Actualizados' })
+            const response = await axios.get(`/api/vendor`)
+            if (response.data === null) throw new Error('No hay proovedores')
+            localStorage.setItem('vendorsData', JSON.stringify(response.data))
+            setVendorsData(response.data as GlassVendor[])
+            setSnackbar({ type: 'success', message: 'Proovedores Actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
             setSnackbar({
                 type: 'warning',
-                message: 'Error al obtener los tipos de vidrio',
+                message: 'Error al obtener los proovedores',
             })
         }
     }
 
     //useEffect
     useEffect(() => {
-        fetchTypesData()
+        fetchVendorsData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     //DataGrid Definitions
-    const rows: GlassType[] = useMemo(() => typesData as GlassType[], [typesData])
+    const rows: GlassVendor[] = useMemo(() => vendorsData as GlassVendor[], [vendorsData])
 
     const columns: GridColDef[] = [
         {
@@ -143,15 +142,9 @@ const Home: NextPage = () => {
             valueFormatter: (params) => `#${(params?.value as string) ?? ''}`,
         },
         {
-            headerName: 'Código',
-            width: 160,
+            headerName: 'Proovedor',
+            width: 120,
             field: 'name',
-        },
-
-        {
-            headerName: 'Descripción',
-            field: 'description',
-            width: 400,
         },
         {
             headerName: 'Creado En',
@@ -176,13 +169,13 @@ const Home: NextPage = () => {
                     key={1}
                     icon={<TrashIcon className="w-4" />}
                     label="Delete"
-                    onClick={() => setTypeToDelete(row as GlassType)}
+                    onClick={() => setVendorToDelete(row as GlassVendor)}
                 />,
                 <GridActionsCellItem
                     key={1}
                     icon={<PencilSquareIcon className="w-4" />}
                     label="Delete"
-                    onClick={() => setTypeToEdit(row as GlassType)}
+                    onClick={() => setVendorToEdit(row as GlassVendor)}
                 />,
             ],
         },
@@ -191,7 +184,7 @@ const Home: NextPage = () => {
     return (
         <>
             <Head>
-                <title>Tipos de Vidrios</title>
+                <title>Listado de Proovedores</title>
                 <meta
                     name="description"
                     content="Gestor de inventario"
@@ -204,21 +197,21 @@ const Home: NextPage = () => {
 
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
-                    <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Tipos de Vidrio</h1>
-                    <div className="flex h-screen_3/4  w-auto max-w-full  flex-col justify-center gap-4">
+                    <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Listado de Proovedores</h1>
+                    <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4">
                         <div className="flex w-full items-end justify-between">
                             <div className="flex w-full justify-end gap-3">
                                 <button
                                     onClick={() => {
-                                        setIsTypeCreatorOpen(true)
+                                        setIsVendorCreatorOpen(true)
                                     }}
-                                    disabled={!typesData}
+                                    disabled={!vendorsData}
                                     className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
-                                    Crear Tipo
+                                    Crear Proovedor
                                 </button>
                             </div>
                         </div>
-                        {typesData && (
+                        {vendorsData && (
                             <DataGrid
                                 disableDensitySelector
                                 localeText={GRID_DEFAULT_LOCALE_TEXT}
@@ -226,7 +219,7 @@ const Home: NextPage = () => {
                                 columns={columns}
                                 slots={{ toolbar: GridToolbar }}
                                 onRowSelectionModelChange={(ids) =>
-                                    setTypeSelection(rows.find((row) => row.id === ids[0]) as GlassType)
+                                    setVendorSelection(rows.find((row) => row.id === ids[0]) as GlassVendor)
                                 }
                                 slotProps={{
                                     toolbar: {
@@ -257,23 +250,19 @@ const Home: NextPage = () => {
 
             {/*Formulario de Carga en almacen traer solo almacen de esa posicion*/}
             <DialogForm
-                title="Crear Tipo de Vidrio"
+                title="Crear Proovedor"
                 buttonText="Crear"
                 buttonStyles="bg-emerald-500 hover:bg-emerald-600"
-                isOpen={isTypeCreatorOpen}
-                setIsOpen={setIsTypeCreatorOpen}
-                onSubmit={onTypeCreation}
-                initialValues={typeSelection}
+                isOpen={isVendorCreatorOpen}
+                setIsOpen={setIsVendorCreatorOpen}
+                onSubmit={onVendorCreation}
+                initialValues={vendorSelection}
                 render={() => {
                     return (
                         <>
                             <TextLine
-                                label="Código"
+                                label="Proovedor"
                                 name="name"
-                            />
-                            <TextLine
-                                label="Descripción"
-                                name="description"
                             />
                         </>
                     )
@@ -284,31 +273,29 @@ const Home: NextPage = () => {
             <DialogForm
                 title={
                     <>
-                        Editar Tipo de Vidrio
-                        {isNotNullUndefinedOrEmpty(typeToEdit) ? (
-                            <span className="text-sm font-normal text-slate-500">{`   ${typeToEdit?.name ?? ''}`}</span>
+                        Editar Proovedor
+                        {isNotNullUndefinedOrEmpty(vendorToEdit) ? (
+                            <span className="text-sm font-normal text-slate-500">{`   ${
+                                vendorToEdit?.name ?? ''
+                            }`}</span>
                         ) : (
                             ''
                         )}
                     </>
                 }
                 buttonText="Editar"
-                isOpen={isNotNullUndefinedOrEmpty(typeToEdit)}
+                isOpen={isNotNullUndefinedOrEmpty(vendorToEdit)}
                 setIsOpen={(value) => {
-                    value || setTypeToEdit(null)
+                    value || setVendorToEdit(null)
                 }}
-                onSubmit={onTypeEdit}
-                initialValues={typeToEdit}
+                onSubmit={onVendorEdit}
+                initialValues={vendorToEdit}
                 render={() => {
                     return (
                         <>
                             <TextLine
-                                label="Código"
+                                label="Proovedor"
                                 name="name"
-                            />
-                            <TextLine
-                                label="Descripción"
-                                name="description"
                             />
                         </>
                     )
@@ -317,18 +304,20 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title={`¿Desea eliminar el tipo ${
-                    isNotNullUndefinedOrEmpty(typeToDelete) ? `${typeToDelete?.name ?? ''}` : ''
+                title={`¿Desea eliminar el proovedor  ${
+                    isNotNullUndefinedOrEmpty(vendorToDelete) ? `${vendorToDelete?.name ?? ''}` : ''
                 }?`}
                 titleStyles="text-center"
-                buttonText={`Eliminar ${isNotNullUndefinedOrEmpty(typeToDelete) ? `${typeToDelete?.name ?? ''}` : ''}`}
+                buttonText={`Eliminar ${
+                    isNotNullUndefinedOrEmpty(vendorToDelete) ? `${vendorToDelete?.name ?? ''}` : ''
+                }`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"
-                isOpen={isNotNullUndefinedOrEmpty(typeToDelete)}
+                isOpen={isNotNullUndefinedOrEmpty(vendorToDelete)}
                 setIsOpen={(value) => {
-                    value || setTypeToDelete(null)
+                    value || setVendorToDelete(null)
                 }}
-                onSubmit={onTypeDelete}
-                initialValues={typeToDelete}
+                onSubmit={onVendorDelete}
+                initialValues={vendorToDelete}
                 render={() => {
                     return (
                         <>

@@ -56,12 +56,14 @@ export async function PATCH(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id'))
         const typeData = (await request.json()) as GlassType
-        const updatedType = prisma.glassType.update({
+        const updatedType = await prisma.glassType.update({
             where: {
                 id: id,
             },
             data: typeData,
         })
+
+        console.log({ updatedType })
 
         return NextResponse.json(updatedType)
     } catch (error) {

@@ -56,7 +56,7 @@ export async function PATCH(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id'))
         const locationData = (await request.json()) as GlassLocation
-        const updatedLocation = prisma.glassLocation.update({
+        const updatedLocation = await prisma.glassLocation.update({
             where: {
                 id: id,
             },

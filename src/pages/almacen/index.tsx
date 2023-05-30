@@ -18,7 +18,7 @@ import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridV
 import axios from 'axios'
 
 //Prisma
-import { type GlassType } from '@prisma/client'
+import { type GlassLocation } from '@prisma/client'
 
 //Custom Components
 import TextLine from '../../components/inputFields/textlineField'
@@ -33,8 +33,8 @@ import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
 
 interface formResponseType {
     id?: number
-    name: string
-    description: string
+    position: string
+    warehouse: string
 }
 
 /*eslint-disable @typescript-eslint/no-misused-promises*/
@@ -42,97 +42,99 @@ interface formResponseType {
 
 const Home: NextPage = () => {
     //States
-    const [typeSelection, setTypeSelection] = useState<GlassType | null>(null)
+    const [locationSelection, setLocationSelection] = useState<GlassLocation | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
 
-    const [isTypeCreatorOpen, setIsTypeCreatorOpen] = useState<boolean>(false)
+    const [isLocationCreatorOpen, setIsLocationCreatorOpen] = useState<boolean>(false)
 
-    const [typeToDelete, setTypeToDelete] = useState<GlassType | null>(null)
-    const [typeToEdit, setTypeToEdit] = useState<GlassType | null>(null)
+    const [locationToDelete, setLocationToDelete] = useState<GlassLocation | null>(null)
+    const [locationToEdit, setLocationToEdit] = useState<GlassLocation | null>(null)
 
-    const [typesData, setTypesData] = useState<GlassType[] | null>(null)
+    const [locationsData, setLocationsData] = useState<GlassLocation[] | null>(null)
 
     //Functions
     //- Submit Functions
-    const onTypeCreation = async (formResponse: object) => {
+    const onLocationCreation = async (formResponse: object) => {
         try {
-            const { name, description } = formResponse as formResponseType
+            const { position, warehouse } = formResponse as formResponseType
 
-            const response = await axios.post(`/api/type`, {
-                name,
-                description,
+            const response = await axios.post(`/api/location`, {
+                position,
+                warehouse,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
-            setSnackbar({ type: 'success', message: 'Tipo cargado exitosamente' })
+            setSnackbar({ type: 'success', message: 'Posición cargada exitosamente' })
 
-            fetchTypesData()
+            fetchLocationsData()
         } catch (error) {
             console.error('Error creating type:', error)
-            setSnackbar({ type: 'warning', message: 'Error al crear el tipo' })
+            setSnackbar({ type: 'warning', message: 'Error al crear la posición' })
         }
     }
 
-    const onTypeDelete = async (formResponse: object) => {
+    const onLocationDelete = async (formResponse: object) => {
         try {
             const { id } = formResponse as formResponseType
-            const response = await axios.delete(`/api/type/${Number(id)}`)
+            const response = await axios.delete(`/api/location/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
-            setSnackbar({ type: 'success', message: 'Tipo eliminado exitosamente' })
+            setSnackbar({ type: 'success', message: 'Posición eliminada exitosamente' })
 
-            fetchTypesData()
+            fetchLocationsData()
         } catch (error) {
             console.error('Error deleting type:', error)
-            setSnackbar({ type: 'warning', message: 'Error al eliminar el tipo' })
+            setSnackbar({ type: 'warning', message: 'Error al eliminar la posición' })
         }
     }
 
-    const onTypeEdit = async (formResponse: object) => {
+    const onLocationEdit = async (formResponse: object) => {
         try {
-            const { id, name, description } = formResponse as formResponseType
+            const { id, position, warehouse } = formResponse as formResponseType
 
-            const response = await axios.patch(`/api/type/${Number(id)}`, {
-                name,
-                description,
+            const response = await axios.patch(`/api/location/${Number(id)}`, {
+                position,
+                warehouse,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
-            setSnackbar({ type: 'success', message: 'Tipo editado exitosamente' })
+            setSnackbar({ type: 'success', message: 'Posición editada exitosamente' })
 
-            fetchTypesData()
+            fetchLocationsData()
         } catch (error) {
             console.error('Error deleting glass:', error)
-            setSnackbar({ type: 'warning', message: 'Error al editar el tipo de vidrio' })
+            setSnackbar({ type: 'warning', message: 'Error al editar la posición' })
         }
     }
 
     //- Fetch Functions
 
-    const fetchTypesData = async () => {
+    const fetchLocationsData = async () => {
         try {
-            const cachedResponse: GlassType[] = JSON.parse(localStorage.getItem('typesData') ?? '{}') as GlassType[]
-            setTypesData(cachedResponse)
+            const cachedResponse: GlassLocation[] = JSON.parse(
+                localStorage.getItem('locationsData') ?? '{}',
+            ) as GlassLocation[]
+            setLocationsData(cachedResponse)
 
-            const response = await axios.get(`/api/type`)
-            if (response.data === null) throw new Error('No hay tipos')
-            localStorage.setItem('typesData', JSON.stringify(response.data))
-            setTypesData(response.data as GlassType[])
-            setSnackbar({ type: 'success', message: 'Tipos de Vidrio Actualizados' })
+            const response = await axios.get(`/api/location`)
+            if (response.data === null) throw new Error('No hay posiciones')
+            localStorage.setItem('locationsData', JSON.stringify(response.data))
+            setLocationsData(response.data as GlassLocation[])
+            setSnackbar({ type: 'success', message: 'Posiciones Actualizadas' })
         } catch (error) {
             console.error('Error fetching data:', error)
             setSnackbar({
                 type: 'warning',
-                message: 'Error al obtener los tipos de vidrio',
+                message: 'Error al obtener las posiciones',
             })
         }
     }
 
     //useEffect
     useEffect(() => {
-        fetchTypesData()
+        fetchLocationsData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     //DataGrid Definitions
-    const rows: GlassType[] = useMemo(() => typesData as GlassType[], [typesData])
+    const rows: GlassLocation[] = useMemo(() => locationsData as GlassLocation[], [locationsData])
 
     const columns: GridColDef[] = [
         {
@@ -143,15 +145,15 @@ const Home: NextPage = () => {
             valueFormatter: (params) => `#${(params?.value as string) ?? ''}`,
         },
         {
-            headerName: 'Código',
-            width: 160,
-            field: 'name',
+            headerName: 'Posición',
+            width: 100,
+            field: 'position',
         },
 
         {
-            headerName: 'Descripción',
-            field: 'description',
-            width: 400,
+            headerName: 'Almacén',
+            field: 'warehouse',
+            width: 120,
         },
         {
             headerName: 'Creado En',
@@ -176,13 +178,13 @@ const Home: NextPage = () => {
                     key={1}
                     icon={<TrashIcon className="w-4" />}
                     label="Delete"
-                    onClick={() => setTypeToDelete(row as GlassType)}
+                    onClick={() => setLocationToDelete(row as GlassLocation)}
                 />,
                 <GridActionsCellItem
                     key={1}
                     icon={<PencilSquareIcon className="w-4" />}
                     label="Delete"
-                    onClick={() => setTypeToEdit(row as GlassType)}
+                    onClick={() => setLocationToEdit(row as GlassLocation)}
                 />,
             ],
         },
@@ -191,7 +193,7 @@ const Home: NextPage = () => {
     return (
         <>
             <Head>
-                <title>Tipos de Vidrios</title>
+                <title>Listado de Posiciones</title>
                 <meta
                     name="description"
                     content="Gestor de inventario"
@@ -204,21 +206,21 @@ const Home: NextPage = () => {
 
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
-                    <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Tipos de Vidrio</h1>
-                    <div className="flex h-screen_3/4  w-auto max-w-full  flex-col justify-center gap-4">
+                    <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Listado de Posiciones</h1>
+                    <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4">
                         <div className="flex w-full items-end justify-between">
                             <div className="flex w-full justify-end gap-3">
                                 <button
                                     onClick={() => {
-                                        setIsTypeCreatorOpen(true)
+                                        setIsLocationCreatorOpen(true)
                                     }}
-                                    disabled={!typesData}
+                                    disabled={!locationsData}
                                     className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
-                                    Crear Tipo
+                                    Crear Posición
                                 </button>
                             </div>
                         </div>
-                        {typesData && (
+                        {locationsData && (
                             <DataGrid
                                 disableDensitySelector
                                 localeText={GRID_DEFAULT_LOCALE_TEXT}
@@ -226,7 +228,7 @@ const Home: NextPage = () => {
                                 columns={columns}
                                 slots={{ toolbar: GridToolbar }}
                                 onRowSelectionModelChange={(ids) =>
-                                    setTypeSelection(rows.find((row) => row.id === ids[0]) as GlassType)
+                                    setLocationSelection(rows.find((row) => row.id === ids[0]) as GlassLocation)
                                 }
                                 slotProps={{
                                     toolbar: {
@@ -257,23 +259,23 @@ const Home: NextPage = () => {
 
             {/*Formulario de Carga en almacen traer solo almacen de esa posicion*/}
             <DialogForm
-                title="Crear Tipo de Vidrio"
+                title="Crear Posición"
                 buttonText="Crear"
                 buttonStyles="bg-emerald-500 hover:bg-emerald-600"
-                isOpen={isTypeCreatorOpen}
-                setIsOpen={setIsTypeCreatorOpen}
-                onSubmit={onTypeCreation}
-                initialValues={typeSelection}
+                isOpen={isLocationCreatorOpen}
+                setIsOpen={setIsLocationCreatorOpen}
+                onSubmit={onLocationCreation}
+                initialValues={locationSelection}
                 render={() => {
                     return (
                         <>
                             <TextLine
-                                label="Código"
-                                name="name"
+                                label="Posición"
+                                name="position"
                             />
                             <TextLine
-                                label="Descripción"
-                                name="description"
+                                label="Almacén"
+                                name="warehouse"
                             />
                         </>
                     )
@@ -284,31 +286,33 @@ const Home: NextPage = () => {
             <DialogForm
                 title={
                     <>
-                        Editar Tipo de Vidrio
-                        {isNotNullUndefinedOrEmpty(typeToEdit) ? (
-                            <span className="text-sm font-normal text-slate-500">{`   ${typeToEdit?.name ?? ''}`}</span>
+                        Editar Posición
+                        {isNotNullUndefinedOrEmpty(locationToEdit) ? (
+                            <span className="text-sm font-normal text-slate-500">{`   ${
+                                locationToEdit?.position ?? ''
+                            }`}</span>
                         ) : (
                             ''
                         )}
                     </>
                 }
                 buttonText="Editar"
-                isOpen={isNotNullUndefinedOrEmpty(typeToEdit)}
+                isOpen={isNotNullUndefinedOrEmpty(locationToEdit)}
                 setIsOpen={(value) => {
-                    value || setTypeToEdit(null)
+                    value || setLocationToEdit(null)
                 }}
-                onSubmit={onTypeEdit}
-                initialValues={typeToEdit}
+                onSubmit={onLocationEdit}
+                initialValues={locationToEdit}
                 render={() => {
                     return (
                         <>
                             <TextLine
-                                label="Código"
-                                name="name"
+                                label="Posición"
+                                name="position"
                             />
                             <TextLine
-                                label="Descripción"
-                                name="description"
+                                label="Almacén"
+                                name="warehouse"
                             />
                         </>
                     )
@@ -317,18 +321,20 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title={`¿Desea eliminar el tipo ${
-                    isNotNullUndefinedOrEmpty(typeToDelete) ? `${typeToDelete?.name ?? ''}` : ''
+                title={`¿Desea eliminar la posición ${
+                    isNotNullUndefinedOrEmpty(locationToDelete) ? `${locationToDelete?.position ?? ''}` : ''
                 }?`}
                 titleStyles="text-center"
-                buttonText={`Eliminar ${isNotNullUndefinedOrEmpty(typeToDelete) ? `${typeToDelete?.name ?? ''}` : ''}`}
+                buttonText={`Eliminar ${
+                    isNotNullUndefinedOrEmpty(locationToDelete) ? `${locationToDelete?.position ?? ''}` : ''
+                }`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"
-                isOpen={isNotNullUndefinedOrEmpty(typeToDelete)}
+                isOpen={isNotNullUndefinedOrEmpty(locationToDelete)}
                 setIsOpen={(value) => {
-                    value || setTypeToDelete(null)
+                    value || setLocationToDelete(null)
                 }}
-                onSubmit={onTypeDelete}
-                initialValues={typeToDelete}
+                onSubmit={onLocationDelete}
+                initialValues={locationToDelete}
                 render={() => {
                     return (
                         <>
