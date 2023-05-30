@@ -47,6 +47,7 @@ interface formResponseType {
     id?: number
     type: { id: number }
     location?: { id: number }
+    destinyLocation?: { id: number }
     vendor: { id: number }
     width: number
     height: number
@@ -107,10 +108,12 @@ const Home: NextPage = () => {
     const onGlassMovement = async (formResponse: object) => {
         console.log({ evento: 'Vidrio Movido', ...formResponse })
         try {
-            const { id, quantity, difQuantity, newComment, type, width, height, vendor, location } =
+            const { id, quantity, difQuantity, newComment, type, width, height, vendor, location, destinyLocation } =
                 formResponse as formResponseType
 
             const newQuantity = Number(quantity) - Number(difQuantity)
+
+            console.log({newQuantity})
 
             if (newQuantity < 0) {
                 setSnackbar({ type: 'warning', message: 'No se puede consumir más vidrio del existente' })
@@ -127,8 +130,10 @@ const Home: NextPage = () => {
                     width,
                     height,
                     vendorId: vendor.id,
-                    locationId: location?.id,
+                    locationId: destinyLocation?.id,
                 })
+
+                console.log({response})
 
                 if (response.data === null) throw new Error('No se obtuvo respuesta')
             }
@@ -150,9 +155,11 @@ const Home: NextPage = () => {
                     height,
                     width,
                     vendorId: vendor.id,
-                    locationId: location?.id,
+                    locationId: destinyLocation?.id,
                     Comment: newComment,
                 })
+
+                console.log({oldGlass,newGlass})
                 if (newGlass.data === null || oldGlass.data === null) throw new Error('No se obtuvo respuesta')
             }
 
@@ -1163,7 +1170,7 @@ const Home: NextPage = () => {
                                 label="Ancho"
                                 name="width"
                                 inputField="width"
-                                className=" sm:col-span-3"
+                                className=" sm:col-span-2"
                                 options={filteredWidthData(filteredGlass)?.map((width, id) => {
                                     return { id: id + 1, width }
                                 })}
@@ -1172,7 +1179,7 @@ const Home: NextPage = () => {
                                 label="Alto"
                                 name="height"
                                 inputField="height"
-                                className=" sm:col-span-3"
+                                className=" sm:col-span-2"
                                 options={filteredHeightData(filteredGlass)?.map((height, id) => {
                                     return { id: id + 1, height }
                                 })}
@@ -1182,6 +1189,7 @@ const Home: NextPage = () => {
                                 label="Proovedor"
                                 name="vendor"
                                 inputField="name"
+                                className=" sm:col-span-2"
                                 options={filteredVendorsData(filteredGlass) as GlassVendor[]}
                             />
 
