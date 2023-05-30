@@ -9,7 +9,7 @@ export const config = {
 }
 
 // GET /api/glass
-export async function getGlass(req: NextRequest) {
+export async function GET(req: NextRequest) {
     const prisma = new PrismaClient()
 
     try {
@@ -61,7 +61,7 @@ export async function getGlass(req: NextRequest) {
 }
 
 // POST /api/glass
-export async function createGlass(request: NextRequest) {
+export async function POST(request: NextRequest) {
     const prisma = new PrismaClient()
 
     try {
@@ -136,7 +136,7 @@ export async function createGlass(request: NextRequest) {
 }
 
 // PATCH /api/glass/:id
-export async function updateGlass(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
     const prisma = new PrismaClient()
     try {
         //Obtengo el vidrio de la petición y el id de los query params
@@ -147,7 +147,8 @@ export async function updateGlass(request: NextRequest) {
 
         if (!id || isNaN(id)) throw new Error('Se debe proveer un id válido')
 
-        if (glassUpdates.quantity===null||glassUpdates===undefined) throw new Error('Se debe proveer las cantidades del vidrio a modificar')
+        if (glassUpdates.quantity === null || glassUpdates === undefined)
+            throw new Error('Se debe proveer las cantidades del vidrio a modificar')
 
         if (glassUpdates.width) glassUpdates.width = Number(glassUpdates.width)
         if (glassUpdates.height) glassUpdates.height = Number(glassUpdates.height)
@@ -247,7 +248,7 @@ export async function updateGlass(request: NextRequest) {
 }
 
 // DELETE /api/glass/:id
-export async function deleteGlass(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
     const prisma = new PrismaClient()
 
     try {
@@ -274,5 +275,7 @@ export async function deleteGlass(request: NextRequest) {
         console.error('Error al eliminar el vidrio:', error)
 
         return NextResponse.json(null, { status: 500 })
+    } finally {
+        await prisma.$disconnect()
     }
 }

@@ -13,7 +13,7 @@ export default {
 
         extend: {
             height: {
-                'screen_3/4':'70vh'
+                'screen_3/4':'65vh'
               }
         },
     },

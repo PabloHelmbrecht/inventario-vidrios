@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { getGlass, createGlass, updateGlass, deleteGlass } from '../../server/glass'
+import { GET, POST, PATCH, DELETE } from '../../../server/location'
 
 export const config = {
     runtime: 'edge',
@@ -10,13 +10,13 @@ export const config = {
 export default async function handler(request: NextRequest, response: NextResponse) {
     try {
         if (request.method === 'GET') {
-            return getGlass(request)
+            return GET(request)
         } else if (request.method === 'POST') {
-            return createGlass(request)
+            return POST(request)
         } else if (request.method === 'PATCH') {
-            return updateGlass(request)
+            return PATCH(request)
         } else if (request.method === 'DELETE') {
-            return deleteGlass(request)
+            return DELETE(request)
         } else {
             return NextResponse.json({ error: 'Petición no procesada' }, { status: 405 })
         }

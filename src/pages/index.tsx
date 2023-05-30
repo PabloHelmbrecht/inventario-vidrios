@@ -120,45 +120,29 @@ const Home: NextPage = () => {
 
             //Muevo todo el vidrio solamente cambia de posición
             if (newQuantity === 0) {
-                const response = await axios.patch(
-                    '/api/glass',
-                    {
-                        quantity: difQuantity,
-                        Comment: newComment,
-                        typeId: type.id,
-                        width,
-                        height,
-                        vendorId: vendor.id,
-                        locationId: location?.id,
-                    },
-                    {
-                        params: {
-                            id,
-                        },
-                    },
-                )
+                const response = await axios.patch(`/api/glass/${Number(id)}`, {
+                    quantity: difQuantity,
+                    Comment: newComment,
+                    typeId: type.id,
+                    width,
+                    height,
+                    vendorId: vendor.id,
+                    locationId: location?.id,
+                })
 
                 if (response.data === null) throw new Error('No se obtuvo respuesta')
             }
             //Creo un vidrio nuevo igual pero con difquantity y modifico el vidrio anterior con newquantity
             else {
-                const oldGlass = await axios.patch(
-                    '/api/glass',
-                    {
-                        typeId: type.id,
-                        quantity: newQuantity,
-                        height,
-                        width,
-                        locationId: location?.id,
-                        vendorId: vendor.id,
-                        Comment: newComment,
-                    },
-                    {
-                        params: {
-                            id,
-                        },
-                    },
-                )
+                const oldGlass = await axios.patch(`/api/glass/${Number(id)}`, {
+                    typeId: type.id,
+                    quantity: newQuantity,
+                    height,
+                    width,
+                    locationId: location?.id,
+                    vendorId: vendor.id,
+                    Comment: newComment,
+                })
 
                 const newGlass = await axios.post('/api/glass', {
                     typeId: type.id,
@@ -193,23 +177,15 @@ const Home: NextPage = () => {
                 return
             }
 
-            const response = await axios.patch(
-                '/api/glass',
-                {
-                    quantity: newQuantity,
-                    Comment: newComment,
-                    typeId: type.id,
-                    width,
-                    height,
-                    vendorId: vendor.id,
-                    locationId: location?.id,
-                },
-                {
-                    params: {
-                        id,
-                    },
-                },
-            )
+            const response = await axios.patch(`/api/glass/${Number(id)}`, {
+                quantity: newQuantity,
+                Comment: newComment,
+                typeId: type.id,
+                width,
+                height,
+                vendorId: vendor.id,
+                locationId: location?.id,
+            })
 
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Vidrio consumido exitosamente' })
@@ -224,11 +200,7 @@ const Home: NextPage = () => {
     const onGlassDelete = async (formResponse: object) => {
         try {
             const { id } = formResponse as formResponseType
-            const response = await axios.delete('/api/glass', {
-                params: {
-                    id,
-                },
-            })
+            const response = await axios.delete(`/api/glass/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Vidrio eliminado exitosamente' })
 
@@ -245,23 +217,15 @@ const Home: NextPage = () => {
 
             const { type, width, height, vendor, location, newComment, quantity } = formResponse as formResponseType
 
-            const response = await axios.patch(
-                '/api/glass',
-                {
-                    typeId: type.id,
-                    width,
-                    height,
-                    quantity,
-                    vendorId: vendor.id,
-                    locationId: location?.id,
-                    Comment: newComment,
-                },
-                {
-                    params: {
-                        id,
-                    },
-                },
-            )
+            const response = await axios.patch(`/api/glass/${Number(id)}`, {
+                typeId: type.id,
+                width,
+                height,
+                quantity,
+                vendorId: vendor.id,
+                locationId: location?.id,
+                Comment: newComment,
+            })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Vidrio editado exitosamente' })
 
@@ -277,23 +241,24 @@ const Home: NextPage = () => {
         try {
             const cachedResponse: SuperGlass[] = JSON.parse(localStorage.getItem('glassData') ?? '{}') as SuperGlass[]
             setGlassData(cachedResponse)
-            const response = await axios.get('/api/glass',{params: {
-                status: 'TRANSIT,STORED',
-              }})
+            const response = await axios.get('/api/glass', {
+                params: {
+                    status: 'TRANSIT,STORED',
+                },
+            })
             if (response.data === null) throw new Error('No hay vidrios')
             localStorage.setItem('glassData', JSON.stringify(response.data))
             setGlassData(response.data as SuperGlass[])
             setSnackbar({ type: 'success', message: 'Vidrios Actualizados' })
 
-
-
-            const cachedResponseWithConsumed: SuperGlass[] = JSON.parse(localStorage.getItem('glassDataWithConsumed') ?? '{}') as SuperGlass[]
+            const cachedResponseWithConsumed: SuperGlass[] = JSON.parse(
+                localStorage.getItem('glassDataWithConsumed') ?? '{}',
+            ) as SuperGlass[]
             setGlassDataWithConsumed(cachedResponseWithConsumed)
             const responseWithConsumed = await axios.get('/api/glass')
             if (responseWithConsumed.data === null) throw new Error('No hay vidrios')
             localStorage.setItem('glassDataWithConsumed', JSON.stringify(responseWithConsumed.data))
             setGlassDataWithConsumed(responseWithConsumed.data as SuperGlass[])
-
         } catch (error) {
             console.error('Error fetching data:', error)
             setSnackbar({ type: 'warning', message: 'Error al obtener los vidrios' })
@@ -305,7 +270,7 @@ const Home: NextPage = () => {
             const cachedResponse: GlassType[] = JSON.parse(localStorage.getItem('typesData') ?? '{}') as GlassType[]
             setTypesData(cachedResponse)
 
-            const response = await axios.get('/api/types')
+            const response = await axios.get('/api/type')
             if (response.data === null) throw new Error('No hay tipos')
             localStorage.setItem('typesData', JSON.stringify(response.data))
             setTypesData(response.data as GlassType[])
@@ -326,7 +291,7 @@ const Home: NextPage = () => {
             ) as GlassLocation[]
             setLocationsData(cachedResponse)
 
-            const response = await axios.get('/api/locations')
+            const response = await axios.get('/api/location')
             if (response.data === null) throw new Error('No hay ubicaciones')
             localStorage.setItem('locationsData', JSON.stringify(response.data))
             setLocationsData(response.data as GlassLocation[])
@@ -347,7 +312,7 @@ const Home: NextPage = () => {
             ) as GlassVendor[]
             setVendorsData(cachedResponse)
 
-            const response = await axios.get('/api/vendors')
+            const response = await axios.get('/api/vendor')
             if (response.data === null) throw new Error('No hay proovedores')
             localStorage.setItem('vendorsData', JSON.stringify(response.data))
             setVendorsData(response.data as GlassType[])
@@ -532,9 +497,11 @@ const Home: NextPage = () => {
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-
     //DataGrid Definitions
-    const rows: SuperGlass[] = useMemo(() => (seeConsumedGlass?glassDataWithConsumed:glassData) as SuperGlass[], [glassData,glassDataWithConsumed,seeConsumedGlass])
+    const rows: SuperGlass[] = useMemo(
+        () => (seeConsumedGlass ? glassDataWithConsumed : glassData) as SuperGlass[],
+        [glassData, glassDataWithConsumed, seeConsumedGlass],
+    )
 
     const columns: GridColDef[] = [
         {
@@ -697,44 +664,44 @@ const Home: NextPage = () => {
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
-                    <div className="flex w-full h-screen_3/4 flex-col justify-center gap-4">
-                        <div className="flex w-full justify-between items-end">
-                        <div className="flex items-center justify-start gap-2 w-1/2 pl-2">
-                            <span className="text-sm font-medium text-gray-700">Ver consumidos</span>
-                            <Toggle
-                            text='Ver Consumidos'
-                            enabled={seeConsumedGlass}
-                            setEnabled={setSeeConsumedGlass}
-                            color='bg-red-500'
-                            />
+                    <div className="flex h-screen_3/4 w-full flex-col justify-center gap-4">
+                        <div className="flex w-full items-end justify-between">
+                            <div className="flex w-1/2 items-center justify-start gap-2 pl-2">
+                                <span className="text-sm font-medium text-gray-700">Ver consumidos</span>
+                                <Toggle
+                                    text="Ver Consumidos"
+                                    enabled={seeConsumedGlass}
+                                    setEnabled={setSeeConsumedGlass}
+                                    color="bg-red-500"
+                                />
                             </div>
-                        <div className="flex w-full justify-end gap-3">
-                            <button
-                                onClick={() => {
-                                    setIsGlassCreatorOpen(true)
-                                }}
-                                disabled={!(glassData && typesData && vendorsData && locationsData)}
-                                className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
-                                Cargar
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setIsGlassMoverOpen(true)
-                                }}
-                                disabled={!(glassData && typesData && vendorsData && locationsData)}
-                                className=" rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-500">
-                                Mover
-                            </button>
+                            <div className="flex w-full justify-end gap-3">
+                                <button
+                                    onClick={() => {
+                                        setIsGlassCreatorOpen(true)
+                                    }}
+                                    disabled={!(glassData && typesData && vendorsData && locationsData)}
+                                    className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
+                                    Cargar
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setIsGlassMoverOpen(true)
+                                    }}
+                                    disabled={!(glassData && typesData && vendorsData && locationsData)}
+                                    className=" rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-500">
+                                    Mover
+                                </button>
 
-                            <button
-                                onClick={() => {
-                                    setIsGlassConsumerOpen(true)
-                                }}
-                                disabled={!(glassData && typesData && vendorsData && locationsData)}
-                                className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:bg-slate-500">
-                                Consumir
-                            </button>
-                        </div>
+                                <button
+                                    onClick={() => {
+                                        setIsGlassConsumerOpen(true)
+                                    }}
+                                    disabled={!(glassData && typesData && vendorsData && locationsData)}
+                                    className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:bg-slate-500">
+                                    Consumir
+                                </button>
+                            </div>
                         </div>
                         {glassData && (
                             <DataGrid

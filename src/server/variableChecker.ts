@@ -9,3 +9,7 @@ export function isNotNullUndefinedOrEmpty(obj: object | null | undefined): boole
 
     return true
 }
+
+export function isValidDate(d: Date) {
+    return d instanceof Date && !isNaN(Number(d))
+}

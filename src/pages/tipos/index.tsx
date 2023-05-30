@@ -31,13 +31,11 @@ import { isNotNullUndefinedOrEmpty } from '../../server/variableChecker'
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
 
-
 interface formResponseType {
     id?: number
     name: string
     description: string
 }
-
 
 /*eslint-disable @typescript-eslint/no-misused-promises*/
 /*eslint-disable @typescript-eslint/no-floating-promises*/
@@ -62,7 +60,7 @@ const Home: NextPage = () => {
 
             const response = await axios.post('/api/type', {
                 name,
-                description
+                description,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Tipo cargado exitosamente' })
@@ -93,15 +91,15 @@ const Home: NextPage = () => {
     }
 
     const onTypeEdit = async (formResponse: object) => {
+        console.log({ formResponse })
         try {
-
-            const { id,name,description } = formResponse as formResponseType
+            const { id, name, description } = formResponse as formResponseType
 
             const response = await axios.patch(
                 '/api/type',
                 {
                     name,
-                    description
+                    description,
                 },
                 {
                     params: {
@@ -126,7 +124,7 @@ const Home: NextPage = () => {
             const cachedResponse: GlassType[] = JSON.parse(localStorage.getItem('typesData') ?? '{}') as GlassType[]
             setTypesData(cachedResponse)
 
-            const response = await axios.get('/api/types')
+            const response = await axios.get('/api/type')
             if (response.data === null) throw new Error('No hay tipos')
             localStorage.setItem('typesData', JSON.stringify(response.data))
             setTypesData(response.data as GlassType[])
@@ -140,14 +138,11 @@ const Home: NextPage = () => {
         }
     }
 
-
-
     //useEffect
     useEffect(() => {
         fetchTypesData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
 
     //DataGrid Definitions
     const rows: GlassType[] = useMemo(() => typesData as GlassType[], [typesData])
@@ -223,18 +218,18 @@ const Home: NextPage = () => {
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Tipos de Vidrio</h1>
-                    <div className="flex flex-col h-screen_3/4 justify-center gap-4">
-                        <div className="flex w-full justify-between items-end">
-                        <div className="flex w-full justify-end gap-3">
-                            <button
-                                onClick={() => {
-                                    setIsTypeCreatorOpen(true)
-                                }}
-                                disabled={!(typesData)}
-                                className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
-                                Crear Tipo
-                            </button>
-                        </div>
+                    <div className="flex h-screen_3/4 w-full flex-col justify-center gap-4">
+                        <div className="flex w-full items-end justify-between">
+                            <div className="flex w-full justify-end gap-3">
+                                <button
+                                    onClick={() => {
+                                        setIsTypeCreatorOpen(true)
+                                    }}
+                                    disabled={!typesData}
+                                    className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
+                                    Crear Tipo
+                                </button>
+                            </div>
                         </div>
                         {typesData && (
                             <DataGrid
@@ -285,7 +280,6 @@ const Home: NextPage = () => {
                 render={() => {
                     return (
                         <>
-                            
                             <TextLine
                                 label="Código"
                                 name="name"
@@ -294,7 +288,6 @@ const Home: NextPage = () => {
                                 label="Descripción"
                                 name="description"
                             />
-
                         </>
                     )
                 }}
@@ -322,17 +315,15 @@ const Home: NextPage = () => {
                 render={() => {
                     return (
                         <>
-                            
-                        <TextLine
-                            label="Código"
-                            name="name"
-                        />
-                        <TextLine
-                            label="Descripción"
-                            name="description"
-                        />
-
-                    </>
+                            <TextLine
+                                label="Código"
+                                name="name"
+                            />
+                            <TextLine
+                                label="Descripción"
+                                name="description"
+                            />
+                        </>
                     )
                 }}
             />
@@ -343,11 +334,7 @@ const Home: NextPage = () => {
                     isNotNullUndefinedOrEmpty(typeToDelete) ? `${typeToDelete?.name ?? ''}` : ''
                 }?`}
                 titleStyles="text-center"
-                buttonText={`Eliminar ${
-                    isNotNullUndefinedOrEmpty(typeToDelete)
-                        ? `${typeToDelete?.name ?? ''}`
-                        : ''
-                }`}
+                buttonText={`Eliminar ${isNotNullUndefinedOrEmpty(typeToDelete) ? `${typeToDelete?.name ?? ''}` : ''}`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"
                 isOpen={isNotNullUndefinedOrEmpty(typeToDelete)}
                 setIsOpen={(value) => {
