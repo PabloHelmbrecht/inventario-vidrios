@@ -147,7 +147,7 @@ export async function updateGlass(request: NextRequest) {
 
         if (!id || isNaN(id)) throw new Error('Se debe proveer un id válido')
 
-        if (!glassUpdates.quantity) throw new Error('Se debe proveer las cantidades del vidrio a modificar')
+        if (glassUpdates.quantity===null||glassUpdates===undefined) throw new Error('Se debe proveer las cantidades del vidrio a modificar')
 
         if (glassUpdates.width) glassUpdates.width = Number(glassUpdates.width)
         if (glassUpdates.height) glassUpdates.height = Number(glassUpdates.height)
@@ -198,6 +198,8 @@ export async function updateGlass(request: NextRequest) {
 
         //Si no existe entonces actualizo el vidrio existente
         else {
+            if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
+            if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
             originalGlass = await prisma.glass.findUnique({
                 where: {
                     id,

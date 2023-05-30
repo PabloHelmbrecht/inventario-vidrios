@@ -74,6 +74,7 @@ const Home: NextPage = () => {
     const [glassToEdit, setGlassToEdit] = useState<SuperGlass | null>(null)
 
     const [glassData, setGlassData] = useState<SuperGlass[] | null>(null)
+    const [glassDataWithConsumed, setGlassDataWithConsumed] = useState<SuperGlass[] | null>(null)
     const [typesData, setTypesData] = useState<GlassType[] | null>(null)
     const [locationsData, setLocationsData] = useState<GlassLocation[] | null>(null)
     const [vendorsData, setVendorsData] = useState<GlassVendor[] | null>(null)
@@ -276,11 +277,23 @@ const Home: NextPage = () => {
         try {
             const cachedResponse: SuperGlass[] = JSON.parse(localStorage.getItem('glassData') ?? '{}') as SuperGlass[]
             setGlassData(cachedResponse)
-            const response = await axios.get('/api/glass')
+            const response = await axios.get('/api/glass',{params: {
+                status: 'TRANSIT,STORED',
+              }})
             if (response.data === null) throw new Error('No hay vidrios')
             localStorage.setItem('glassData', JSON.stringify(response.data))
             setGlassData(response.data as SuperGlass[])
             setSnackbar({ type: 'success', message: 'Vidrios Actualizados' })
+
+
+
+            const cachedResponseWithConsumed: SuperGlass[] = JSON.parse(localStorage.getItem('glassDataWithConsumed') ?? '{}') as SuperGlass[]
+            setGlassDataWithConsumed(cachedResponseWithConsumed)
+            const responseWithConsumed = await axios.get('/api/glass')
+            if (responseWithConsumed.data === null) throw new Error('No hay vidrios')
+            localStorage.setItem('glassDataWithConsumed', JSON.stringify(responseWithConsumed.data))
+            setGlassDataWithConsumed(responseWithConsumed.data as SuperGlass[])
+
         } catch (error) {
             console.error('Error fetching data:', error)
             setSnackbar({ type: 'warning', message: 'Error al obtener los vidrios' })
@@ -519,8 +532,9 @@ const Home: NextPage = () => {
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+
     //DataGrid Definitions
-    const rows: SuperGlass[] = useMemo(() => glassData as SuperGlass[], [glassData])
+    const rows: SuperGlass[] = useMemo(() => (seeConsumedGlass?glassDataWithConsumed:glassData) as SuperGlass[], [glassData,glassDataWithConsumed,seeConsumedGlass])
 
     const columns: GridColDef[] = [
         {
@@ -683,12 +697,12 @@ const Home: NextPage = () => {
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
-                    <div className="flex w-full flex-col justify-center gap-4">
+                    <div className="flex w-full h-screen_3/4 flex-col justify-center gap-4">
                         <div className="flex w-full justify-between items-end">
                         <div className="flex items-center justify-start gap-2 w-1/2 pl-2">
                             <span className="text-sm font-medium text-gray-700">Ver consumidos</span>
                             <Toggle
-                            text='test'
+                            text='Ver Consumidos'
                             enabled={seeConsumedGlass}
                             setEnabled={setSeeConsumedGlass}
                             color='bg-red-500'

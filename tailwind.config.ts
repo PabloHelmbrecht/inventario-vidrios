@@ -10,7 +10,12 @@ export default {
             full: '100%',
             screen: '100vh',
         },
-        extend: {},
+
+        extend: {
+            height: {
+                'screen_3/4':'70vh'
+              }
+        },
     },
     plugins: [],
 } satisfies Config
