@@ -92,7 +92,7 @@ const Home: NextPage = () => {
             const { type, width, height, vendor, location, quantity, newComment } = formResponse as formResponseType
 
             const response = await axios.post('/api/glass', {
-                user,
+                user:user??process.env.DEFAULT_USER,
                 glass: {
                     typeId: type.id,
                     width,
@@ -121,7 +121,6 @@ const Home: NextPage = () => {
 
             const newQuantity = Number(quantity) - Number(difQuantity)
 
-            console.log({ newQuantity })
 
             if (newQuantity < 0) {
                 setSnackbar({ type: 'warning', message: 'No se puede consumir más vidrio del existente' })
@@ -132,7 +131,7 @@ const Home: NextPage = () => {
             //Muevo todo el vidrio solamente cambia de posición
             if (newQuantity === 0) {
                 const response = await axios.patch(`/api/glass/${Number(id)}`, {
-                    user,
+                    user:user??process.env.DEFAULT_USER,
                     glass: {
                         quantity: difQuantity,
                         Comment: newComment,
@@ -151,7 +150,7 @@ const Home: NextPage = () => {
             //Creo un vidrio nuevo igual pero con difquantity y modifico el vidrio anterior con newquantity
             else {
                 const oldGlass = await axios.patch(`/api/glass/${Number(id)}`, {
-                    user,
+                    user:user??process.env.DEFAULT_USER,
                     glass: {
                         typeId: type.id,
                         quantity: newQuantity,
@@ -164,7 +163,7 @@ const Home: NextPage = () => {
                 })
 
                 const newGlass = await axios.post('/api/glass', {
-                    user,
+                    user:user??process.env.DEFAULT_USER,
                     glass: {
                         typeId: type.id,
                         quantity: difQuantity,
@@ -202,7 +201,7 @@ const Home: NextPage = () => {
             }
 
             const response = await axios.patch(`/api/glass/${Number(id)}`, {
-                user,
+                user:user??process.env.DEFAULT_USER,
                 glass: {
                     quantity: newQuantity,
                     Comment: newComment,
@@ -245,7 +244,7 @@ const Home: NextPage = () => {
             const { type, width, height, vendor, location, newComment, quantity } = formResponse as formResponseType
 
             const response = await axios.patch(`/api/glass/${Number(id)}`, {
-                user,
+                user:user??process.env.DEFAULT_USER,
                 glass: {
                     typeId: type.id,
                     width,
