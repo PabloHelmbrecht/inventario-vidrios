@@ -35,6 +35,7 @@ import { isNotNullUndefinedOrEmpty } from '../server/variableChecker'
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../constants/localeTextConstants'
 import { type Calculation } from 'final-form-calculate'
+import { useSession } from 'next-auth/react'
 
 //Custom Types
 interface SuperGlass extends Glass {
@@ -60,6 +61,10 @@ interface formResponseType {
 /*eslint-disable @typescript-eslint/no-floating-promises*/
 
 const Home: NextPage = () => {
+    const { data: session, status } = useSession()
+    console.log({ session, status })
+    const user = session?.user
+
     //States
     const [glassSelection, setGlassSelection] = useState<SuperGlass | null>(null)
     const [glassFiltered, setGlassFiltered] = useState<SuperGlass | null>(null)
@@ -87,13 +92,16 @@ const Home: NextPage = () => {
             const { type, width, height, vendor, location, quantity, newComment } = formResponse as formResponseType
 
             const response = await axios.post('/api/glass', {
-                typeId: type.id,
-                width,
-                height,
-                vendorId: vendor.id,
-                locationId: location?.id !== null ? location?.id : undefined,
-                quantity,
-                Comment: newComment,
+                user,
+                glass: {
+                    typeId: type.id,
+                    width,
+                    height,
+                    vendorId: vendor.id,
+                    locationId: location?.id !== null ? location?.id : undefined,
+                    quantity,
+                    Comment: newComment,
+                },
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Vidrio cargado exitosamente' })
@@ -113,7 +121,7 @@ const Home: NextPage = () => {
 
             const newQuantity = Number(quantity) - Number(difQuantity)
 
-            console.log({newQuantity})
+            console.log({ newQuantity })
 
             if (newQuantity < 0) {
                 setSnackbar({ type: 'warning', message: 'No se puede consumir más vidrio del existente' })
@@ -124,42 +132,51 @@ const Home: NextPage = () => {
             //Muevo todo el vidrio solamente cambia de posición
             if (newQuantity === 0) {
                 const response = await axios.patch(`/api/glass/${Number(id)}`, {
-                    quantity: difQuantity,
-                    Comment: newComment,
-                    typeId: type.id,
-                    width,
-                    height,
-                    vendorId: vendor.id,
-                    locationId: destinyLocation?.id,
+                    user,
+                    glass: {
+                        quantity: difQuantity,
+                        Comment: newComment,
+                        typeId: type.id,
+                        width,
+                        height,
+                        vendorId: vendor.id,
+                        locationId: destinyLocation?.id,
+                    },
                 })
 
-                console.log({response})
+                console.log({ response })
 
                 if (response.data === null) throw new Error('No se obtuvo respuesta')
             }
             //Creo un vidrio nuevo igual pero con difquantity y modifico el vidrio anterior con newquantity
             else {
                 const oldGlass = await axios.patch(`/api/glass/${Number(id)}`, {
-                    typeId: type.id,
-                    quantity: newQuantity,
-                    height,
-                    width,
-                    locationId: location?.id,
-                    vendorId: vendor.id,
-                    Comment: newComment,
+                    user,
+                    glass: {
+                        typeId: type.id,
+                        quantity: newQuantity,
+                        height,
+                        width,
+                        locationId: location?.id,
+                        vendorId: vendor.id,
+                        Comment: newComment,
+                    },
                 })
 
                 const newGlass = await axios.post('/api/glass', {
-                    typeId: type.id,
-                    quantity: difQuantity,
-                    height,
-                    width,
-                    vendorId: vendor.id,
-                    locationId: destinyLocation?.id,
-                    Comment: newComment,
+                    user,
+                    glass: {
+                        typeId: type.id,
+                        quantity: difQuantity,
+                        height,
+                        width,
+                        vendorId: vendor.id,
+                        locationId: destinyLocation?.id,
+                        Comment: newComment,
+                    },
                 })
 
-                console.log({oldGlass,newGlass})
+                console.log({ oldGlass, newGlass })
                 if (newGlass.data === null || oldGlass.data === null) throw new Error('No se obtuvo respuesta')
             }
 
@@ -185,13 +202,16 @@ const Home: NextPage = () => {
             }
 
             const response = await axios.patch(`/api/glass/${Number(id)}`, {
-                quantity: newQuantity,
-                Comment: newComment,
-                typeId: type.id,
-                width,
-                height,
-                vendorId: vendor.id,
-                locationId: location?.id,
+                user,
+                glass: {
+                    quantity: newQuantity,
+                    Comment: newComment,
+                    typeId: type.id,
+                    width,
+                    height,
+                    vendorId: vendor.id,
+                    locationId: location?.id,
+                },
             })
 
             if (response.data === null) throw new Error('No se obtuvo respuesta')
@@ -225,13 +245,16 @@ const Home: NextPage = () => {
             const { type, width, height, vendor, location, newComment, quantity } = formResponse as formResponseType
 
             const response = await axios.patch(`/api/glass/${Number(id)}`, {
-                typeId: type.id,
-                width,
-                height,
-                quantity,
-                vendorId: vendor.id,
-                locationId: location?.id,
-                Comment: newComment,
+                user,
+                glass: {
+                    typeId: type.id,
+                    width,
+                    height,
+                    quantity,
+                    vendorId: vendor.id,
+                    locationId: location?.id,
+                    Comment: newComment,
+                },
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Vidrio editado exitosamente' })

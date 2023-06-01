@@ -50,6 +50,7 @@ const config = {
         'space-before-function-paren': 'off',
         'no-dupe-class-members': 'off',
         'no-useless-constructor': 'off',
+        'no-useless-escape':'off',
         '@typescript-eslint/no-useless-constructor': 'off',
         'lines-between-class-members': ['error', 'always'],
         'padding-line-between-statements': ['error', { blankLine: 'always', prev: '*', next: 'return' }],

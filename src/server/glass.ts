@@ -8,6 +8,8 @@ export const config = {
     runtime: 'edge',
 }
 
+/*eslint-disable no-useless-escape*/
+
 // GET /api/glass
 export async function GET(req: NextRequest) {
     const prisma = new PrismaClient()
@@ -66,7 +68,10 @@ export async function POST(request: NextRequest) {
 
     try {
         //Obtengo el vidrio a través de request
-        const requestData = (await request.json()) as Glass
+        const {user,glass:requestData} = await request.json() as {user:{id:string;email:string};glass:Glass}
+
+        if (!user.id) throw new Error('Se debe proveer un usuario válido')
+        if(String(user.email.match('/@([A-Za-z0-9.-]+)\.[A-Za-z]{2,}/'))!=='uveg') throw new Error('Se debe proveer un usuario de Uveg')
 
         if (requestData.width) requestData.width = Number(requestData.width)
         if (requestData.height) requestData.height = Number(requestData.height)
@@ -114,7 +119,7 @@ export async function POST(request: NextRequest) {
                 column,
                 oldValue: null,
                 newValue: String(newValue),
-                userId: 'cli0a7a3v0000qk0ghwh6yxki',
+                userId: user.id,
             }
         })
 
@@ -140,8 +145,14 @@ export async function PATCH(request: NextRequest) {
     const prisma = new PrismaClient()
     try {
         //Obtengo el vidrio de la petición y el id de los query params
-        const glassUpdates = (await request.json()) as Glass
+        const {user,glass:glassUpdates} = await request.json()  as {user:{id:string;email:string};glass:Glass}
         const { searchParams } = new URL(request.url)
+
+        if (!user.id) throw new Error('Se debe proveer un usuario válido')
+        if(String(user.email.match('/@([A-Za-z0-9.-]+)\.[A-Za-z]{2,}/'))!=='uveg') throw new Error('Se debe proveer un usuario de Uveg')
+
+
+        
 
         const id = Number(searchParams.get('id'))
 
@@ -224,7 +235,7 @@ export async function PATCH(request: NextRequest) {
                     column,
                     oldValue: String(oldValue),
                     newValue: String(newValue),
-                    userId: 'cli0a7a3v0000qk0ghwh6yxki',
+                    userId: user.id,
                 } as GlassMovement)
             }
 
