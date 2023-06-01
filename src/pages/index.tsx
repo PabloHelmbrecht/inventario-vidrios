@@ -692,11 +692,11 @@ const Home: NextPage = () => {
 
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
-                    <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
+                    <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
                     <div className="flex h-screen_3/4 w-full flex-col justify-center gap-4">
-                        <div className="flex w-full items-end justify-between">
-                            <div className="flex w-1/2 items-center justify-start gap-2 pl-2">
-                                <span className="text-sm font-medium text-gray-700">Ver consumidos</span>
+                        <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row w-full sm:items-end sm:justify-between">
+                            <div className="flex sm:w-1/2 w-full items-center justify-start gap-2 pl-2">
+                                <span className="text-sm font-medium  text-gray-700">Ver consumidos</span>
                                 <Toggle
                                     text="Ver Consumidos"
                                     enabled={seeConsumedGlass}
@@ -704,7 +704,7 @@ const Home: NextPage = () => {
                                     color="bg-red-500"
                                 />
                             </div>
-                            <div className="flex w-full justify-end gap-3">
+                            <div className="flex w-full justify-between sm:justify-end gap-3">
                                 <button
                                     onClick={() => {
                                         setIsGlassCreatorOpen(true)

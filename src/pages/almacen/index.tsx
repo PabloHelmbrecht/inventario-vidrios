@@ -206,7 +206,7 @@ const Home: NextPage = () => {
 
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
-                    <h1 className="text-lg font-semibold text-gray-700 sm:text-[2rem]">Listado de Posiciones</h1>
+                    <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Listado de Posiciones</h1>
                     <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4">
                         <div className="flex w-full items-end justify-between">
                             <div className="flex w-full justify-end gap-3">
