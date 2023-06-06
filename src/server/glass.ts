@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     try {
         //Optengo el id y status pasados por query params
         const { searchParams } = new URL(req.url)
-        const id = searchParams.get('id')
+        const id = searchParams.get('id')??searchParams.get('nextParamid')
         const status = searchParams.get('status')?.split(',') as GlassStatus[] | null
 
         //Si existe un id entonces devuelvo ese vidrio específico
@@ -155,7 +155,7 @@ export async function PATCH(request: NextRequest) {
 
         if (!user?.id) throw new Error('Se debe proveer un usuario válido')
 
-        const id = Number(searchParams.get('id'))
+        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
 
         if (!id || isNaN(id)) throw new Error('Se debe proveer un id válido')
 
@@ -265,7 +265,7 @@ export async function DELETE(request: NextRequest) {
 
     try {
         const { searchParams } = new URL(request.url)
-        const id = searchParams.get('id')
+        const id = searchParams.get('id')??searchParams.get('nextParamid')
 
         await prisma.glassMovement.deleteMany({
             where: {

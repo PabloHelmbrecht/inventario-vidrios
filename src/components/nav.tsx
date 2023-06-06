@@ -121,7 +121,7 @@ export default function Navbar() {
                                                             onClick={() => {
                                                                 void signOut()
                                                             }}>
-                                                            Sign out
+                                                            Cerrar Sesión
                                                         </button>
                                                     )}
                                                 </Menu.Item>
@@ -136,7 +136,7 @@ export default function Navbar() {
                                                             onClick={() => {
                                                                 void signIn('google')
                                                             }}>
-                                                            Sign in
+                                                            Ingresar
                                                         </button>
                                                     )}
                                                 </Menu.Item>
@@ -209,7 +209,7 @@ export default function Navbar() {
                                                 void signOut()
                                             }}
                                             className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
-                                            Sign out
+                                            Cerrar Sesión
                                         </button>
                                     </div>
                                 </>
@@ -220,7 +220,7 @@ export default function Navbar() {
                                             void signIn('google')
                                         }}
                                         className="flex w-full px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">
-                                        Sign in
+                                        Ingresar
                                     </button>
                                 </div>
                             )}
