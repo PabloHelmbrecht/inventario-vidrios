@@ -68,7 +68,10 @@ export async function POST(request: NextRequest) {
 
     try {
         //Obtengo el vidrio a través de request
-        const {user,glass:requestData} = await request.json() as {user?:{id?:string;email:string};glass:Glass}
+        const { user, glass: requestData } = (await request.json()) as {
+            user?: { id?: string; email: string }
+            glass: Glass
+        }
 
         if (!user?.id) throw new Error('Se debe proveer un usuario válido')
 
@@ -144,13 +147,13 @@ export async function PATCH(request: NextRequest) {
     const prisma = new PrismaClient()
     try {
         //Obtengo el vidrio de la petición y el id de los query params
-        const {user,glass:glassUpdates} = await request.json()  as {user?:{id?:string;email:string};glass:Glass}
+        const { user, glass: glassUpdates } = (await request.json()) as {
+            user?: { id?: string; email: string }
+            glass: Glass
+        }
         const { searchParams } = new URL(request.url)
 
         if (!user?.id) throw new Error('Se debe proveer un usuario válido')
-
-
-        
 
         const id = Number(searchParams.get('id'))
 

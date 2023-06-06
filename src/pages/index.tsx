@@ -62,7 +62,12 @@ interface formResponseType {
 
 const Home: NextPage = () => {
     const { data: session } = useSession()
-    const user = (session?.user)??{"name":"MANTENIMIENTO UVEG","email":"mantenimiento@uveg.ar","image":null,"id":"clid221kv0000lq0h3tvno38h"} 
+    const user = session?.user ?? {
+        name: 'MANTENIMIENTO UVEG',
+        email: 'mantenimiento@uveg.ar',
+        image: null,
+        id: 'clid221kv0000lq0h3tvno38h',
+    }
 
     //States
     const [glassSelection, setGlassSelection] = useState<SuperGlass | null>(null)
@@ -87,6 +92,7 @@ const Home: NextPage = () => {
     //Functions
     //- Submit Functions
     const onGlassCreation = async (formResponse: object) => {
+        console.log({formResponse})
         try {
             const { type, width, height, vendor, location, quantity, newComment } = formResponse as formResponseType
             const response = await axios.post('/api/glass', {
@@ -112,12 +118,12 @@ const Home: NextPage = () => {
     }
 
     const onGlassMovement = async (formResponse: object) => {
+        console.log({formResponse})
         try {
             const { id, quantity, difQuantity, newComment, type, width, height, vendor, location, destinyLocation } =
                 formResponse as formResponseType
 
             const newQuantity = Number(quantity) - Number(difQuantity)
-
 
             if (newQuantity < 0) {
                 setSnackbar({ type: 'warning', message: 'No se puede consumir más vidrio del existente' })
@@ -127,7 +133,6 @@ const Home: NextPage = () => {
 
             //Muevo todo el vidrio solamente cambia de posición
             if (newQuantity === 0) {
-                
                 const response = await axios.patch(`/api/glass/${Number(id)}`, {
                     user,
                     glass: {
@@ -140,7 +145,6 @@ const Home: NextPage = () => {
                         locationId: destinyLocation?.id,
                     },
                 })
-
 
                 if (response.data === null) throw new Error('No se obtuvo respuesta')
             }
@@ -185,6 +189,7 @@ const Home: NextPage = () => {
     }
     const onGlassConsumption = async (formResponse: object) => {
         try {
+            console.log({formResponse})
             const { id, quantity, difQuantity, newComment, type, width, height, vendor, location } =
                 formResponse as formResponseType
 
@@ -221,6 +226,7 @@ const Home: NextPage = () => {
 
     const onGlassDelete = async (formResponse: object) => {
         try {
+            console.log({formResponse})
             const { id } = formResponse as formResponseType
             const response = await axios.delete(`/api/glass/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
@@ -235,6 +241,7 @@ const Home: NextPage = () => {
 
     const onGlassEdit = async (formResponse: object) => {
         try {
+            console.log({formResponse})
             const { id } = formResponse as formResponseType
 
             const { type, width, height, vendor, location, newComment, quantity } = formResponse as formResponseType
@@ -690,8 +697,8 @@ const Home: NextPage = () => {
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
                     <div className="flex h-screen_3/4 w-full flex-col justify-center gap-4">
-                        <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row w-full sm:items-end sm:justify-between">
-                            <div className="flex sm:w-1/2 w-full items-center justify-start gap-2 pl-2">
+                        <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-0">
+                            <div className="flex w-full items-center justify-start gap-2 pl-2 sm:w-1/2">
                                 <span className="text-sm font-medium  text-gray-700">Ver consumidos</span>
                                 <Toggle
                                     text="Ver Consumidos"
@@ -700,7 +707,7 @@ const Home: NextPage = () => {
                                     color="bg-red-500"
                                 />
                             </div>
-                            <div className="flex w-full justify-between sm:justify-end gap-3">
+                            <div className="flex w-full justify-between gap-3 sm:justify-end">
                                 <button
                                     onClick={() => {
                                         setIsGlassCreatorOpen(true)
