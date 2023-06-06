@@ -61,9 +61,8 @@ interface formResponseType {
 /*eslint-disable @typescript-eslint/no-floating-promises*/
 
 const Home: NextPage = () => {
-    const { data: session, status } = useSession()
-    console.log({ session, status })
-    const user = session?.user
+    const { data: session } = useSession()
+    const user = (session?.user)??{"name":"MANTENIMIENTO UVEG","email":"mantenimiento@uveg.ar","image":null,"id":"clid221kv0000lq0h3tvno38h"} 
 
     //States
     const [glassSelection, setGlassSelection] = useState<SuperGlass | null>(null)
@@ -90,9 +89,8 @@ const Home: NextPage = () => {
     const onGlassCreation = async (formResponse: object) => {
         try {
             const { type, width, height, vendor, location, quantity, newComment } = formResponse as formResponseType
-
             const response = await axios.post('/api/glass', {
-                user:user??process.env.DEFAULT_USER,
+                user,
                 glass: {
                     typeId: type.id,
                     width,
@@ -114,7 +112,6 @@ const Home: NextPage = () => {
     }
 
     const onGlassMovement = async (formResponse: object) => {
-        console.log({ evento: 'Vidrio Movido', ...formResponse })
         try {
             const { id, quantity, difQuantity, newComment, type, width, height, vendor, location, destinyLocation } =
                 formResponse as formResponseType
@@ -130,8 +127,9 @@ const Home: NextPage = () => {
 
             //Muevo todo el vidrio solamente cambia de posición
             if (newQuantity === 0) {
+                
                 const response = await axios.patch(`/api/glass/${Number(id)}`, {
-                    user:user??process.env.DEFAULT_USER,
+                    user,
                     glass: {
                         quantity: difQuantity,
                         Comment: newComment,
@@ -143,14 +141,13 @@ const Home: NextPage = () => {
                     },
                 })
 
-                console.log({ response })
 
                 if (response.data === null) throw new Error('No se obtuvo respuesta')
             }
             //Creo un vidrio nuevo igual pero con difquantity y modifico el vidrio anterior con newquantity
             else {
                 const oldGlass = await axios.patch(`/api/glass/${Number(id)}`, {
-                    user:user??process.env.DEFAULT_USER,
+                    user,
                     glass: {
                         typeId: type.id,
                         quantity: newQuantity,
@@ -163,7 +160,7 @@ const Home: NextPage = () => {
                 })
 
                 const newGlass = await axios.post('/api/glass', {
-                    user:user??process.env.DEFAULT_USER,
+                    user,
                     glass: {
                         typeId: type.id,
                         quantity: difQuantity,
@@ -175,7 +172,6 @@ const Home: NextPage = () => {
                     },
                 })
 
-                console.log({ oldGlass, newGlass })
                 if (newGlass.data === null || oldGlass.data === null) throw new Error('No se obtuvo respuesta')
             }
 
@@ -201,7 +197,7 @@ const Home: NextPage = () => {
             }
 
             const response = await axios.patch(`/api/glass/${Number(id)}`, {
-                user:user??process.env.DEFAULT_USER,
+                user,
                 glass: {
                     quantity: newQuantity,
                     Comment: newComment,
@@ -244,7 +240,7 @@ const Home: NextPage = () => {
             const { type, width, height, vendor, location, newComment, quantity } = formResponse as formResponseType
 
             const response = await axios.patch(`/api/glass/${Number(id)}`, {
-                user:user??process.env.DEFAULT_USER,
+                user,
                 glass: {
                     typeId: type.id,
                     width,
