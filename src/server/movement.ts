@@ -96,7 +96,7 @@ export async function PATCH(request: NextRequest) {
     const prisma = new PrismaClient()
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id'))
+        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
         const movementData = (await request.json()) as GlassMovement
         const updatedMovement = await prisma.glassMovement.update({
             where: {
@@ -120,7 +120,7 @@ export async function DELETE(request: NextRequest) {
     const prisma = new PrismaClient()
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id'))
+        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
 
         const deletedMovement = await prisma.glassMovement.delete({ where: { id } })
 

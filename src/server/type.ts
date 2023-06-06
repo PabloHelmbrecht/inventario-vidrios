@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id'))
+        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
         if (id) {
             const response = await prisma.glassType.findUnique({ where: { id } })
 
@@ -54,7 +54,7 @@ export async function PATCH(request: NextRequest) {
     const prisma = new PrismaClient()
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id'))
+        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
         const typeData = (await request.json()) as GlassType
         const updatedType = await prisma.glassType.update({
             where: {
@@ -80,7 +80,7 @@ export async function DELETE(request: NextRequest) {
     const prisma = new PrismaClient()
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id'))
+        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
 
         const deletedType = await prisma.glassType.delete({ where: { id } })
 
