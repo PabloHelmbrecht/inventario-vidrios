@@ -12,7 +12,13 @@ import Head from 'next/head'
 import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid'
+import {
+    DataGridPremium as DataGrid,
+    GridToolbar,
+    GridActionsCellItem,
+    type GridColDef,
+    type GridValidRowModel,
+} from '@mui/x-data-grid-premium'
 
 //Axios
 import axios from 'axios'
@@ -42,6 +48,21 @@ interface SuperGlass extends Glass {
     type?: GlassType | null
     location?: GlassLocation | null
     vendor?: GlassVendor | null
+    squaredMeters?: number
+}
+
+interface RowType extends SuperGlass {
+    typeName?: string
+    typeDescription?: string
+    typeCreatedAt?: Date
+    typeUpdatedAt?: Date
+    locationPosition?: string
+    locationWarehouse?: string
+    locationCreatedAt?: Date
+    locationUpdatedAt?: Date
+    vendorName?: string
+    vendorCreatedAt?: Date
+    vendorUpdatedAt?: Date
 }
 
 interface formResponseType {
@@ -92,7 +113,7 @@ const Home: NextPage = () => {
     //Functions
     //- Submit Functions
     const onGlassCreation = async (formResponse: object) => {
-        console.log({formResponse})
+        console.log({ formResponse })
         try {
             const { type, width, height, vendor, location, quantity, newComment } = formResponse as formResponseType
             const response = await axios.post('/api/glass', {
@@ -118,7 +139,7 @@ const Home: NextPage = () => {
     }
 
     const onGlassMovement = async (formResponse: object) => {
-        console.log({formResponse})
+        console.log({ formResponse })
         try {
             const { id, quantity, difQuantity, newComment, type, width, height, vendor, location, destinyLocation } =
                 formResponse as formResponseType
@@ -189,7 +210,7 @@ const Home: NextPage = () => {
     }
     const onGlassConsumption = async (formResponse: object) => {
         try {
-            console.log({formResponse})
+            console.log({ formResponse })
             const { id, quantity, difQuantity, newComment, type, width, height, vendor, location } =
                 formResponse as formResponseType
 
@@ -226,7 +247,7 @@ const Home: NextPage = () => {
 
     const onGlassDelete = async (formResponse: object) => {
         try {
-            console.log({formResponse})
+            console.log({ formResponse })
             const { id } = formResponse as formResponseType
             const response = await axios.delete(`/api/glass/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
@@ -241,7 +262,7 @@ const Home: NextPage = () => {
 
     const onGlassEdit = async (formResponse: object) => {
         try {
-            console.log({formResponse})
+            console.log({ formResponse })
             const { id } = formResponse as formResponseType
 
             const { type, width, height, vendor, location, newComment, quantity } = formResponse as formResponseType
@@ -530,23 +551,40 @@ const Home: NextPage = () => {
     }, [])
 
     //DataGrid Definitions
-    const rows: SuperGlass[] = useMemo(
-        () => (seeConsumedGlass ? glassDataWithConsumed : glassData) as SuperGlass[],
-        [glassData, glassDataWithConsumed, seeConsumedGlass],
-    )
+    const rows: RowType[] = useMemo(() => {
+        return (seeConsumedGlass ? glassDataWithConsumed : glassData)?.map((row) => {
+            return {
+                ...row,
+                typeName: row.type?.name,
+                typeDescription: row.type?.description,
+                typeCreatedAt: row.type?.createdAt,
+                typeUpdatedAt: row.type?.updatedAt,
+                locationPosition: row.location?.position,
+                locationWarehouse: row.location?.warehouse,
+                locationCreatedAt: row.location?.createdAt,
+                locationUpdatedAt: row.location?.updatedAt,
+                vendorName: row.vendor?.name,
+                vendorCreatedAt: row.vendor?.createdAt,
+                vendorUpdatedAt: row.vendor?.updatedAt,
+            }
+        }) as RowType[]
+    }, [glassData, glassDataWithConsumed, seeConsumedGlass])
 
     const columns: GridColDef[] = [
         {
             headerName: 'Id',
             field: 'id',
-            width: 70,
+            width: 80,
             type: 'number',
-            valueFormatter: (params) => `#${(params?.value as string) ?? ''}`,
+            valueFormatter: (params) => (params?.value ? `#${String(params?.value)}` : undefined),
+            aggregable: false,
+            groupable: false,
         },
         {
             headerName: 'Estado',
             field: 'status',
-            width: 100,
+            width: 130,
+
             renderCell: (params) => {
                 let text: string
                 let ringColor: string
@@ -572,10 +610,13 @@ const Home: NextPage = () => {
                         textColor = 'text-red-800'
                         break
                     default:
-                        text = (params?.value as string) ?? ''
+                        text = String(params?.value) ?? 'Agrupado'
                         ringColor = 'ring-slate-700/10'
                         backgroundColor = 'bg-slate-50'
                         textColor = 'text-slate-800'
+                }
+                if (!params?.value) {
+                    return undefined
                 }
 
                 return (
@@ -589,60 +630,70 @@ const Home: NextPage = () => {
         {
             headerName: 'Código',
             width: 140,
-            field: 'type.code',
-            valueGetter: ({ row }: { row: Record<string, Record<string, string>> }) => row?.type?.name,
+            field: 'typeName',
+            aggregable: false,
         },
 
         {
             headerName: 'Descripción',
-            field: 'type',
+            field: 'typeDescription',
             width: 200,
-            valueFormatter: ({ value }: { value: { description: string } }) => value?.description,
+            aggregable: false,
         },
         {
             headerName: 'Ancho',
             field: 'width',
-            width: 100,
+            width: 110,
             type: 'number',
-            valueFormatter: ({ value }: { value: string }) => `${value} mm`,
+            valueFormatter: ({ value }: { value: string }) => (value ? `${value} mm` : undefined),
         },
         {
             headerName: 'Alto',
             field: 'height',
+            width: 110,
+            type: 'number',
+            valueFormatter: ({ value }: { value: string }) => (value ? `${value} mm` : undefined),
+        },
+        {
+            headerName: 'Área',
+            field: 'squaredMeters',
             width: 100,
             type: 'number',
-            valueFormatter: ({ value }: { value: string }) => `${value} mm`,
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? `${parseFloat(value).toFixed(2)} m²` : undefined,
         },
 
         {
             headerName: 'Cantidad',
             field: 'quantity',
-            width: 100,
+            width: 130,
             type: 'number',
         },
         {
             headerName: 'Almacén',
             width: 100,
-            field: 'location.warehouse',
-            valueGetter: ({ row }: { row: Record<string, Record<string, string>> }) => row?.location?.warehouse,
+            field: 'locationWarehouse',
+            aggregable: false,
         },
 
         {
             headerName: 'Posición',
-            field: 'location',
-            width: 100,
-            valueFormatter: ({ value }: { value: { position: string } }) => value?.position,
+            field: 'locationPosition',
+            width: 130,
+            aggregable: false,
         },
         {
             headerName: 'Proovedor',
-            field: 'vendor',
+            field: 'vendorName',
             width: 100,
-            valueFormatter: ({ value }: { value: { name: string } }) => value?.name,
+            aggregable: false,
         },
         {
             headerName: 'Comentario',
             field: 'Comment',
             width: 200,
+            aggregable: false,
+            groupable: false,
         },
         {
             headerName: 'Creado En',
@@ -650,6 +701,7 @@ const Home: NextPage = () => {
             width: 150,
             type: 'dateTime',
             valueGetter: ({ value }: { value: string }) => new Date(value),
+            groupable: false,
         },
         {
             headerName: 'Actualizado En',
@@ -657,25 +709,31 @@ const Home: NextPage = () => {
             width: 150,
             type: 'dateTime',
             valueGetter: ({ value }: { value: string }) => new Date(value),
+            groupable: false,
         },
         {
             field: 'Acciones',
             type: 'actions',
             width: 80,
-            getActions: ({ row }: { row: GridValidRowModel }) => [
-                <GridActionsCellItem
-                    key={1}
-                    icon={<TrashIcon className="w-4" />}
-                    label="Delete"
-                    onClick={() => setGlassToDelete(row as SuperGlass)}
-                />,
-                <GridActionsCellItem
-                    key={1}
-                    icon={<PencilSquareIcon className="w-4" />}
-                    label="Delete"
-                    onClick={() => setGlassToEdit(row as SuperGlass)}
-                />,
-            ],
+            getActions: ({ row }: { row: GridValidRowModel }) =>
+                row.id
+                    ? [
+                          <GridActionsCellItem
+                              key={1}
+                              icon={<TrashIcon className="w-4" />}
+                              label="Delete"
+                              onClick={() => setGlassToDelete(row as RowType)}
+                          />,
+                          <GridActionsCellItem
+                              key={1}
+                              icon={<PencilSquareIcon className="w-4" />}
+                              label="Delete"
+                              onClick={() => setGlassToEdit(row as RowType)}
+                          />,
+                      ]
+                    : [],
+            aggregable: false,
+            groupable: false,
         },
     ]
 
@@ -743,12 +801,29 @@ const Home: NextPage = () => {
                                 columns={columns}
                                 slots={{ toolbar: GridToolbar }}
                                 onRowSelectionModelChange={(ids) =>
-                                    setGlassSelection(rows.find((row) => row.id === ids[0]) as SuperGlass)
+                                    setGlassSelection(rows.find((row) => row.id === ids[0]) as RowType)
                                 }
                                 slotProps={{
                                     toolbar: {
                                         showQuickFilter: true,
                                         quickFilterProps: { debounceMs: 500 },
+                                    },
+                                }}
+                                initialState={{
+                                    columns: {
+                                        columnVisibilityModel: {
+                                            typeDescription: false,
+                                            locationWarehouse: false,
+                                            vendorName: false,
+                                            createdAt: false,
+                                            updatedAt: false,
+                                        },
+                                    },
+                                    aggregation: {
+                                        model: {
+                                            quantity: 'sum',
+                                            squaredMeters: 'sum',
+                                        },
                                     },
                                 }}
                                 sx={{
@@ -865,6 +940,14 @@ const Home: NextPage = () => {
                 initialValues={glassSelection}
                 decorator={
                     [
+                        /*{
+                            field: 'id',
+                            updates: (id, __, allValues) => {
+                               console.log({allValues})
+
+                                return {}
+                            },
+                        },*/
                         {
                             field: 'type',
                             updates: (fieldValue, __, allValues) => {

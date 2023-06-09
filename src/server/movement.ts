@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { type GlassMovement, PrismaClient } from '@prisma/client/edge'
+import { type GlassMovement } from '@prisma/client/edge'
+import { prisma } from './db'
 import { isValidDate } from './variableChecker'
 export const config = {
     runtime: 'edge',
@@ -7,8 +8,6 @@ export const config = {
 
 // GET /api/movement
 export async function GET(request: NextRequest) {
-    const prisma = new PrismaClient()
-
     try {
         const { searchParams } = new URL(request.url)
         const glassId = Number(searchParams.get('glassId'))
@@ -74,7 +73,6 @@ export async function GET(request: NextRequest) {
 
 // POST /api/movement
 export async function POST(request: NextRequest) {
-    const prisma = new PrismaClient()
     try {
         const movementData = (await request.json()) as GlassMovement
         const createdMovement = await prisma.glassMovement.create({
@@ -93,10 +91,9 @@ export async function POST(request: NextRequest) {
 
 // PATCH /api/movement/:id
 export async function PATCH(request: NextRequest) {
-    const prisma = new PrismaClient()
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
+        const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
         const movementData = (await request.json()) as GlassMovement
         const updatedMovement = await prisma.glassMovement.update({
             where: {
@@ -117,10 +114,9 @@ export async function PATCH(request: NextRequest) {
 
 // DELETE /api/movement/:id
 export async function DELETE(request: NextRequest) {
-    const prisma = new PrismaClient()
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
+        const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
 
         const deletedMovement = await prisma.glassMovement.delete({ where: { id } })
 

@@ -1,28 +1,40 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { type NextRequest, NextResponse } from 'next/server'
-/*import { authOptions } from "./auth";
-import { getServerSession } from 'next-auth'*/
+import { prisma } from './db'
 
 import { type Glass, type GlassMovement, type GlassStatus } from '@prisma/client'
-import { PrismaClient } from '@prisma/client/edge'
 export const config = {
     runtime: 'edge',
 }
 
-/*eslint-disable no-useless-escape*/
+const prismaX = prisma.$extends({
+    //name: `squareMetersComputed`,
+    result: {
+        glass: {
+            squaredMeters: {
+                needs: { height: true, width: true },
+                compute(data: { height: number; width: number }) {
+                    return (data.height * data.width) / 1000000
+                },
+            },
+        },
+    },
+})
 
 // GET /api/glass
 export async function GET(req: NextRequest) {
-    const prisma = new PrismaClient()
-
     try {
         //Optengo el id y status pasados por query params
         const { searchParams } = new URL(req.url)
-        const id = searchParams.get('id')??searchParams.get('nextParamid')
+        const id = searchParams.get('id') ?? searchParams.get('nextParamid')
         const status = searchParams.get('status')?.split(',') as GlassStatus[] | null
 
         //Si existe un id entonces devuelvo ese vidrio específico
         if (id) {
-            const response = await prisma.glass.findUnique({
+            const response = await prismaX.glass.findUnique({
                 include: {
                     type: true,
                     vendor: true,
@@ -38,7 +50,7 @@ export async function GET(req: NextRequest) {
 
         //Si no existe entonces traigo todos los vidrios de la base de datos que tienen el status obtenido
         else {
-            const response = await prisma.glass.findMany({
+            const response = await prismaX.glass.findMany({
                 include: {
                     type: true,
                     vendor: true,
@@ -58,14 +70,12 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(null, { status: 500 })
     } finally {
         //Por último termino la conexión con prisma
-        await prisma.$disconnect()
+        await prismaX.$disconnect()
     }
 }
 
 // POST /api/glass
 export async function POST(request: NextRequest) {
-    const prisma = new PrismaClient()
-
     try {
         //Obtengo el vidrio a través de request
         const { user, glass: requestData } = (await request.json()) as {
@@ -81,7 +91,7 @@ export async function POST(request: NextRequest) {
         requestData.status = 'STORED'
 
         //Busco en la base de datos si existe un vidrio con las mismas características
-        let createdGlass: Glass | null = await prisma.glass.findFirst({
+        let createdGlass: Glass | null = await prismaX.glass.findFirst({
             where: {
                 typeId: requestData.typeId ?? null,
                 locationId: requestData.locationId ?? null,
@@ -97,7 +107,7 @@ export async function POST(request: NextRequest) {
             if (requestData.quantity <= 0) requestData.status = 'CONSUMED'
             if (!requestData.locationId) requestData.status = 'TRANSIT'
 
-            createdGlass = await prisma.glass.update({
+            createdGlass = await prismaX.glass.update({
                 where: {
                     id: parseInt(String(createdGlass.id)),
                 },
@@ -109,7 +119,7 @@ export async function POST(request: NextRequest) {
             if (requestData.quantity <= 0) requestData.status = 'CONSUMED'
             if (!requestData.locationId) requestData.status = 'TRANSIT'
 
-            createdGlass = await prisma.glass.create({
+            createdGlass = await prismaX.glass.create({
                 data: requestData,
             })
         }
@@ -125,7 +135,7 @@ export async function POST(request: NextRequest) {
             }
         })
 
-        await prisma.glassMovement.createMany({
+        await prismaX.glassMovement.createMany({
             data: glassMovements,
         })
 
@@ -138,13 +148,12 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(null, { status: 500 })
     } finally {
         //Termino la conexión con prisma
-        await prisma.$disconnect()
+        await prismaX.$disconnect()
     }
 }
 
 // PATCH /api/glass/:id
 export async function PATCH(request: NextRequest) {
-    const prisma = new PrismaClient()
     try {
         //Obtengo el vidrio de la petición y el id de los query params
         const { user, glass: glassUpdates } = (await request.json()) as {
@@ -155,7 +164,7 @@ export async function PATCH(request: NextRequest) {
 
         if (!user?.id) throw new Error('Se debe proveer un usuario válido')
 
-        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
+        const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
 
         if (!id || isNaN(id)) throw new Error('Se debe proveer un id válido')
 
@@ -168,7 +177,7 @@ export async function PATCH(request: NextRequest) {
         if (!glassUpdates.status) glassUpdates.status = 'STORED'
 
         let originalGlass: (Glass & { [key: string]: string | number | null | Date }) | null =
-            await prisma.glass.findFirst({
+            await prismaX.glass.findFirst({
                 where: {
                     id: {
                         not: id,
@@ -189,20 +198,20 @@ export async function PATCH(request: NextRequest) {
             if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
             if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
 
-            updatedGlass = await prisma.glass.update({
+            updatedGlass = await prismaX.glass.update({
                 where: {
                     id: originalGlass.id,
                 },
                 data: glassUpdates,
             })
 
-            await prisma.glassMovement.deleteMany({
+            await prismaX.glassMovement.deleteMany({
                 where: {
                     glassId: id,
                 },
             })
 
-            await prisma.glass.delete({
+            await prismaX.glass.delete({
                 where: {
                     id,
                 },
@@ -213,13 +222,13 @@ export async function PATCH(request: NextRequest) {
         else {
             if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
             if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
-            originalGlass = await prisma.glass.findUnique({
+            originalGlass = await prismaX.glass.findUnique({
                 where: {
                     id,
                 },
             })
 
-            updatedGlass = await prisma.glass.update({
+            updatedGlass = await prismaX.glass.update({
                 where: {
                     id,
                 },
@@ -242,7 +251,7 @@ export async function PATCH(request: NextRequest) {
 
             return movements
         }, [])
-        await prisma.glassMovement.createMany({
+        await prismaX.glassMovement.createMany({
             data: glassMovements,
         })
 
@@ -255,25 +264,23 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json(null, { status: 500 })
     } finally {
         //por último cierro la conexión con prisma
-        await prisma.$disconnect()
+        await prismaX.$disconnect()
     }
 }
 
 // DELETE /api/glass/:id
 export async function DELETE(request: NextRequest) {
-    const prisma = new PrismaClient()
-
     try {
         const { searchParams } = new URL(request.url)
-        const id = searchParams.get('id')??searchParams.get('nextParamid')
+        const id = searchParams.get('id') ?? searchParams.get('nextParamid')
 
-        await prisma.glassMovement.deleteMany({
+        await prismaX.glassMovement.deleteMany({
             where: {
                 glassId: parseInt(String(id)),
             },
         })
 
-        const deletedGlass = await prisma.glass.delete({
+        const deletedGlass = await prismaX.glass.delete({
             where: {
                 id: parseInt(String(id)),
             },
@@ -288,6 +295,6 @@ export async function DELETE(request: NextRequest) {
 
         return NextResponse.json(null, { status: 500 })
     } finally {
-        await prisma.$disconnect()
+        await prismaX.$disconnect()
     }
 }

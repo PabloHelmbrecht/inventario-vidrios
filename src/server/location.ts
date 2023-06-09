@@ -1,17 +1,16 @@
 import { type NextRequest, NextResponse } from 'next/server'
+import { prisma } from './db'
 
-import { type GlassLocation, PrismaClient } from '@prisma/client/edge'
+import { type GlassLocation } from '@prisma/client/edge'
 export const config = {
     runtime: 'edge',
 }
 
 // GET /api/location
 export async function GET(request: NextRequest) {
-    const prisma = new PrismaClient()
-
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
+        const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
         if (id) {
             const response = await prisma.glassLocation.findUnique({ where: { id } })
 
@@ -32,7 +31,6 @@ export async function GET(request: NextRequest) {
 
 // POST /api/location
 export async function POST(request: NextRequest) {
-    const prisma = new PrismaClient()
     try {
         const locationData = (await request.json()) as GlassLocation
         const createdLocation = await prisma.glassLocation.create({
@@ -51,10 +49,9 @@ export async function POST(request: NextRequest) {
 
 // PATCH /api/location/:id
 export async function PATCH(request: NextRequest) {
-    const prisma = new PrismaClient()
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
+        const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
         const locationData = (await request.json()) as GlassLocation
         const updatedLocation = await prisma.glassLocation.update({
             where: {
@@ -75,10 +72,9 @@ export async function PATCH(request: NextRequest) {
 
 // DELETE /api/location/:id
 export async function DELETE(request: NextRequest) {
-    const prisma = new PrismaClient()
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
+        const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
 
         const deletedLocation = await prisma.glassLocation.delete({ where: { id } })
 

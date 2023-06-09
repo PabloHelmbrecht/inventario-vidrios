@@ -1,17 +1,15 @@
 import { type NextRequest, NextResponse } from 'next/server'
-
-import { type GlassType, PrismaClient } from '@prisma/client/edge'
+import { prisma } from './db'
+import { type GlassType } from '@prisma/client/edge'
 export const config = {
     runtime: 'edge',
 }
 
 // GET /api/type
 export async function GET(request: NextRequest) {
-    const prisma = new PrismaClient()
-
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
+        const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
         if (id) {
             const response = await prisma.glassType.findUnique({ where: { id } })
 
@@ -32,7 +30,6 @@ export async function GET(request: NextRequest) {
 
 // POST /api/type
 export async function POST(request: NextRequest) {
-    const prisma = new PrismaClient()
     try {
         const typeData = (await request.json()) as GlassType
         const createdType = await prisma.glassType.create({
@@ -51,10 +48,9 @@ export async function POST(request: NextRequest) {
 
 // PATCH /api/type/:id
 export async function PATCH(request: NextRequest) {
-    const prisma = new PrismaClient()
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
+        const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
         const typeData = (await request.json()) as GlassType
         const updatedType = await prisma.glassType.update({
             where: {
@@ -77,10 +73,9 @@ export async function PATCH(request: NextRequest) {
 
 // DELETE /api/type/:id
 export async function DELETE(request: NextRequest) {
-    const prisma = new PrismaClient()
     try {
         const { searchParams } = new URL(request.url)
-        const id = Number(searchParams.get('id')??searchParams.get('nextParamid'))
+        const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
 
         const deletedType = await prisma.glassType.delete({ where: { id } })
 

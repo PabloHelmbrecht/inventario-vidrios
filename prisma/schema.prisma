@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["clientExtensions"]
 }
 
 datasource db {
@@ -26,6 +27,8 @@ model Glass {
   GlassMovement GlassMovement[]
 
   @@index([typeId, locationId, vendorId])
+  @@index([locationId])
+  @@index([vendorId])
 }
 
 model GlassMovement {
@@ -40,6 +43,7 @@ model GlassMovement {
   user      User?    @relation(fields: [userId], references: [id])
 
   @@index([glassId, userId])
+  @@index([userId])
 }
 
 model GlassType {
