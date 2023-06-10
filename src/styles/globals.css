@@ -50,4 +50,9 @@
 .MuiDataGrid-main.css-204u17-MuiDataGrid-main > div:nth-child(3) {
     display: none;
   }
+
+  .h-screen-fit {
+    height: calc(100vh - 12rem)
+  }
+  
   

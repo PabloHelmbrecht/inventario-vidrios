@@ -90,53 +90,57 @@ export async function POST(request: NextRequest) {
         if (requestData.quantity) requestData.quantity = Number(requestData.quantity)
         requestData.status = 'STORED'
 
-        //Busco en la base de datos si existe un vidrio con las mismas características
-        let createdGlass: Glass | null = await prismaX.glass.findFirst({
-            where: {
-                typeId: requestData.typeId ?? null,
-                locationId: requestData.locationId ?? null,
-                vendorId: requestData.vendorId ?? null,
-                height: requestData.height ?? null,
-                width: requestData.width ?? null,
-            },
-        })
-
-        //Si existe entonces sumo las cantidades de vidrio y actualizo el vidrio ya existente
-        if (createdGlass) {
-            requestData.quantity = parseInt(String(requestData.quantity)) + parseInt(String(createdGlass.quantity))
-            if (requestData.quantity <= 0) requestData.status = 'CONSUMED'
-            if (!requestData.locationId) requestData.status = 'TRANSIT'
-
-            createdGlass = await prismaX.glass.update({
+        const createdGlass = await prismaX.$transaction(async (tx) => {
+            //Busco en la base de datos si existe un vidrio con las mismas características
+            let createdGlass: Glass | null = await tx.glass.findFirst({
                 where: {
-                    id: parseInt(String(createdGlass.id)),
+                    typeId: requestData.typeId ?? null,
+                    locationId: requestData.locationId ?? null,
+                    vendorId: requestData.vendorId ?? null,
+                    height: requestData.height ?? null,
+                    width: requestData.width ?? null,
                 },
-                data: requestData,
             })
-        }
-        //Si no existe creo el vidrio nuevo
-        else {
-            if (requestData.quantity <= 0) requestData.status = 'CONSUMED'
-            if (!requestData.locationId) requestData.status = 'TRANSIT'
 
-            createdGlass = await prismaX.glass.create({
-                data: requestData,
-            })
-        }
+            //Si existe entonces sumo las cantidades de vidrio y actualizo el vidrio ya existente
+            if (createdGlass) {
+                requestData.quantity = parseInt(String(requestData.quantity)) + parseInt(String(createdGlass.quantity))
+                if (requestData.quantity <= 0) requestData.status = 'CONSUMED'
+                if (!requestData.locationId) requestData.status = 'TRANSIT'
 
-        //Luego guardo los movimientos por cada vidrio creado
-        const glassMovements = Object.entries(requestData).map(([column, newValue]) => {
-            return {
-                glassId: parseInt(String(createdGlass?.id)),
-                column,
-                oldValue: null,
-                newValue: String(newValue),
-                userId: user?.id,
+                createdGlass = await tx.glass.update({
+                    where: {
+                        id: parseInt(String(createdGlass.id)),
+                    },
+                    data: requestData,
+                })
             }
-        })
+            //Si no existe creo el vidrio nuevo
+            else {
+                if (requestData.quantity <= 0) requestData.status = 'CONSUMED'
+                if (!requestData.locationId) requestData.status = 'TRANSIT'
 
-        await prismaX.glassMovement.createMany({
-            data: glassMovements,
+                createdGlass = await tx.glass.create({
+                    data: requestData,
+                })
+            }
+
+            //Luego guardo los movimientos por cada vidrio creado
+            const glassMovements = Object.entries(requestData).map(([column, newValue]) => {
+                return {
+                    glassId: parseInt(String(createdGlass?.id)),
+                    column,
+                    oldValue: null,
+                    newValue: String(newValue),
+                    userId: user?.id,
+                }
+            })
+
+            await tx.glassMovement.createMany({
+                data: glassMovements,
+            })
+
+            return createdGlass
         })
 
         // Por último devuelvo el vidrio actualizado
@@ -176,83 +180,90 @@ export async function PATCH(request: NextRequest) {
         if (glassUpdates.quantity) glassUpdates.quantity = Number(glassUpdates.quantity)
         if (!glassUpdates.status) glassUpdates.status = 'STORED'
 
-        let originalGlass: (Glass & { [key: string]: string | number | null | Date }) | null =
-            await prismaX.glass.findFirst({
-                where: {
-                    id: {
-                        not: id,
+        const originalGlass = await prismaX.$transaction(async (tx) => {
+            let originalGlass: (Glass & { [key: string]: string | number | null | Date }) | null =
+                await tx.glass.findFirst({
+                    where: {
+                        id: {
+                            not: id,
+                        },
+                        typeId: glassUpdates.typeId ?? null,
+                        locationId: glassUpdates.locationId ?? null,
+                        vendorId: glassUpdates.vendorId ?? null,
+                        height: glassUpdates.height ?? null,
+                        width: glassUpdates.width ?? null,
                     },
-                    typeId: glassUpdates.typeId ?? null,
-                    locationId: glassUpdates.locationId ?? null,
-                    vendorId: glassUpdates.vendorId ?? null,
-                    height: glassUpdates.height ?? null,
-                    width: glassUpdates.width ?? null,
-                },
-            })
+                })
 
-        let updatedGlass: Glass | null = null
+            let updatedGlass: Glass | null = null
 
-        //Si existe un vidrio similar entonces sumo las cantidades, calculo el nuevo estado y actualizo los datos de este y borro el vidrio anterior
-        if (originalGlass) {
-            glassUpdates.quantity = glassUpdates.quantity + originalGlass.quantity
-            if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
-            if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
+            //Si existe un vidrio similar entonces sumo las cantidades, calculo el nuevo estado y actualizo los datos de este y borro el vidrio anterior
+            if (originalGlass) {
+                glassUpdates.quantity = glassUpdates.quantity + originalGlass.quantity
+                if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
+                if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
 
-            updatedGlass = await prismaX.glass.update({
-                where: {
-                    id: originalGlass.id,
-                },
-                data: glassUpdates,
-            })
+                updatedGlass = await tx.glass.update({
+                    where: {
+                        id: originalGlass.id,
+                    },
+                    data: glassUpdates,
+                })
 
-            await prismaX.glassMovement.deleteMany({
-                where: {
-                    glassId: id,
-                },
-            })
+                await tx.glassMovement.deleteMany({
+                    where: {
+                        glassId: id,
+                    },
+                })
 
-            await prismaX.glass.delete({
-                where: {
-                    id,
-                },
-            })
-        }
-
-        //Si no existe entonces actualizo el vidrio existente
-        else {
-            if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
-            if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
-            originalGlass = await prismaX.glass.findUnique({
-                where: {
-                    id,
-                },
-            })
-
-            updatedGlass = await prismaX.glass.update({
-                where: {
-                    id,
-                },
-                data: glassUpdates,
-            })
-        }
-
-        //Creo los movimientos de vidrio
-        const glassMovements = Object.entries(updatedGlass).reduce((movements: GlassMovement[], [column, newValue]) => {
-            const oldValue = originalGlass ? (originalGlass[column] as string) : null
-            if (oldValue !== newValue) {
-                movements.push({
-                    glassId: originalGlass?.id,
-                    column,
-                    oldValue: String(oldValue),
-                    newValue: String(newValue),
-                    userId: user?.id,
-                } as GlassMovement)
+                await tx.glass.delete({
+                    where: {
+                        id,
+                    },
+                })
             }
 
-            return movements
-        }, [])
-        await prismaX.glassMovement.createMany({
-            data: glassMovements,
+            //Si no existe entonces actualizo el vidrio existente
+            else {
+                if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
+                if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
+                originalGlass = await tx.glass.findUnique({
+                    where: {
+                        id,
+                    },
+                })
+
+                updatedGlass = await tx.glass.update({
+                    where: {
+                        id,
+                    },
+                    data: glassUpdates,
+                })
+            }
+
+            //Creo los movimientos de vidrio
+            const glassMovements = Object.entries(updatedGlass).reduce(
+                (movements: GlassMovement[], [column, newValue]) => {
+                    const oldValue = originalGlass ? (originalGlass[column] as string) : null
+                    if (oldValue !== newValue) {
+                        movements.push({
+                            glassId: originalGlass?.id,
+                            column,
+                            oldValue: String(oldValue),
+                            newValue: String(newValue),
+                            userId: user?.id,
+                        } as GlassMovement)
+                    }
+
+                    return movements
+                },
+                [],
+            )
+            await tx.glassMovement.createMany({
+                data: glassMovements,
+            })
+
+            return originalGlass
         })
 
         //Devuelvo el vidrio actualizado
@@ -274,19 +285,21 @@ export async function DELETE(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id') ?? searchParams.get('nextParamid')
 
-        await prismaX.glassMovement.deleteMany({
-            where: {
-                glassId: parseInt(String(id)),
-            },
-        })
+        const deletedGlass = await prismaX.$transaction(async (tx) => {
+            await tx.glassMovement.deleteMany({
+                where: {
+                    glassId: parseInt(String(id)),
+                },
+            })
 
-        const deletedGlass = await prismaX.glass.delete({
-            where: {
-                id: parseInt(String(id)),
-            },
-            include: {
-                GlassMovement: true,
-            },
+            return await tx.glass.delete({
+                where: {
+                    id: parseInt(String(id)),
+                },
+                include: {
+                    GlassMovement: true,
+                },
+            })
         })
 
         return NextResponse.json(deletedGlass)

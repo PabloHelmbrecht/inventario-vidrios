@@ -26,7 +26,7 @@ model Glass {
   vendor        GlassVendor?    @relation(fields: [vendorId], references: [id])
   GlassMovement GlassMovement[]
 
-  @@index([typeId, locationId, vendorId])
+  @@index([typeId])
   @@index([locationId])
   @@index([vendorId])
 }
@@ -42,7 +42,7 @@ model GlassMovement {
   glass     Glass    @relation(fields: [glassId], references: [id])
   user      User?    @relation(fields: [userId], references: [id])
 
-  @@index([glassId, userId])
+  @@index([glassId])
   @@index([userId])
 }
 

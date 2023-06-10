@@ -700,7 +700,7 @@ const Home: NextPage = () => {
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => new Date(value),
+            valueGetter: ({ value }: { value: string }) => (value ? new Date(value) : undefined),
             groupable: false,
         },
         {
@@ -708,7 +708,7 @@ const Home: NextPage = () => {
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => new Date(value),
+            valueGetter: ({ value }: { value: string }) => (value ? new Date(value) : undefined),
             groupable: false,
         },
         {
@@ -753,8 +753,8 @@ const Home: NextPage = () => {
 
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
-                    <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1>
-                    <div className="flex h-screen_3/4 w-full flex-col justify-center gap-4">
+                    {/* <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Inventario de Vidrios</h1> */}
+                    <div className="h-screen-fit flex w-full flex-col justify-center gap-4">
                         <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-0">
                             <div className="flex w-full items-center justify-start gap-2 pl-2 sm:w-1/2">
                                 <span className="text-sm font-medium  text-gray-700">Ver consumidos</span>

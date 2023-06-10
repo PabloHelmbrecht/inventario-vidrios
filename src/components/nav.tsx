@@ -13,7 +13,7 @@ const navigation = [
     { name: 'Tipos', href: '/tipos' },
     { name: 'Almacén', href: '/almacen' },
     { name: 'Proovedores', href: '/proovedores' },
-    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Historial', href: '/historial' },
 ]
 
 function classNames(...classes: string[]) {

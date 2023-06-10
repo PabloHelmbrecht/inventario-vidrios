@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
         if (glassId) {
             const response = await prisma.glassMovement.findMany({
                 include: {
-                    glass: false,
+                    user: true,
                 },
                 where: {
                     glassId,
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
         } else {
             const response = await prisma.glassMovement.findMany({
                 include: {
-                    glass: false,
+                    user: true,
                 },
                 where: {
                     column: column ? { in: column } : undefined,

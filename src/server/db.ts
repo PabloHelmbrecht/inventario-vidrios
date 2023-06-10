@@ -10,6 +10,6 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma =
     globalForPrisma.prisma ??
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    new PrismaClient({ log: env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'] })
+    new PrismaClient({ errorFormat: 'pretty', log: env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'] })
 
 if (env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
