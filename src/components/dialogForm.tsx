@@ -1,5 +1,5 @@
 //React
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 
 //Headless UI
 import { Dialog, Transition } from '@headlessui/react'
@@ -19,6 +19,8 @@ interface dialogFormProps {
     isOpen: boolean
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
     //eslint-disable-next-line no-unused-vars
+    onCloseCallback?: (values?: object) => void
+    // eslint-disable-next-line no-unused-vars
     onSubmit: (values: object) => void
     decorator?: Calculation[]
     //eslint-disable-next-line no-unused-vars
@@ -34,11 +36,19 @@ export default function DialogForm({
     //children,
     isOpen,
     setIsOpen,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onCloseCallback = () => {},
     onSubmit,
     decorator,
     initialValues = {},
     render,
 }: dialogFormProps) {
+    useEffect(()=> {
+
+        onCloseCallback()
+
+    },[onCloseCallback])
+
     return (
         <Transition
             appear
@@ -47,7 +57,7 @@ export default function DialogForm({
             <Dialog
                 as="div"
                 className="relative z-10"
-                onClose={() => setIsOpen(false)}>
+                onClose={() => {setIsOpen(false)}}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -75,14 +85,18 @@ export default function DialogForm({
                                     /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
                                     //@ts-ignore
                                     decorators={decorator ? [createDecorator(...decorator)] : null}
+                                    mutators={{
+                                        setFormAttribute: ([fieldName, fieldVal]: [string, number|string| null | undefined | object | Date], state, { changeValue }) => {
+                                          changeValue(state, fieldName, () => fieldVal);
+                                        }
+                                      }}
                                     initialValues={{ ...initialValues }}
                                     render={(props) => (
                                         <form>
                                             <Dialog.Title
                                                 as="h3"
-                                                className={` ${
-                                                    titleStyles ?? ''
-                                                } text-lg font-medium leading-6 text-gray-900`}>
+                                                className={` ${titleStyles ?? ''
+                                                    } text-lg font-medium leading-6 text-gray-900`}>
                                                 {title}
                                             </Dialog.Title>
 

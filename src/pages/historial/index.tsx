@@ -23,7 +23,7 @@ import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
 
 const columnDictionary: { [key: string]: string } = {
     id: 'ID del Vidrio',
-    typeId: 'ID del Tipo',
+    typeId: 'ID del Material',
     status: 'Estado',
     quantity: 'Cantidad',
     createdAt: 'Creado En',

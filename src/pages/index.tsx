@@ -40,8 +40,8 @@ import { isNotNullUndefinedOrEmpty } from '../server/variableChecker'
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../constants/localeTextConstants'
-import { type Calculation } from 'final-form-calculate'
 import { useSession } from 'next-auth/react'
+
 
 //Custom Types
 interface SuperGlass extends Glass {
@@ -63,6 +63,11 @@ interface RowType extends SuperGlass {
     vendorName?: string
     vendorCreatedAt?: Date
     vendorUpdatedAt?: Date
+}
+
+type FormInputType = SuperGlass & {
+    width?: { id: number; width: number }
+    height?: { id: number; height: number }
 }
 
 interface formResponseType {
@@ -113,7 +118,6 @@ const Home: NextPage = () => {
     //Functions
     //- Submit Functions
     const onGlassCreation = async (formResponse: object) => {
-        console.log({ formResponse })
         try {
             const { type, width, height, vendor, location, quantity, newComment } = formResponse as formResponseType
             const response = await axios.post('/api/glass', {
@@ -139,7 +143,6 @@ const Home: NextPage = () => {
     }
 
     const onGlassMovement = async (formResponse: object) => {
-        console.log({ formResponse })
         try {
             const { id, quantity, difQuantity, newComment, type, width, height, vendor, location, destinyLocation } =
                 formResponse as formResponseType
@@ -210,7 +213,6 @@ const Home: NextPage = () => {
     }
     const onGlassConsumption = async (formResponse: object) => {
         try {
-            console.log({ formResponse })
             const { id, quantity, difQuantity, newComment, type, width, height, vendor, location } =
                 formResponse as formResponseType
 
@@ -247,7 +249,6 @@ const Home: NextPage = () => {
 
     const onGlassDelete = async (formResponse: object) => {
         try {
-            console.log({ formResponse })
             const { id } = formResponse as formResponseType
             const response = await axios.delete(`/api/glass/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
@@ -262,7 +263,6 @@ const Home: NextPage = () => {
 
     const onGlassEdit = async (formResponse: object) => {
         try {
-            console.log({ formResponse })
             const { id } = formResponse as formResponseType
 
             const { type, width, height, vendor, location, newComment, quantity } = formResponse as formResponseType
@@ -324,15 +324,15 @@ const Home: NextPage = () => {
             setTypesData(cachedResponse)
 
             const response = await axios.get('/api/type')
-            if (response.data === null) throw new Error('No hay tipos')
+            if (response.data === null) throw new Error('No hay materiales')
             localStorage.setItem('typesData', JSON.stringify(response.data))
             setTypesData(response.data as GlassType[])
-            //setSnackbar({ type: 'success', message: 'Tipos de Vidrio Actualizados' })
+            //setSnackbar({ type: 'success', message: 'Materiales Actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
             setSnackbar({
                 type: 'warning',
-                message: 'Error al obtener los tipos de vidrio',
+                message: 'Error al obtener los materiales de vidrio',
             })
         }
     }
@@ -381,151 +381,74 @@ const Home: NextPage = () => {
 
     //- useMemos to Filter Form Options
 
-    const filteredTypesData = (filteredGlass: SuperGlass) =>
-        glassData
-            ?.filter((glass) => {
-                const { location, width, height, vendor } = glass
+    function getFieldOptions(glass: SuperGlass) {
 
-                const filterVendor: boolean = filteredGlass?.vendor?.name
-                    ? filteredGlass?.vendor?.name === vendor?.name
-                    : true
+        const foundGlasses = glassData?.filter((glassToCompare: SuperGlass) => {
 
-                const filterLocation: boolean = filteredGlass?.location?.position
-                    ? filteredGlass?.location?.position === location?.position
-                    : true
 
-                const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
+            let response = true
 
-                const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
+            if (glass.vendor?.name && glass.vendor?.name !== glassToCompare.vendor?.name) {
+                response = false
+            }
 
-                const finalFilter = filterVendor && filterLocation && filterWidth && filterHeight
+            if (glass.location?.position && glass.location?.position !== glassToCompare.location?.position) {
+                response = false
+            }
 
-                return finalFilter
-            })
-            .map((glass) => glass.type as GlassType)
-            .filter((v, i, a) => a.findIndex((v2) => v2.name === v.name) === i)
+            if (glass.width && glass.width !== glassToCompare.width) {
+                response = false
+            }
 
-    const filteredLocationsData = (filteredGlass: SuperGlass) =>
-        glassData
-            ?.filter((glass) => {
-                const { type, width, height, vendor } = glass
+            if (glass.height && glass.height !== glassToCompare.height) {
+                response = false
+            }
 
-                const filterVendor: boolean = filteredGlass?.vendor?.name
-                    ? filteredGlass?.vendor?.name === vendor?.name
-                    : true
+            if (glass.type?.name && glass.type?.name !== glassToCompare.type?.name) {
+                response = false
+            }
 
-                const filterType: boolean = filteredGlass?.type?.name ? filteredGlass?.type?.name === type?.name : true
+            return response
+        })
 
-                const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
 
-                const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
+        return {
+            "id": [... new Set(foundGlasses?.map(glass => glass.id))],
+            "type": [... new Set(foundGlasses?.map(glass => glass.type))],
+            "location": [... new Set(foundGlasses?.map(glass => glass.location))],
+            "vendor": [... new Set(foundGlasses?.map(glass => glass.vendor))],
+            "width": [... new Set(foundGlasses?.map(glass => glass.width))],
+            "height": [... new Set(foundGlasses?.map(glass => glass.height))],
+        }
+    }
 
-                const finalFilter = filterVendor && filterType && filterWidth && filterHeight
 
-                return finalFilter
-            })
-            .map((glass) => glass.location as GlassLocation)
-            .filter((v, i, a) => a.findIndex((v2) => v2.position === v.position) === i)
+    function filterGlassData(glass: SuperGlass & { difQuantity: string }) {
+        const foundGlass: SuperGlass[] | undefined = glassData?.filter((glassToCompare: SuperGlass) => {
 
-    const filteredVendorsData = (filteredGlass: SuperGlass) =>
-        glassData
-            ?.filter((glass) => {
-                const { type, width, height, location } = glass
+            let response = true
 
-                const filterType: boolean = filteredGlass?.type?.name ? filteredGlass?.type?.name === type?.name : true
+            if (glass.vendor?.name && glass.vendor?.name !== glassToCompare.vendor?.name) {
+                response = false
+            }
 
-                const filterLocation: boolean = filteredGlass?.location?.position
-                    ? filteredGlass?.location?.position === location?.position
-                    : true
+            if (glass.location?.position && glass.location?.position !== glassToCompare.location?.position) {
+                response = false
+            }
 
-                const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
+            if (glass.width && glass.width !== glassToCompare.width) {
+                response = false
+            }
 
-                const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
+            if (glass.height && glass.height !== glassToCompare.height) {
+                response = false
+            }
 
-                const finalFilter = filterType && filterLocation && filterWidth && filterHeight
+            if (glass.type?.name && glass.type?.name !== glassToCompare.type?.name) {
+                response = false
+            }
 
-                return finalFilter
-            })
-            .map((glass) => glass.vendor as GlassVendor)
-            .filter((v, i, a) => a.findIndex((v2) => v2.name === v.name) === i)
-
-    const filteredWidthData = (filteredGlass: SuperGlass) => [
-        ...new Set(
-            glassData
-                ?.filter((glass) => {
-                    const { type, location, height, vendor } = glass
-
-                    const filterVendor: boolean = filteredGlass?.vendor?.name
-                        ? filteredGlass?.vendor?.name === vendor?.name
-                        : true
-
-                    const filterType: boolean = filteredGlass?.type?.name
-                        ? filteredGlass?.type?.name === type?.name
-                        : true
-
-                    const filterLocation: boolean = filteredGlass?.location?.position
-                        ? filteredGlass?.location?.position === location?.position
-                        : true
-
-                    const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
-
-                    const finalFilter = filterVendor && filterType && filterLocation && filterHeight
-
-                    return finalFilter
-                })
-                .map((glass) => glass.width),
-        ),
-    ]
-
-    const filteredHeightData = (filteredGlass: SuperGlass) => [
-        ...new Set(
-            glassData
-                ?.filter((glass) => {
-                    const { type, location, width, vendor } = glass
-
-                    const filterVendor: boolean = filteredGlass?.vendor?.name
-                        ? filteredGlass?.vendor?.name === vendor?.name
-                        : true
-
-                    const filterType: boolean = filteredGlass?.type?.name
-                        ? filteredGlass?.type?.name === type?.name
-                        : true
-
-                    const filterLocation: boolean = filteredGlass?.location?.position
-                        ? filteredGlass?.location?.position === location?.position
-                        : true
-
-                    const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
-
-                    const finalFilter = filterVendor && filterType && filterLocation && filterWidth
-
-                    return finalFilter
-                })
-                .map((glass) => glass.height),
-        ),
-    ]
-
-    const filterGlassData = (filteredGlass: SuperGlass & { difQuantity: string }) => {
-        const foundGlass: SuperGlass[] | undefined = glassData?.filter((glass) => {
-            const { type, location, width, height, vendor } = glass
-
-            const filterVendor: boolean = filteredGlass?.vendor?.name
-                ? filteredGlass?.vendor?.name === vendor?.name
-                : true
-
-            const filterType: boolean = filteredGlass?.type?.name ? filteredGlass?.type?.name === type?.name : true
-
-            const filterLocation: boolean = filteredGlass?.location?.position
-                ? filteredGlass?.location?.position === location?.position
-                : true
-
-            const filterWidth: boolean = filteredGlass?.width ? filteredGlass?.width === width : true
-
-            const filterHeight: boolean = filteredGlass?.height ? filteredGlass?.height === height : true
-
-            const finalFilter = filterVendor && filterType && filterLocation && filterWidth && filterHeight
-
-            return finalFilter
+            return response
         })
 
         if (foundGlass?.length === 1 && foundGlass) {
@@ -534,7 +457,7 @@ const Home: NextPage = () => {
             setGlassFiltered(null)
         }
 
-        if (glassFiltered && foundGlass && Number(filteredGlass?.difQuantity) <= Number(foundGlass[0]?.quantity)) {
+        if (glassFiltered && foundGlass && Number(glass?.difQuantity) <= Number(foundGlass[0]?.quantity)) {
             setAllowQuantityChange(true)
         } else {
             setAllowQuantityChange(false)
@@ -549,6 +472,11 @@ const Home: NextPage = () => {
         fetchVendorsData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    useEffect(() => {
+        setGlassFiltered(null)
+    }, [isGlassMoverOpen, isGlassConsumerOpen])
+
 
     //DataGrid Definitions
     const rows: RowType[] = useMemo(() => {
@@ -569,6 +497,7 @@ const Home: NextPage = () => {
             }
         }) as RowType[]
     }, [glassData, glassDataWithConsumed, seeConsumedGlass])
+
 
     const columns: GridColDef[] = [
         {
@@ -718,19 +647,19 @@ const Home: NextPage = () => {
             getActions: ({ row }: { row: GridValidRowModel }) =>
                 row.id
                     ? [
-                          <GridActionsCellItem
-                              key={1}
-                              icon={<TrashIcon className="w-4" />}
-                              label="Delete"
-                              onClick={() => setGlassToDelete(row as RowType)}
-                          />,
-                          <GridActionsCellItem
-                              key={1}
-                              icon={<PencilSquareIcon className="w-4" />}
-                              label="Delete"
-                              onClick={() => setGlassToEdit(row as RowType)}
-                          />,
-                      ]
+                        <GridActionsCellItem
+                            key={1}
+                            icon={<TrashIcon className="w-4" />}
+                            label="Delete"
+                            onClick={() => setGlassToDelete(row as RowType)}
+                        />,
+                        <GridActionsCellItem
+                            key={1}
+                            icon={<PencilSquareIcon className="w-4" />}
+                            label="Delete"
+                            onClick={() => setGlassToEdit(row as RowType)}
+                        />,
+                    ]
                     : [],
             aggregable: false,
             groupable: false,
@@ -860,7 +789,7 @@ const Home: NextPage = () => {
                     return (
                         <>
                             <Combobox
-                                label="Tipo"
+                                label="Material"
                                 name="type"
                                 inputField="name"
                                 options={typesData as GlassType[]}
@@ -916,9 +845,8 @@ const Home: NextPage = () => {
                     <>
                         Mover Vidrio
                         {isNotNullUndefinedOrEmpty(glassFiltered) ? (
-                            <span className="text-sm font-normal text-slate-500">{`${` #${glassFiltered?.id ?? ''} ${
-                                glassFiltered?.type?.name ?? ''
-                            } ${glassFiltered?.width ?? ''}X${glassFiltered?.height ?? ''}`}`}</span>
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassFiltered?.id ?? ''} ${glassFiltered?.type?.name ?? ''
+                                } ${glassFiltered?.width ?? ''}X${glassFiltered?.height ?? ''}`}`}</span>
                         ) : (
                             ''
                         )}
@@ -937,349 +865,61 @@ const Home: NextPage = () => {
                         height: formResponse?.height?.height,
                     })
                 }}
-                initialValues={glassSelection}
-                decorator={
-                    [
-                        /*{
-                            field: 'id',
-                            updates: (id, __, allValues) => {
-                               console.log({allValues})
-
-                                return {}
-                            },
-                        },*/
-                        {
-                            field: 'type',
-                            updates: (fieldValue, __, allValues) => {
-                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
-                                const values = allValues as {
-                                    width: { width: number }
-                                    height: { height: number }
-                                    vendor?: object
-                                    location?: object
-                                    type?: object
-                                }
-                                const filteredGlass = {
-                                    ...values,
-                                    width: values?.width?.width,
-                                    height: values?.height?.height,
-                                } as SuperGlass
-
-                                const filteredWidth = filteredWidthData(filteredGlass)
-                                const filteredHeight = filteredHeightData(filteredGlass)
-                                const filteredLocations = filteredLocationsData(filteredGlass)
-                                const filteredVendors = filteredVendorsData(filteredGlass)
-
-                                //const filteredTypes = filteredTypesData(filteredGlass)
-
-                                const newValues: {
-                                    width?: { id: number; width: number | undefined }
-                                    height?: { id: number; height: number | undefined }
-                                    type?: object
-                                    location?: object
-                                    quantity?: number
-                                    vendor?: object
-                                    id?: number
-                                } = {}
-
-                                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                                    newValues.width = { id: 1, width: filteredWidth[0] }
-                                }
-                                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                                    newValues.height = { id: 1, height: filteredHeight[0] }
-                                }
-                                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                                    newValues.location = filteredLocations[0] as GlassLocation
-                                }
-                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
-                                    newValues.vendor = filteredVendors[0] as GlassVendor
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.id))) {
-                                    newValues.id = Number(glassFiltered?.id)
-                                }
-
-                                return newValues
-                            },
-                        },
-                        {
-                            field: 'width',
-                            updates: (fieldValue, __, allValues) => {
-                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
-                                const values = allValues as {
-                                    width: { width: number }
-                                    height: { height: number }
-                                    location?: object
-                                    vendor?: object
-                                    type?: object
-                                }
-                                const filteredGlass = {
-                                    ...values,
-                                    width: values?.width?.width,
-                                    height: values?.height?.height,
-                                } as SuperGlass
-
-                                //const filteredWidth = filteredWidthData(filteredGlass)
-                                const filteredHeight = filteredHeightData(filteredGlass)
-                                const filteredLocations = filteredLocationsData(filteredGlass)
-                                const filteredVendors = filteredVendorsData(filteredGlass)
-                                const filteredTypes = filteredTypesData(filteredGlass)
-
-                                const newValues: {
-                                    width?: { id: number; width: number | undefined }
-                                    height?: { id: number; height: number | undefined }
-                                    type?: object
-                                    location?: object
-                                    vendor?: object
-                                    quantity?: number
-                                    id?: number
-                                } = {}
-
-                                /*if(filteredWidth?.length===1&&values?.width?.width!==filteredWidth[0]) {
-                                newValues.width =  {id:1,width:filteredWidth[0]}
-                            }*/
-                                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                                    newValues.height = { id: 1, height: filteredHeight[0] }
-                                }
-                                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                                    newValues.location = filteredLocations[0] as GlassLocation
-                                }
-                                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                                    newValues.type = filteredTypes[0] as GlassType
-                                }
-                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
-                                    newValues.vendor = filteredVendors[0] as GlassVendor
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-
-                                return newValues
-                            },
-                        },
-                        {
-                            field: 'height',
-                            updates: (fieldValue, __, allValues) => {
-                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
-                                const values = allValues as {
-                                    width: { width: number }
-                                    height: { height: number }
-                                    location?: object
-                                    vendor?: object
-                                    type?: object
-                                    quantity?: number
-                                }
-                                const filteredGlass = {
-                                    ...values,
-                                    width: values?.width?.width,
-                                    height: values?.height?.height,
-                                } as SuperGlass
-
-                                const filteredWidth = filteredWidthData(filteredGlass)
-                                //const filteredHeight = filteredHeightData(filteredGlass)
-                                const filteredLocations = filteredLocationsData(filteredGlass)
-                                const filteredVendors = filteredVendorsData(filteredGlass)
-                                const filteredTypes = filteredTypesData(filteredGlass)
-
-                                const newValues: {
-                                    width?: { id: number; width: number | undefined }
-                                    height?: { id: number; height: number | undefined }
-                                    type?: object
-                                    location?: object
-                                    vendor?: object
-                                    quantity?: number
-                                    id?: number
-                                } = {}
-
-                                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                                    newValues.width = { id: 1, width: filteredWidth[0] }
-                                }
-                                /*if(filteredHeight?.length===1&&values?.height?.height!==filteredHeight[0]) {
-                                newValues.height =  {id:1,height:filteredHeight[0]}
-                            }*/
-                                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                                    newValues.location = filteredLocations[0] as GlassLocation
-                                }
-                                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                                    newValues.type = filteredTypes[0] as GlassType
-                                }
-                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
-                                    newValues.vendor = filteredVendors[0] as GlassVendor
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-
-                                return newValues
-                            },
-                        },
-                        {
-                            field: 'location',
-                            updates: (fieldValue, __, allValues) => {
-                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
-                                const values = allValues as {
-                                    width: { width: number }
-                                    height: { height: number }
-                                    location?: object
-                                    vendor?: object
-                                    type?: object
-                                }
-                                const filteredGlass = {
-                                    ...values,
-                                    width: values?.width?.width,
-                                    height: values?.height?.height,
-                                } as SuperGlass
-
-                                const filteredWidth = filteredWidthData(filteredGlass)
-                                const filteredHeight = filteredHeightData(filteredGlass)
-                                //const filteredLocations = filteredLocationsData(filteredGlass);const filteredVendors = filteredVendorsData(filteredGlass)
-                                const filteredTypes = filteredTypesData(filteredGlass)
-                                const filteredVendors = filteredVendorsData(filteredGlass)
-
-                                const newValues: {
-                                    width?: { id: number; width: number | undefined }
-                                    height?: { id: number; height: number | undefined }
-                                    type?: object
-                                    location?: object
-                                    vendor?: object
-                                    quantity?: number
-                                    id?: number
-                                } = {}
-
-                                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                                    newValues.width = { id: 1, width: filteredWidth[0] }
-                                }
-                                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                                    newValues.height = { id: 1, height: filteredHeight[0] }
-                                }
-                                /*if(filteredLocations?.length===1&&values?.location!==filteredLocations[0]) {
-                                newValues.location = filteredLocations[0] as GlassLocation
-                            }*/
-                                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                                    newValues.type = filteredTypes[0] as GlassType
-                                }
-                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
-                                    newValues.vendor = filteredVendors[0] as GlassVendor
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-
-                                return newValues
-                            },
-                        },
-                        {
-                            field: 'vendor',
-                            updates: (fieldValue, __, allValues) => {
-                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
-                                const values = allValues as {
-                                    width: { width: number }
-                                    height: { height: number }
-                                    vendor?: object
-                                    location?: object
-                                    type?: object
-                                }
-                                const filteredGlass = {
-                                    ...values,
-                                    width: values?.width?.width,
-                                    height: values?.height?.height,
-                                } as SuperGlass
-
-                                const filteredWidth = filteredWidthData(filteredGlass)
-                                const filteredHeight = filteredHeightData(filteredGlass)
-                                const filteredLocations = filteredLocationsData(filteredGlass)
-
-                                const filteredTypes = filteredTypesData(filteredGlass)
-
-                                const newValues: {
-                                    width?: { id: number; width: number | undefined }
-                                    height?: { id: number; height: number | undefined }
-                                    type?: object
-                                    location?: object
-                                    quantity?: number
-                                    id?: number
-                                } = {}
-
-                                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                                    newValues.width = { id: 1, width: filteredWidth[0] }
-                                }
-                                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                                    newValues.height = { id: 1, height: filteredHeight[0] }
-                                }
-                                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                                    newValues.location = filteredLocations[0] as GlassLocation
-                                }
-                                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                                    newValues.type = filteredTypes[0] as GlassType
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.id))) {
-                                    newValues.id = Number(glassFiltered?.id)
-                                }
-
-                                return newValues
-                            },
-                        },
-                    ] as Calculation[]
-                }
+                initialValues={glassSelection ? { ...glassSelection, width: { id: 1, width: glassSelection?.width }, height: { id: 1, height: glassSelection?.height } } : undefined}
                 render={(props) => {
-                    const width = props.values?.width as { width: number }
-                    const height = props.values?.height as { height: number }
 
-                    const filteredGlass = {
-                        ...props.values,
-                        width: width?.width,
-                        height: height?.height,
-                    } as SuperGlass
+                    const values = props.values as FormInputType
 
-                    filterGlassData({ ...filteredGlass, difQuantity: String(props.values?.difQuantity) })
+                    // eslint-disable-next-line no-unused-vars
+                    const setFormAttribute = props.form.mutators.setFormAttribute as (fieldName: string, fieldVal: number | string | null | object | Date) => void
+
+                    const formGlass: SuperGlass = {
+                        ...values,
+                        width: values?.width?.width,
+                        height: values?.height?.height,
+                    }
+
+                    filterGlassData({ ...formGlass, difQuantity: String(props.values?.difQuantity) })
+
+
+
+                    if (glassFiltered?.id && values.id !== glassFiltered.id) {
+                        setFormAttribute('id', glassFiltered.id)
+                        setFormAttribute('type', glassFiltered.type as object)
+                        setFormAttribute('vendor', glassFiltered.vendor as object)
+                        setFormAttribute('location', glassFiltered.location as object)
+                        setFormAttribute('width', { id: 1, width: glassFiltered.width } as object)
+                        setFormAttribute('height', { id: 1, height: glassFiltered.height } as object)
+                        setFormAttribute('quantity', glassFiltered.quantity)
+                    }
+
 
                     return (
                         <>
                             <TextLine
-                                label="Id"
+                                label="id"
                                 name="id"
-                                className="hidden"
+                                className='hidden'
                                 required={false}
                             />
                             <Combobox
-                                label="Tipo"
+                                label="Material"
                                 name="type"
                                 inputField="name"
-                                options={filteredTypesData(filteredGlass) as GlassType[]}
+                                options={getFieldOptions(formGlass).type as GlassType[]}
                             />
                             <Combobox
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
-                                options={filteredTypesData(filteredGlass) as GlassType[]}
+                                options={getFieldOptions(formGlass).type as GlassType[]}
                             />
                             <Combobox
                                 label="Ancho"
                                 name="width"
                                 inputField="width"
-                                className=" sm:col-span-2"
-                                options={filteredWidthData(filteredGlass)?.map((width, id) => {
+                                className="sm:col-span-2"
+                                options={getFieldOptions(formGlass).width?.map((width, id) => {
                                     return { id: id + 1, width }
                                 })}
                             />
@@ -1287,8 +927,8 @@ const Home: NextPage = () => {
                                 label="Alto"
                                 name="height"
                                 inputField="height"
-                                className=" sm:col-span-2"
-                                options={filteredHeightData(filteredGlass)?.map((height, id) => {
+                                className="sm:col-span-2"
+                                options={getFieldOptions(formGlass).height?.map((height, id) => {
                                     return { id: id + 1, height }
                                 })}
                             />
@@ -1298,7 +938,7 @@ const Home: NextPage = () => {
                                 name="vendor"
                                 inputField="name"
                                 className=" sm:col-span-2"
-                                options={filteredVendorsData(filteredGlass) as GlassVendor[]}
+                                options={getFieldOptions(formGlass).vendor as GlassVendor[]}
                             />
 
                             <Combobox
@@ -1306,7 +946,7 @@ const Home: NextPage = () => {
                                 name="location"
                                 inputField="position"
                                 className=" sm:col-span-3"
-                                options={filteredLocationsData(filteredGlass) as GlassLocation[]}
+                                options={getFieldOptions(formGlass).location as GlassLocation[]}
                             />
 
                             <Combobox
@@ -1343,9 +983,8 @@ const Home: NextPage = () => {
                     <>
                         Consumir Vidrio
                         {isNotNullUndefinedOrEmpty(glassFiltered) ? (
-                            <span className="text-sm font-normal text-slate-500">{`${` #${glassFiltered?.id ?? ''} ${
-                                glassFiltered?.type?.name ?? ''
-                            } ${glassFiltered?.width ?? ''}X${glassFiltered?.height ?? ''}`}`}</span>
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassFiltered?.id ?? ''} ${glassFiltered?.type?.name ?? ''
+                                } ${glassFiltered?.width ?? ''}X${glassFiltered?.height ?? ''}`}`}</span>
                         ) : (
                             ''
                         )}
@@ -1364,338 +1003,63 @@ const Home: NextPage = () => {
                         height: formResponse?.height?.height,
                     })
                 }}
-                initialValues={glassSelection}
-                decorator={
-                    [
-                        {
-                            field: 'type',
-                            updates: (fieldValue, __, allValues) => {
-                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
-                                const values = allValues as {
-                                    width: { width: number }
-                                    height: { height: number }
-                                    location?: object
-                                    vendor?: object
-                                    type?: object
-                                }
-                                const filteredGlass = {
-                                    ...values,
-                                    width: values?.width?.width,
-                                    height: values?.height?.height,
-                                } as SuperGlass
-
-                                const filteredWidth = filteredWidthData(filteredGlass)
-                                const filteredHeight = filteredHeightData(filteredGlass)
-                                const filteredLocations = filteredLocationsData(filteredGlass)
-                                const filteredVendors = filteredVendorsData(filteredGlass)
-                                //const filteredTypes = filteredTypesData(filteredGlass)
-
-                                const newValues: {
-                                    width?: { id: number; width: number | undefined }
-                                    height?: { id: number; height: number | undefined }
-                                    type?: object
-                                    location?: object
-                                    vendor?: object
-                                    quantity?: number
-                                    id?: number
-                                } = {}
-
-                                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                                    newValues.width = { id: 1, width: filteredWidth[0] }
-                                }
-                                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                                    newValues.height = { id: 1, height: filteredHeight[0] }
-                                }
-                                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                                    newValues.location = filteredLocations[0] as GlassLocation
-                                }
-                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
-                                    newValues.vendor = filteredVendors[0] as GlassVendor
-                                }
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-
-                                return newValues
-                            },
-                        },
-                        {
-                            field: 'width',
-                            updates: (fieldValue, __, allValues) => {
-                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
-                                const values = allValues as {
-                                    width: { width: number }
-                                    height: { height: number }
-                                    location?: object
-                                    type?: object
-                                    vendor?: object
-                                }
-                                const filteredGlass = {
-                                    ...values,
-                                    width: values?.width?.width,
-                                    height: values?.height?.height,
-                                } as SuperGlass
-
-                                //const filteredWidth = filteredWidthData(filteredGlass)
-                                const filteredHeight = filteredHeightData(filteredGlass)
-                                const filteredLocations = filteredLocationsData(filteredGlass)
-                                const filteredVendors = filteredVendorsData(filteredGlass)
-                                const filteredTypes = filteredTypesData(filteredGlass)
-
-                                const newValues: {
-                                    width?: { id: number; width: number | undefined }
-                                    height?: { id: number; height: number | undefined }
-                                    type?: object
-                                    location?: object
-                                    vendor?: object
-                                    quantity?: number
-                                    id?: number
-                                } = {}
-
-                                /*if(filteredWidth?.length===1&&values?.width?.width!==filteredWidth[0]) {
-                                newValues.width =  {id:1,width:filteredWidth[0]}
-                            }*/
-                                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                                    newValues.height = { id: 1, height: filteredHeight[0] }
-                                }
-                                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                                    newValues.location = filteredLocations[0] as GlassLocation
-                                }
-                                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                                    newValues.type = filteredTypes[0] as GlassType
-                                }
-                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
-                                    newValues.vendor = filteredVendors[0] as GlassVendor
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-
-                                return newValues
-                            },
-                        },
-                        {
-                            field: 'height',
-                            updates: (fieldValue, __, allValues) => {
-                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
-                                const values = allValues as {
-                                    width: { width: number }
-                                    height: { height: number }
-                                    location?: object
-                                    type?: object
-                                    vendor?: object
-                                    quantity?: number
-                                }
-                                const filteredGlass = {
-                                    ...values,
-                                    width: values?.width?.width,
-                                    height: values?.height?.height,
-                                } as SuperGlass
-
-                                const filteredWidth = filteredWidthData(filteredGlass)
-                                //const filteredHeight = filteredHeightData(filteredGlass)
-                                const filteredLocations = filteredLocationsData(filteredGlass)
-                                const filteredVendors = filteredVendorsData(filteredGlass)
-                                const filteredTypes = filteredTypesData(filteredGlass)
-
-                                const newValues: {
-                                    width?: { id: number; width: number | undefined }
-                                    height?: { id: number; height: number | undefined }
-                                    type?: object
-                                    location?: object
-                                    vendor?: object
-                                    quantity?: number
-                                    id?: number
-                                } = {}
-
-                                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                                    newValues.width = { id: 1, width: filteredWidth[0] }
-                                }
-                                /*if(filteredHeight?.length===1&&values?.height?.height!==filteredHeight[0]) {
-                                newValues.height =  {id:1,height:filteredHeight[0]}
-                            }*/
-                                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                                    newValues.location = filteredLocations[0] as GlassLocation
-                                }
-                                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                                    newValues.type = filteredTypes[0] as GlassType
-                                }
-                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
-                                    newValues.vendor = filteredVendors[0] as GlassVendor
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-
-                                return newValues
-                            },
-                        },
-                        {
-                            field: 'location',
-                            updates: (fieldValue, __, allValues) => {
-                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
-                                const values = allValues as {
-                                    width: { width: number }
-                                    height: { height: number }
-                                    location?: object
-                                    type?: object
-                                    vendor?: object
-                                }
-                                const filteredGlass = {
-                                    ...values,
-                                    width: values?.width?.width,
-                                    height: values?.height?.height,
-                                } as SuperGlass
-
-                                const filteredWidth = filteredWidthData(filteredGlass)
-                                const filteredHeight = filteredHeightData(filteredGlass)
-                                //const filteredLocations = filteredLocationsData(filteredGlass);const filteredVendors = filteredVendorsData(filteredGlass)
-                                const filteredTypes = filteredTypesData(filteredGlass)
-                                const filteredVendors = filteredVendorsData(filteredGlass)
-
-                                const newValues: {
-                                    width?: { id: number; width: number | undefined }
-                                    height?: { id: number; height: number | undefined }
-                                    type?: object
-                                    location?: object
-                                    vendor?: object
-                                    quantity?: number
-                                    id?: number
-                                } = {}
-
-                                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                                    newValues.width = { id: 1, width: filteredWidth[0] }
-                                }
-                                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                                    newValues.height = { id: 1, height: filteredHeight[0] }
-                                }
-                                /*if(filteredLocations?.length===1&&values?.location!==filteredLocations[0]) {
-                                newValues.location = filteredLocations[0] as GlassLocation
-                            }*/
-                                if (filteredVendors?.length === 1 && values?.vendor !== filteredVendors[0]) {
-                                    newValues.vendor = filteredVendors[0] as GlassVendor
-                                }
-                                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                                    newValues.type = filteredTypes[0] as GlassType
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-
-                                return newValues
-                            },
-                        },
-                        {
-                            field: 'vendor',
-                            updates: (fieldValue, __, allValues) => {
-                                if (!isNotNullUndefinedOrEmpty(fieldValue as object)) return {}
-                                const values = allValues as {
-                                    width: { width: number }
-                                    height: { height: number }
-                                    vendor?: object
-                                    location?: object
-                                    type?: object
-                                }
-                                const filteredGlass = {
-                                    ...values,
-                                    width: values?.width?.width,
-                                    height: values?.height?.height,
-                                } as SuperGlass
-
-                                const filteredWidth = filteredWidthData(filteredGlass)
-                                const filteredHeight = filteredHeightData(filteredGlass)
-                                const filteredLocations = filteredLocationsData(filteredGlass)
-
-                                const filteredTypes = filteredTypesData(filteredGlass)
-
-                                const newValues: {
-                                    width?: { id: number; width: number | undefined }
-                                    height?: { id: number; height: number | undefined }
-                                    type?: object
-                                    location?: object
-                                    quantity?: number
-                                    id?: number
-                                } = {}
-
-                                if (filteredWidth?.length === 1 && values?.width?.width !== filteredWidth[0]) {
-                                    newValues.width = { id: 1, width: filteredWidth[0] }
-                                }
-                                if (filteredHeight?.length === 1 && values?.height?.height !== filteredHeight[0]) {
-                                    newValues.height = { id: 1, height: filteredHeight[0] }
-                                }
-                                if (filteredLocations?.length === 1 && values?.location !== filteredLocations[0]) {
-                                    newValues.location = filteredLocations[0] as GlassLocation
-                                }
-                                if (filteredTypes?.length === 1 && values?.type !== filteredTypes[0]) {
-                                    newValues.type = filteredTypes[0] as GlassType
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.quantity))) {
-                                    newValues.quantity = Number(glassFiltered?.quantity)
-                                }
-
-                                if (!isNaN(Number(glassFiltered?.id))) {
-                                    newValues.id = Number(glassFiltered?.id)
-                                }
-
-                                return newValues
-                            },
-                        },
-                    ] as Calculation[]
-                }
+                initialValues={glassSelection ? { ...glassSelection, width: { id: 1, width: glassSelection?.width }, height: { id: 1, height: glassSelection?.height } } : null}
                 render={(props) => {
-                    const width = props.values?.width as { width: number }
-                    const height = props.values?.height as { height: number }
 
-                    const filteredGlass = {
-                        ...props.values,
-                        width: width?.width,
-                        height: height?.height,
-                    } as SuperGlass
+                    const values = props.values as FormInputType
 
-                    filterGlassData({ ...filteredGlass, difQuantity: String(props.values?.difQuantity) })
+                    // eslint-disable-next-line no-unused-vars
+                    const setFormAttribute = props.form.mutators.setFormAttribute as (fieldName: string, fieldVal: number | string | null | object | Date) => void
+
+                    const formGlass: SuperGlass = {
+                        ...values,
+                        width: values?.width?.width,
+                        height: values?.height?.height,
+                    }
+
+
+                    filterGlassData({ ...formGlass, difQuantity: String(props.values?.difQuantity) })
+
+
+                    if (glassFiltered?.id && values.id !== glassFiltered.id) {
+                        setFormAttribute('id', glassFiltered.id)
+                        setFormAttribute('type', glassFiltered.type as object)
+                        setFormAttribute('vendor', glassFiltered.vendor as object)
+                        setFormAttribute('location', glassFiltered.location as object)
+                        setFormAttribute('width', { id: 1, width: glassFiltered.width } as object)
+                        setFormAttribute('height', { id: 1, height: glassFiltered.height } as object)
+                        setFormAttribute('quantity', glassFiltered.quantity)
+                    }
+
+
+
 
                     return (
                         <>
                             <TextLine
-                                label="Id"
+                                label="id"
                                 name="id"
                                 className="hidden"
                                 required={false}
                             />
                             <Combobox
-                                label="Tipo"
+                                label="Material"
                                 name="type"
                                 inputField="name"
-                                options={filteredTypesData(filteredGlass) as GlassType[]}
+                                options={getFieldOptions(formGlass).type as GlassType[]}
                             />
                             <Combobox
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
-                                options={filteredTypesData(filteredGlass) as GlassType[]}
+                                options={getFieldOptions(formGlass).type as GlassType[]}
                             />
                             <Combobox
                                 label="Ancho"
                                 name="width"
                                 inputField="width"
                                 className=" sm:col-span-3"
-                                options={filteredWidthData(filteredGlass)?.map((width, id) => {
+                                options={getFieldOptions(formGlass).width?.map((width, id) => {
                                     return { id: id + 1, width }
                                 })}
                             />
@@ -1704,7 +1068,7 @@ const Home: NextPage = () => {
                                 name="height"
                                 inputField="height"
                                 className=" sm:col-span-3"
-                                options={filteredHeightData(filteredGlass)?.map((height, id) => {
+                                options={getFieldOptions(formGlass).height?.map((height, id) => {
                                     return { id: id + 1, height }
                                 })}
                             />
@@ -1714,14 +1078,14 @@ const Home: NextPage = () => {
                                 name="location"
                                 inputField="position"
                                 className=" sm:col-span-3"
-                                options={filteredLocationsData(filteredGlass) as GlassLocation[]}
+                                options={getFieldOptions(formGlass).location as GlassLocation[]}
                             />
                             <Combobox
                                 label="Proovedor"
                                 name="vendor"
                                 inputField="name"
                                 className=" sm:col-span-3"
-                                options={filteredVendorsData(filteredGlass) as GlassVendor[]}
+                                options={getFieldOptions(formGlass).vendor as GlassVendor[]}
                             />
                             <Numeric
                                 label="Cantidad"
@@ -1750,9 +1114,8 @@ const Home: NextPage = () => {
                     <>
                         Editar Vidrio
                         {isNotNullUndefinedOrEmpty(glassToEdit) ? (
-                            <span className="text-sm font-normal text-slate-500">{`${` #${glassToEdit?.id ?? ''} ${
-                                glassToEdit?.type?.name ?? ''
-                            } ${glassToEdit?.width ?? ''}X${glassToEdit?.height ?? ''}`}`}</span>
+                            <span className="text-sm font-normal text-slate-500">{`${` #${glassToEdit?.id ?? ''} ${glassToEdit?.type?.name ?? ''
+                                } ${glassToEdit?.width ?? ''}X${glassToEdit?.height ?? ''}`}`}</span>
                         ) : (
                             ''
                         )}
@@ -1769,7 +1132,7 @@ const Home: NextPage = () => {
                     return (
                         <>
                             <Combobox
-                                label="Tipo"
+                                label="Material"
                                 name="type"
                                 inputField="name"
                                 options={typesData as GlassType[]}
@@ -1822,17 +1185,14 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title={`¿Desea eliminar el vidrio #${
-                    isNotNullUndefinedOrEmpty(glassToDelete) ? `${glassToDelete?.id ?? ''}` : ''
-                }?`}
+                title={`¿Desea eliminar el vidrio #${isNotNullUndefinedOrEmpty(glassToDelete) ? `${glassToDelete?.id ?? ''}` : ''
+                    }?`}
                 titleStyles="text-center"
-                buttonText={`Eliminar #${
-                    isNotNullUndefinedOrEmpty(glassToDelete)
-                        ? `${glassToDelete?.id ?? ''} ${glassToDelete?.type?.name ?? ''} ${
-                              glassToDelete?.width ?? ''
-                          }X${glassToDelete?.height ?? ''}`
-                        : 'vidrio'
-                }`}
+                buttonText={`Eliminar #${isNotNullUndefinedOrEmpty(glassToDelete)
+                    ? `${glassToDelete?.id ?? ''} ${glassToDelete?.type?.name ?? ''} ${glassToDelete?.width ?? ''
+                    }X${glassToDelete?.height ?? ''}`
+                    : 'vidrio'
+                    }`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"
                 isOpen={isNotNullUndefinedOrEmpty(glassToDelete)}
                 setIsOpen={(value) => {

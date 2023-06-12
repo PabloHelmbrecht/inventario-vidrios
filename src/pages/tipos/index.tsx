@@ -63,12 +63,12 @@ const Home: NextPage = () => {
                 description,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
-            setSnackbar({ type: 'success', message: 'Tipo cargado exitosamente' })
+            setSnackbar({ type: 'success', message: 'Material cargado exitosamente' })
 
             fetchTypesData()
         } catch (error) {
             console.error('Error creating type:', error)
-            setSnackbar({ type: 'warning', message: 'Error al crear el tipo' })
+            setSnackbar({ type: 'warning', message: 'Error al crear el material' })
         }
     }
 
@@ -77,12 +77,12 @@ const Home: NextPage = () => {
             const { id } = formResponse as formResponseType
             const response = await axios.delete(`/api/type/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
-            setSnackbar({ type: 'success', message: 'Tipo eliminado exitosamente' })
+            setSnackbar({ type: 'success', message: 'Material eliminado exitosamente' })
 
             fetchTypesData()
         } catch (error) {
             console.error('Error deleting type:', error)
-            setSnackbar({ type: 'warning', message: 'Error al eliminar el tipo' })
+            setSnackbar({ type: 'warning', message: 'Error al eliminar el material' })
         }
     }
 
@@ -95,12 +95,12 @@ const Home: NextPage = () => {
                 description,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
-            setSnackbar({ type: 'success', message: 'Tipo editado exitosamente' })
+            setSnackbar({ type: 'success', message: 'Material editado exitosamente' })
 
             fetchTypesData()
         } catch (error) {
             console.error('Error deleting glass:', error)
-            setSnackbar({ type: 'warning', message: 'Error al editar el tipo de vidrio' })
+            setSnackbar({ type: 'warning', message: 'Error al editar el material de vidrio' })
         }
     }
 
@@ -112,15 +112,15 @@ const Home: NextPage = () => {
             setTypesData(cachedResponse)
 
             const response = await axios.get(`/api/type`)
-            if (response.data === null) throw new Error('No hay tipos')
+            if (response.data === null) throw new Error('No hay materiales')
             localStorage.setItem('typesData', JSON.stringify(response.data))
             setTypesData(response.data as GlassType[])
-            setSnackbar({ type: 'success', message: 'Tipos de Vidrio Actualizados' })
+            setSnackbar({ type: 'success', message: 'Materiales Actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
             setSnackbar({
                 type: 'warning',
-                message: 'Error al obtener los tipos de vidrio',
+                message: 'Error al obtener los materiales de vidrio',
             })
         }
     }
@@ -191,7 +191,7 @@ const Home: NextPage = () => {
     return (
         <>
             <Head>
-                <title>Tipos de Vidrios</title>
+                <title>Materiales de Vidrios</title>
                 <meta
                     name="description"
                     content="Gestor de inventario"
@@ -204,7 +204,7 @@ const Home: NextPage = () => {
 
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
-                    <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Tipos de Vidrio</h1>
+                    <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Materiales</h1>
                     <div className="flex h-screen_3/4  w-auto max-w-full  flex-col justify-center gap-4">
                         <div className="flex w-full items-end justify-between">
                             <div className="flex w-full justify-end gap-3">
@@ -214,7 +214,7 @@ const Home: NextPage = () => {
                                     }}
                                     disabled={!typesData}
                                     className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
-                                    Crear Tipo
+                                    Crear Material
                                 </button>
                             </div>
                         </div>
@@ -257,7 +257,7 @@ const Home: NextPage = () => {
 
             {/*Formulario de Carga en almacen traer solo almacen de esa posicion*/}
             <DialogForm
-                title="Crear Tipo de Vidrio"
+                title="Crear Material de Vidrio"
                 buttonText="Crear"
                 buttonStyles="bg-emerald-500 hover:bg-emerald-600"
                 isOpen={isTypeCreatorOpen}
@@ -284,7 +284,7 @@ const Home: NextPage = () => {
             <DialogForm
                 title={
                     <>
-                        Editar Tipo de Vidrio
+                        Editar Material de Vidrio
                         {isNotNullUndefinedOrEmpty(typeToEdit) ? (
                             <span className="text-sm font-normal text-slate-500">{`   ${typeToEdit?.name ?? ''}`}</span>
                         ) : (
@@ -317,7 +317,7 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title={`¿Desea eliminar el tipo ${
+                title={`¿Desea eliminar el material ${
                     isNotNullUndefinedOrEmpty(typeToDelete) ? `${typeToDelete?.name ?? ''}` : ''
                 }?`}
                 titleStyles="text-center"

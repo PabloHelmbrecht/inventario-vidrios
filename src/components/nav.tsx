@@ -10,7 +10,7 @@ import Image from 'next/image'
 const navigation = [
     { name: 'Inventario de Vidrios', href: '/' },
     //{ name: 'Movimientos', href: '/movimientos' },
-    { name: 'Tipos', href: '/tipos' },
+    { name: 'Materiales', href: '/materiales' },
     { name: 'Almacén', href: '/almacen' },
     { name: 'Proovedores', href: '/proovedores' },
     { name: 'Historial', href: '/historial' },
