@@ -9,10 +9,10 @@ export default function Signin() {
     console.log({status})
 
     useEffect(() => {
-        if (status === 'unauthenticated') {
+        if (status !== 'authenticated') {
             console.log('No JWT')
             console.log({status})
-        } else if (status === 'authenticated') {
+        } else {
             void router.push('/')
         }
     }, [router, status])

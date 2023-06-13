@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { withAuth } from 'next-auth/middleware'
-import { env } from '~/env.mjs'
+import { getToken } from 'next-auth/jwt';
+import { type NextRequest, NextResponse } from 'next/server';
 
-export default env.NODE_ENV !== 'development'
-    ? withAuth({
-          pages: {
-              signIn: '/auth/signin',
-          },
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-      })
-    : () => {}
+export async function middleware(req: NextRequest) {
+  // 'secret' should be the same 'process.env.SECRET' use in NextAuth function
+  const session = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET }); console.log('session in middleware: ', session)
+
+  
+  return NextResponse.next()
+}
