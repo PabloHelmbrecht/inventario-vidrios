@@ -1,7 +1,10 @@
 import { type Config } from 'tailwindcss'
 
+
 export default {
-    content: ['./src/**/*.{js,ts,jsx,tsx}'],
+    content: [
+        './src/**/*.{js,ts,jsx,tsx}',
+        './node_modules/tailwind-datepicker-react/dist/**/*.js'],
     theme: {
         minHeight: {
             '0': '0',
@@ -13,8 +16,8 @@ export default {
 
         extend: {
             height: {
-                'screen_3/4':'65vh'
-              }
+                'screen_3/4': '65vh'
+            }
         },
     },
     plugins: [],

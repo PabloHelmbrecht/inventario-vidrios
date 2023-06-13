@@ -99,6 +99,7 @@ export async function POST(request: NextRequest) {
                     vendorId: requestData.vendorId ?? null,
                     height: requestData.height ?? null,
                     width: requestData.width ?? null,
+                    batch: requestData.batch ?? null,
                 },
             })
 
@@ -192,6 +193,7 @@ export async function PATCH(request: NextRequest) {
                         vendorId: glassUpdates.vendorId ?? null,
                         height: glassUpdates.height ?? null,
                         width: glassUpdates.width ?? null,
+                        batch: glassUpdates.batch ?? null,
                     },
                 })
 

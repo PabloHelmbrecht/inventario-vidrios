@@ -31,6 +31,7 @@ import Combobox from '../components/inputFields/comboboxField'
 import Numeric from '../components/inputFields/numericField'
 import TextArea from '../components/inputFields/textareaField'
 import TextLine from '../components/inputFields/textlineField'
+import DateField from '~/components/inputFields/dateField'
 import DialogForm from '../components/dialogForm'
 import Toggle from '../components/toggle'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
@@ -68,6 +69,7 @@ interface RowType extends SuperGlass {
 type FormInputType = SuperGlass & {
     width?: { id: number; width: number }
     height?: { id: number; height: number }
+    batch?: {id: number; batch: string}
 }
 
 interface formResponseType {
@@ -79,6 +81,8 @@ interface formResponseType {
     width: number
     height: number
     quantity: number
+    batch?: string
+    expirationDate?: Date
     newComment?: string
     difQuantity?: string | number
 }
@@ -119,7 +123,7 @@ const Home: NextPage = () => {
     //- Submit Functions
     const onGlassCreation = async (formResponse: object) => {
         try {
-            const { type, width, height, vendor, location, quantity, newComment } = formResponse as formResponseType
+            const { type, width, height, vendor, location, quantity, batch, expirationDate, newComment } = formResponse as formResponseType
             const response = await axios.post('/api/glass', {
                 user,
                 glass: {
@@ -129,6 +133,8 @@ const Home: NextPage = () => {
                     vendorId: vendor.id,
                     locationId: location?.id !== null ? location?.id : undefined,
                     quantity,
+                    batch,
+                    expirationDate,
                     Comment: newComment,
                 },
             })
@@ -144,7 +150,7 @@ const Home: NextPage = () => {
 
     const onGlassMovement = async (formResponse: object) => {
         try {
-            const { id, quantity, difQuantity, newComment, type, width, height, vendor, location, destinyLocation } =
+            const { id, quantity, difQuantity, newComment, type, width, height, vendor, batch, expirationDate, location, destinyLocation } =
                 formResponse as formResponseType
 
             const newQuantity = Number(quantity) - Number(difQuantity)
@@ -167,6 +173,8 @@ const Home: NextPage = () => {
                         height,
                         vendorId: vendor.id,
                         locationId: destinyLocation?.id,
+                        batch,
+                        expirationDate
                     },
                 })
 
@@ -184,6 +192,8 @@ const Home: NextPage = () => {
                         locationId: location?.id,
                         vendorId: vendor.id,
                         Comment: newComment,
+                        batch,
+                        expirationDate
                     },
                 })
 
@@ -197,6 +207,8 @@ const Home: NextPage = () => {
                         vendorId: vendor.id,
                         locationId: destinyLocation?.id,
                         Comment: newComment,
+                        batch,
+                        expirationDate
                     },
                 })
 
@@ -213,7 +225,7 @@ const Home: NextPage = () => {
     }
     const onGlassConsumption = async (formResponse: object) => {
         try {
-            const { id, quantity, difQuantity, newComment, type, width, height, vendor, location } =
+            const { id, quantity, difQuantity, newComment, type, width, height, vendor, batch, expirationDate, location } =
                 formResponse as formResponseType
 
             const newQuantity = Number(quantity) - Number(difQuantity)
@@ -234,6 +246,8 @@ const Home: NextPage = () => {
                     height,
                     vendorId: vendor.id,
                     locationId: location?.id,
+                    batch,
+                    expirationDate
                 },
             })
 
@@ -265,7 +279,7 @@ const Home: NextPage = () => {
         try {
             const { id } = formResponse as formResponseType
 
-            const { type, width, height, vendor, location, newComment, quantity } = formResponse as formResponseType
+            const { type, width, height, vendor, location, newComment, quantity, batch, expirationDate } = formResponse as formResponseType
 
             const response = await axios.patch(`/api/glass/${Number(id)}`, {
                 user,
@@ -277,6 +291,8 @@ const Home: NextPage = () => {
                     vendorId: vendor.id,
                     locationId: location?.id,
                     Comment: newComment,
+                    batch,
+                    expirationDate
                 },
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
@@ -392,6 +408,10 @@ const Home: NextPage = () => {
                 response = false
             }
 
+            if (glass.batch && glass.batch !== glassToCompare.batch) {
+                response = false
+            }
+
             if (glass.location?.position && glass.location?.position !== glassToCompare.location?.position) {
                 response = false
             }
@@ -419,6 +439,7 @@ const Home: NextPage = () => {
             "vendor": [... new Set(foundGlasses?.map(glass => glass.vendor))],
             "width": [... new Set(foundGlasses?.map(glass => glass.width))],
             "height": [... new Set(foundGlasses?.map(glass => glass.height))],
+            "batch": [... new Set(foundGlasses?.map(glass => String(glass.batch)))],
         }
     }
 
@@ -429,6 +450,10 @@ const Home: NextPage = () => {
             let response = true
 
             if (glass.vendor?.name && glass.vendor?.name !== glassToCompare.vendor?.name) {
+                response = false
+            }
+
+            if (glass.batch && glass.batch !== glassToCompare.batch) {
                 response = false
             }
 
@@ -618,10 +643,24 @@ const Home: NextPage = () => {
             aggregable: false,
         },
         {
+            headerName: 'Lote',
+            field: 'batch',
+            width: 100,
+            aggregable: false,
+        },
+        {
             headerName: 'Comentario',
             field: 'Comment',
             width: 200,
             aggregable: false,
+            groupable: false,
+        },
+        {
+            headerName: 'Expira En',
+            field: 'expirationDate',
+            width: 150,
+            type: 'date',
+            valueGetter: ({ value }: { value: string }) => (value ? new Date(value) : undefined),
             groupable: false,
         },
         {
@@ -744,6 +783,7 @@ const Home: NextPage = () => {
                                             typeDescription: false,
                                             locationWarehouse: false,
                                             vendorName: false,
+                                            expirationDate: false,
                                             createdAt: false,
                                             updatedAt: false,
                                         },
@@ -826,6 +866,18 @@ const Home: NextPage = () => {
                                 required={false}
                                 options={locationsData as GlassLocation[]}
                             />
+                            <TextLine
+                                label="Lote"
+                                name="batch"
+                                className=" sm:col-span-3"
+                                required={false}
+                            />
+                            <DateField
+                                label="Vencimiento"
+                                name="expirationDate"
+                                className=" sm:col-span-3"
+                                required={false}
+                            />
                             <Numeric
                                 label="Cantidad"
                                 name="quantity"
@@ -858,14 +910,15 @@ const Home: NextPage = () => {
                 isOpen={isGlassMoverOpen}
                 setIsOpen={setIsGlassMoverOpen}
                 onSubmit={(values) => {
-                    const formResponse = values as { width: { width: number }; height: { height: number } }
+                    const formResponse = values as { width: { width: number }; height: { height: number }; batch: { batch: string } }
                     onGlassMovement({
                         ...formResponse,
                         width: formResponse?.width?.width,
                         height: formResponse?.height?.height,
+                        batch: formResponse?.batch?.batch,
                     })
                 }}
-                initialValues={glassSelection ? { ...glassSelection, width: { id: 1, width: glassSelection?.width }, height: { id: 1, height: glassSelection?.height } } : undefined}
+                initialValues={glassSelection ? { ...glassSelection, width: { id: 1, width: glassSelection?.width }, height: { id: 1, height: glassSelection?.height }, batch: { id: 1, batch: String(glassSelection?.batch) } } : undefined}
                 render={(props) => {
 
                     const values = props.values as FormInputType
@@ -877,6 +930,7 @@ const Home: NextPage = () => {
                         ...values,
                         width: values?.width?.width,
                         height: values?.height?.height,
+                        batch: values?.batch?.batch,
                     }
 
                     filterGlassData({ ...formGlass, difQuantity: String(props.values?.difQuantity) })
@@ -890,6 +944,7 @@ const Home: NextPage = () => {
                         setFormAttribute('location', glassFiltered.location as object)
                         setFormAttribute('width', { id: 1, width: glassFiltered.width } as object)
                         setFormAttribute('height', { id: 1, height: glassFiltered.height } as object)
+                        setFormAttribute('batch', { id: 1, batch: String(glassFiltered.batch) } as object)
                         setFormAttribute('quantity', glassFiltered.quantity)
                     }
 
@@ -918,7 +973,7 @@ const Home: NextPage = () => {
                                 label="Ancho"
                                 name="width"
                                 inputField="width"
-                                className="sm:col-span-2"
+                                className="sm:col-span-3"
                                 options={getFieldOptions(formGlass).width?.map((width, id) => {
                                     return { id: id + 1, width }
                                 })}
@@ -927,9 +982,19 @@ const Home: NextPage = () => {
                                 label="Alto"
                                 name="height"
                                 inputField="height"
-                                className="sm:col-span-2"
+                                className="sm:col-span-3"
                                 options={getFieldOptions(formGlass).height?.map((height, id) => {
                                     return { id: id + 1, height }
+                                })}
+                            />
+
+                            <Combobox
+                                label="Lote"
+                                name="batch"
+                                inputField="batch"
+                                className="sm:col-span-3"
+                                options={getFieldOptions(formGlass).batch?.map((batch, id) => {
+                                    return { id: id + 1, batch }
                                 })}
                             />
 
@@ -937,7 +1002,7 @@ const Home: NextPage = () => {
                                 label="Proovedor"
                                 name="vendor"
                                 inputField="name"
-                                className=" sm:col-span-2"
+                                className=" sm:col-span-3"
                                 options={getFieldOptions(formGlass).vendor as GlassVendor[]}
                             />
 
@@ -996,14 +1061,15 @@ const Home: NextPage = () => {
                 isOpen={isGlassConsumerOpen}
                 setIsOpen={setIsGlassConsumerOpen}
                 onSubmit={(values) => {
-                    const formResponse = values as { width: { width: number }; height: { height: number } }
+                    const formResponse = values as { width: { width: number }; height: { height: number }; batch: {batch: string} }
                     onGlassConsumption({
                         ...formResponse,
                         width: formResponse?.width?.width,
                         height: formResponse?.height?.height,
+                        batch: formResponse?.batch?.batch,
                     })
                 }}
-                initialValues={glassSelection ? { ...glassSelection, width: { id: 1, width: glassSelection?.width }, height: { id: 1, height: glassSelection?.height } } : null}
+                initialValues={glassSelection ? { ...glassSelection, width: { id: 1, width: glassSelection?.width }, height: { id: 1, height: glassSelection?.height }, batch: { id: 1, batch: String(glassSelection?.batch) } } : null}
                 render={(props) => {
 
                     const values = props.values as FormInputType
@@ -1015,6 +1081,7 @@ const Home: NextPage = () => {
                         ...values,
                         width: values?.width?.width,
                         height: values?.height?.height,
+                        batch: values?.batch?.batch,
                     }
 
 
@@ -1028,6 +1095,7 @@ const Home: NextPage = () => {
                         setFormAttribute('location', glassFiltered.location as object)
                         setFormAttribute('width', { id: 1, width: glassFiltered.width } as object)
                         setFormAttribute('height', { id: 1, height: glassFiltered.height } as object)
+                        setFormAttribute('batch', { id: 1, batch: String(glassFiltered.batch) } as object)
                         setFormAttribute('quantity', glassFiltered.quantity)
                     }
 
@@ -1058,7 +1126,7 @@ const Home: NextPage = () => {
                                 label="Ancho"
                                 name="width"
                                 inputField="width"
-                                className=" sm:col-span-3"
+                                className=" sm:col-span-2"
                                 options={getFieldOptions(formGlass).width?.map((width, id) => {
                                     return { id: id + 1, width }
                                 })}
@@ -1067,9 +1135,18 @@ const Home: NextPage = () => {
                                 label="Alto"
                                 name="height"
                                 inputField="height"
-                                className=" sm:col-span-3"
+                                className=" sm:col-span-2"
                                 options={getFieldOptions(formGlass).height?.map((height, id) => {
                                     return { id: id + 1, height }
+                                })}
+                            />
+                            <Combobox
+                                label="Lote"
+                                name="batch"
+                                inputField="batch"
+                                className="sm:col-span-2"
+                                options={getFieldOptions(formGlass).batch?.map((batch, id) => {
+                                    return { id: id + 1, batch }
                                 })}
                             />
 
@@ -1152,6 +1229,18 @@ const Home: NextPage = () => {
                                 label="Alto"
                                 name="height"
                                 className=" sm:col-span-3"
+                            />
+                            <TextLine
+                                label="Lote"
+                                name="batch"
+                                className=" sm:col-span-3"
+                                required={false}
+                            />
+                            <DateField
+                                label="Vencimiento"
+                                name="expirationDate"
+                                className=" sm:col-span-3"
+                                required={false}
                             />
 
                             <Combobox
