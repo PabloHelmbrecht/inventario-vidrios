@@ -501,6 +501,8 @@ const Home: NextPage = () => {
                 licenseDiv = divs[i]
             }
         }
+
+        console.log({licenseDiv})
         licenseDiv?.remove()
         
         fetchGlassData()
