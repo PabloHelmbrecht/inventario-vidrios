@@ -92,6 +92,7 @@ interface formResponseType {
 
 const Home: NextPage = () => {
     const { data: session } = useSession()
+    session?.user
     const user = session?.user ?? {
         name: 'MANTENIMIENTO UVEG',
         email: 'mantenimiento@uveg.ar',

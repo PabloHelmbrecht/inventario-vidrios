@@ -112,7 +112,7 @@ export default function DialogForm({
                                                                 .handleSubmit(e)
                                                                 ?.then((val) => val)
                                                                 .catch((e) => {
-                                                                    console.log(e)
+                                                                    console.error(e)
                                                                 })
 
                                                             setIsOpen(false)

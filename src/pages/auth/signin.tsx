@@ -6,11 +6,10 @@ import { useRouter } from 'next/router'
 export default function Signin() {
     const router = useRouter()
     const { status } = useSession()
-    console.log({status})
+
 
     useEffect(() => {
         if (status !== 'authenticated') {
-            console.log('No JWT')
             console.log({status})
         } else {
             void router.push('/')

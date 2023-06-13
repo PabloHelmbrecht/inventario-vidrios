@@ -59,7 +59,6 @@ export async function PATCH(request: NextRequest) {
             data: typeData,
         })
 
-        console.log({ updatedType })
 
         return NextResponse.json(updatedType)
     } catch (error) {

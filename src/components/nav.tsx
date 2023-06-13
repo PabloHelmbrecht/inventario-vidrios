@@ -6,6 +6,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 
 const navigation = [
     { name: 'Inventario de Vidrios', href: '/' },
@@ -22,8 +23,14 @@ function classNames(...classes: string[]) {
 
 export default function Navbar() {
     const pathname = usePathname()
-    const { data: session } = useSession()
+    const { data: session, status } = useSession()
     const user = session?.user
+    const router = useRouter()
+
+    if(status!=='authenticated'&&router.pathname!=='/auth/signin'&&process.env.NODE_ENV!=='development') {
+        void router.push('/auth/signin')
+    }
+
 
     return (
         <Disclosure
