@@ -1,6 +1,7 @@
 //Reacts
 import React, { useState, useEffect, useMemo } from 'react'
 
+
 //Next Auth
 //import { useSession } from 'next-auth/react'
 
@@ -492,10 +493,21 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
+
+        const divs = document.getElementsByTagName("div")
+        let licenseDiv
+        for(let i = 0; i < divs.length; i++){
+            if(divs[i]?.innerText==='MUI X Missing license key'){
+                licenseDiv = divs[i]
+            }
+        }
+        licenseDiv?.remove()
+        
         fetchGlassData()
         fetchTypesData()
         fetchLocationsData()
         fetchVendorsData()
+
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

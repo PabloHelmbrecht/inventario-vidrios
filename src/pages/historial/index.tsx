@@ -67,6 +67,17 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
+
+        const divs = document.getElementsByTagName("div")
+        let licenseDiv
+        for(let i = 0; i < divs.length; i++){
+            if(divs[i]?.innerText==='MUI X Missing license key'){
+                licenseDiv = divs[i]
+            }
+        }
+        licenseDiv?.remove()
+
+
         fetchMovementsData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])

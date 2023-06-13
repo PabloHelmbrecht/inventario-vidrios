@@ -30,7 +30,7 @@ export default function Navbar() {
     
     useEffect(()=>{
         
-        if(status!=='authenticated'&&router.pathname!=='/auth/signin'&&process.env.NODE_ENV!=='development') {
+        if(status==='unauthenticated'&&router.pathname!=='/auth/signin'&&process.env.NODE_ENV!=='development') {
             void router.push('/auth/signin')
         }
     },[router, status])
