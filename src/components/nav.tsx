@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
@@ -25,11 +25,15 @@ export default function Navbar() {
     const pathname = usePathname()
     const { data: session, status } = useSession()
     const user = session?.user
+    
     const router = useRouter()
-
-    if(status!=='authenticated'&&router.pathname!=='/auth/signin'&&process.env.NODE_ENV!=='development') {
-        void router.push('/auth/signin')
-    }
+    
+    useEffect(()=>{
+        
+        if(status!=='authenticated'&&router.pathname!=='/auth/signin'&&process.env.NODE_ENV!=='development') {
+            void router.push('/auth/signin')
+        }
+    },[router, status])
 
 
     return (
