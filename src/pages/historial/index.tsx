@@ -68,14 +68,19 @@ const Home: NextPage = () => {
     //useEffect
     useEffect(() => {
 
-        const divs = document.getElementsByTagName("div")
+        setTimeout(()=> {
+            const divs = document.getElementsByTagName("div")
         let licenseDiv
         for(let i = 0; i < divs.length; i++){
             if(divs[i]?.innerText==='MUI X Missing license key'){
                 licenseDiv = divs[i]
+                console.log(divs[i])
             }
         }
+        console.log(divs)
+        console.log({licenseDiv})
         licenseDiv?.remove()
+        },1001)
 
 
         fetchMovementsData()
