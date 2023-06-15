@@ -44,6 +44,9 @@ const Home: NextPage = () => {
     const { data: session } = useSession()
     const isAdmin = session?.user?.role === 'ADMIN'
 
+
+    console.log({rol: session})
+
     //States
     const [typeSelection, setTypeSelection] = useState<GlassType | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
