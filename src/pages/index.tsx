@@ -103,7 +103,7 @@ const Home: NextPage = () => {
     }
 
     //States
-    const [glassSelection, setGlassSelection] = useState<SuperGlass | null>(null)
+    const [glassSelection, setGlassSelection] = useState<SuperGlass & {difQuantity?:number; destinyLocation?: GlassLocation} | null>(null)
     const [glassFiltered, setGlassFiltered] = useState<SuperGlass | null>(null)
     const [allowQuantityChange, setAllowQuantityChange] = useState<boolean>(false)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
@@ -519,6 +519,8 @@ const Home: NextPage = () => {
             return response
         })
 
+   
+
         if (foundGlass?.length === 1 && foundGlass) {
             setGlassFiltered(foundGlass[0] as SuperGlass)
         } else {
@@ -527,9 +529,16 @@ const Home: NextPage = () => {
 
         if (glassFiltered && foundGlass && Number(glass?.difQuantity) <= Number(foundGlass[0]?.quantity)) {
             setAllowQuantityChange(true)
+            setGlassSelection(null)
+
+            
+            
         } else {
             setAllowQuantityChange(false)
         }
+
+
+       
     }
 
     function processDynamicForm(props: FormRenderProps) {
@@ -561,7 +570,10 @@ const Home: NextPage = () => {
             setFormAttribute('height', { id: 1, height: glassFiltered.height } as object)
             setFormAttribute('batch', { id: 1, batch: glassFiltered.batch } as object)
             setFormAttribute('quantity', glassFiltered.quantity)
+            setFormAttribute('diffQuantity', Number(props.values?.difQuantity))
+            
         }
+        
 
         return formGlass
     }
@@ -1041,6 +1053,10 @@ const Home: NextPage = () => {
                 }
                 render={(props) => {
                     const formGlass = processDynamicForm(props)
+
+                    
+
+                        
 
                     return (
                         <>
