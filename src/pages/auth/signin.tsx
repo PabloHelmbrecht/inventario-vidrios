@@ -7,10 +7,9 @@ export default function Signin() {
     const router = useRouter()
     const { status } = useSession()
 
-
     useEffect(() => {
         if (status !== 'authenticated') {
-            console.log({status})
+            console.log({ status })
         } else {
             void router.push('/')
         }

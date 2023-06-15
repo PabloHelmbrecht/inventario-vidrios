@@ -43,11 +43,9 @@ export default function DialogForm({
     initialValues = {},
     render,
 }: dialogFormProps) {
-    useEffect(()=> {
-
+    useEffect(() => {
         onCloseCallback()
-
-    },[onCloseCallback])
+    }, [onCloseCallback])
 
     return (
         <Transition
@@ -57,7 +55,9 @@ export default function DialogForm({
             <Dialog
                 as="div"
                 className="relative z-10"
-                onClose={() => {setIsOpen(false)}}>
+                onClose={() => {
+                    setIsOpen(false)
+                }}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -66,7 +66,7 @@ export default function DialogForm({
                     leave="ease-in duration-200"
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0">
-                    <div className="fixed inset-0 bg-black bg-opacity-25 overflow-visible" />
+                    <div className="fixed inset-0 overflow-visible bg-black bg-opacity-25" />
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">
@@ -86,17 +86,25 @@ export default function DialogForm({
                                     //@ts-ignore
                                     decorators={decorator ? [createDecorator(...decorator)] : null}
                                     mutators={{
-                                        setFormAttribute: ([fieldName, fieldVal]: [string, number|string| null | undefined | object | Date], state, { changeValue }) => {
-                                          changeValue(state, fieldName, () => fieldVal);
-                                        }
-                                      }}
+                                        setFormAttribute: (
+                                            [fieldName, fieldVal]: [
+                                                string,
+                                                number | string | null | undefined | object | Date,
+                                            ],
+                                            state,
+                                            { changeValue },
+                                        ) => {
+                                            changeValue(state, fieldName, () => fieldVal)
+                                        },
+                                    }}
                                     initialValues={{ ...initialValues }}
                                     render={(props) => (
                                         <form>
                                             <Dialog.Title
                                                 as="h3"
-                                                className={` ${titleStyles ?? ''
-                                                    } text-lg font-medium leading-6 text-gray-900`}>
+                                                className={` ${
+                                                    titleStyles ?? ''
+                                                } text-lg font-medium leading-6 text-gray-900`}>
                                                 {title}
                                             </Dialog.Title>
 

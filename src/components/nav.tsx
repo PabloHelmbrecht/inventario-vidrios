@@ -15,6 +15,7 @@ const navigation = [
     { name: 'Almacén', href: '/almacen' },
     { name: 'Proovedores', href: '/proovedores' },
     { name: 'Historial', href: '/historial' },
+    { name: 'Usuarios', href: '/usuarios' },
 ]
 
 function classNames(...classes: string[]) {
@@ -25,16 +26,18 @@ export default function Navbar() {
     const pathname = usePathname()
     const { data: session, status } = useSession()
     const user = session?.user
-    
+
     const router = useRouter()
-    
-    useEffect(()=>{
-        
-        if(status==='unauthenticated'&&router.pathname!=='/auth/signin'&&process.env.NODE_ENV!=='development') {
+
+    useEffect(() => {
+        if (
+            status === 'unauthenticated' &&
+            router.pathname !== '/auth/signin' &&
+            process.env.NODE_ENV !== 'development'
+        ) {
             void router.push('/auth/signin')
         }
-    },[router, status])
-
+    }, [router, status])
 
     return (
         <Disclosure

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 
 //Next Auth
-//import { useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 
 //Next
 import { type NextPage } from 'next'
@@ -41,6 +41,9 @@ interface formResponseType {
 /*eslint-disable @typescript-eslint/no-floating-promises*/
 
 const Home: NextPage = () => {
+    const { data: session } = useSession()
+    const isAdmin = session?.user?.role === 'ADMIN'
+
     //States
     const [locationSelection, setLocationSelection] = useState<GlassLocation | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
@@ -136,7 +139,7 @@ const Home: NextPage = () => {
     //DataGrid Definitions
     const rows: GlassLocation[] = useMemo(() => locationsData as GlassLocation[], [locationsData])
 
-    const columns: GridColDef[] = [
+    let columns: GridColDef[] = [
         {
             headerName: 'Id',
             field: 'id',
@@ -169,26 +172,32 @@ const Home: NextPage = () => {
             type: 'dateTime',
             valueGetter: ({ value }: { value: string }) => new Date(value),
         },
-        {
-            field: 'Acciones',
-            type: 'actions',
-            width: 80,
-            getActions: ({ row }: { row: GridValidRowModel }) => [
-                <GridActionsCellItem
-                    key={1}
-                    icon={<TrashIcon className="w-4" />}
-                    label="Delete"
-                    onClick={() => setLocationToDelete(row as GlassLocation)}
-                />,
-                <GridActionsCellItem
-                    key={1}
-                    icon={<PencilSquareIcon className="w-4" />}
-                    label="Delete"
-                    onClick={() => setLocationToEdit(row as GlassLocation)}
-                />,
-            ],
-        },
     ]
+
+    if (isAdmin) {
+        columns = [
+            ...columns,
+            {
+                field: 'Acciones',
+                type: 'actions',
+                width: 80,
+                getActions: ({ row }: { row: GridValidRowModel }) => [
+                    <GridActionsCellItem
+                        key={1}
+                        icon={<TrashIcon className="w-4" />}
+                        label="Delete"
+                        onClick={() => setLocationToDelete(row as GlassLocation)}
+                    />,
+                    <GridActionsCellItem
+                        key={1}
+                        icon={<PencilSquareIcon className="w-4" />}
+                        label="Delete"
+                        onClick={() => setLocationToEdit(row as GlassLocation)}
+                    />,
+                ],
+            },
+        ]
+    }
 
     return (
         <>
@@ -209,16 +218,18 @@ const Home: NextPage = () => {
                     <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Listado de Posiciones</h1>
                     <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4">
                         <div className="flex w-full items-end justify-between">
-                            <div className="flex w-full justify-end gap-3">
-                                <button
-                                    onClick={() => {
-                                        setIsLocationCreatorOpen(true)
-                                    }}
-                                    disabled={!locationsData}
-                                    className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
-                                    Crear Posición
-                                </button>
-                            </div>
+                            {isAdmin && (
+                                <div className="flex w-full justify-end gap-3">
+                                    <button
+                                        onClick={() => {
+                                            setIsLocationCreatorOpen(true)
+                                        }}
+                                        disabled={!locationsData}
+                                        className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
+                                        Crear Posición
+                                    </button>
+                                </div>
+                            )}
                         </div>
                         {locationsData && (
                             <DataGrid

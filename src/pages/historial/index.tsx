@@ -7,7 +7,12 @@ import Head from 'next/head'
 import Image from 'next/image'
 
 //Material UI
-import { DataGridPremium as DataGrid, GridToolbar, type GridColDef } from '@mui/x-data-grid-premium'
+import {
+    DataGridPremium as DataGrid,
+    GridToolbar,
+    type GridColDef,
+    type GridRenderCellParams,
+} from '@mui/x-data-grid-premium'
 
 //Axios
 import axios from 'axios'
@@ -21,6 +26,11 @@ import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
 
+interface SuperGlassMovement extends GlassMovement {
+    user: User
+    userName: string | null
+}
+
 const columnDictionary: { [key: string]: string } = {
     id: 'ID del Vidrio',
     typeId: 'ID del Material',
@@ -33,6 +43,9 @@ const columnDictionary: { [key: string]: string } = {
     height: 'Alto',
     vendorId: 'ID del Proovedor',
     Comment: 'Comentario',
+    batch: 'Lore',
+    expirationDate: 'Expira En',
+    squaredMeters: '{Area',
 }
 
 /*eslint-disable @typescript-eslint/no-misused-promises*/
@@ -41,20 +54,24 @@ const columnDictionary: { [key: string]: string } = {
 const Home: NextPage = () => {
     //States
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
-    const [movementsData, setMovementsData] = useState<GlassMovement[] | null>(null)
+    const [movementsData, setMovementsData] = useState<SuperGlassMovement[] | null>(null)
 
     //- Fetch Functions
     const fetchMovementsData = async () => {
         try {
-            const cachedResponse: GlassMovement[] = JSON.parse(
+            const cachedResponse: SuperGlassMovement[] = JSON.parse(
                 localStorage.getItem('movementsData') ?? '{}',
-            ) as GlassMovement[]
+            ) as SuperGlassMovement[]
             setMovementsData(cachedResponse)
 
-            const response = await axios.get(`/api/movement`)
+            const response: { data: SuperGlassMovement[] } = await axios.get(`/api/movement`)
             if (response.data === null) throw new Error('No hay movimientos')
             localStorage.setItem('movementsData', JSON.stringify(response.data))
-            setMovementsData(response.data as GlassMovement[])
+
+            response.data = response.data.map((movement) => {
+                return { ...movement, userName: String(movement.user.name) + ' ' + String(movement.user.email) }
+            })
+            setMovementsData(response.data)
             setSnackbar({ type: 'success', message: 'Historial Actualizado' })
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -67,27 +84,24 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
-
-        setTimeout(()=> {
-            const divs = document.getElementsByTagName("div")
-        let licenseDiv
-        for(let i = 0; i < divs.length; i++){
-            if(divs[i]?.innerText==='MUI X Missing license key'){
-                licenseDiv = divs[i]
-                
+        setTimeout(() => {
+            const divs = document.getElementsByTagName('div')
+            let licenseDiv
+            for (let i = 0; i < divs.length; i++) {
+                if (divs[i]?.innerText === 'MUI X Missing license key') {
+                    licenseDiv = divs[i]
+                }
             }
-        }
-  
-        licenseDiv?.remove()
-        },200)
 
+            licenseDiv?.remove()
+        }, 200)
 
         fetchMovementsData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     //DataGrid Definitions
-    const rows: GlassMovement[] = useMemo(() => movementsData as GlassMovement[], [movementsData])
+    const rows: SuperGlassMovement[] = useMemo(() => movementsData as SuperGlassMovement[], [movementsData])
 
     const columns: GridColDef[] = [
         {
@@ -106,31 +120,45 @@ const Home: NextPage = () => {
         },
         {
             headerName: 'Usuario',
-            field: 'user',
+            field: 'userName',
             width: 200,
-            valueFormatter: ({ value }: { value?: User }) =>
-                value ? `${String(value.name)} ${String(value.email)}` : undefined,
-            renderCell: ({ value }: { value?: User }) =>
-                value && (
-                    <div
-                        className={`${
-                            value.role === 'ADMIN'
-                                ? 'bg-yellow-50 text-yellow-700 ring-yellow-700/10'
-                                : 'bg-slate-50 text-slate-700 ring-slate-700/10 '
-                        } flex items-center gap-3 overflow-hidden rounded-md px-2 py-1.5 text-xs font-medium ring-1 ring-inset `}>
-                        <Image
-                            className="h-5 w-5 rounded-full"
-                            src={
-                                value?.image ||
-                                'https://media.licdn.com/dms/image/C4E0BAQETbxjnoHj6FQ/company-logo_200_200/0/1651757588440?e=1691020800&v=beta&t=WGCW5Yt44ABVeptgPOyQQiXrdoPNGvANCSWv4BrMh4U'
-                            }
-                            height={32}
-                            width={32}
-                            alt={`${value?.name || 'placeholder'} avatar`}
-                        />
-                        <div className="text-xs font-medium">{value?.name}</div>
-                    </div>
-                ),
+            renderCell: (params: GridRenderCellParams) => {
+                const groupingKey = (params?.rowNode as { groupingKey: string })?.groupingKey
+                let row = params?.row as SuperGlassMovement
+
+                if (params?.rowNode?.type === 'group') {
+                    row = movementsData?.find((movement) => movement.userName === groupingKey) as SuperGlassMovement
+                }
+
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                const user = row?.user
+
+                return (
+                    user && (
+                        <div
+                            className={`${
+                                user.role === 'ADMIN'
+                                    ? 'bg-yellow-50 text-yellow-700 ring-yellow-700/10'
+                                    : 'bg-slate-50 text-slate-700 ring-slate-700/10 '
+                            } flex items-center gap-3 overflow-hidden rounded-md px-2 py-1.5 text-xs font-medium ring-1 ring-inset `}>
+                            <Image
+                                className="h-5 w-5 rounded-full"
+                                src={
+                                    user?.image ||
+                                    `https://ui-avatars.com/api/?name=${encodeURI(
+                                        String(user?.name),
+                                    )}&length=1&background=random&rounded=true&size=32` ||
+                                    'https://media.licdn.com/dms/image/C4E0BAQETbxjnoHj6FQ/company-logo_200_200/0/1651757588440?e=1691020800&v=beta&t=WGCW5Yt44ABVeptgPOyQQiXrdoPNGvANCSWv4BrMh4U'
+                                }
+                                height={32}
+                                width={32}
+                                alt={`${user?.name || 'placeholder'} avatar`}
+                            />
+                            <div className="text-xs font-medium">{user?.name}</div>
+                        </div>
+                    )
+                )
+            },
         },
 
         {
@@ -139,6 +167,7 @@ const Home: NextPage = () => {
             width: 130,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             valueFormatter: (params) => (params?.value ? columnDictionary[String(params?.value)] : undefined),
+            renderCell: (params) => (params?.value ? columnDictionary[String(params?.value)] : undefined),
         },
         {
             headerName: 'Valor Anterior',
@@ -185,6 +214,9 @@ const Home: NextPage = () => {
                                 rows={rows}
                                 columns={columns}
                                 slots={{ toolbar: GridToolbar }}
+                                groupingColDef={{
+                                    headerName: 'Grupo',
+                                }}
                                 slotProps={{
                                     toolbar: {
                                         showQuickFilter: true,

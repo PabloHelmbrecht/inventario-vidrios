@@ -103,38 +103,38 @@ export default function ComboboxField({
                                                     Nothing found.
                                                 </div>
                                             ) : (
-                                                filteredOptions.map((option) => (<Combobox.Option
-                                                    key={option.id}
-                                                    className={({ active }: { active: boolean }) =>
-                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                            active ? `bg-sky-600 text-white` : 'text-gray-900'
-                                                        }`
-                                                    }
-                                                    value={option}>
-                                                    {({ selected, active }) => (
-                                                        <>
-                                                            <span
-                                                                className={`block truncate ${
-                                                                    selected ? 'font-medium' : 'font-normal'
-                                                                }`}>
-                                                                {
-                                                                    String(option[inputField]??'Sin Valor')
-                                                                }
-                                                            </span>
-                                                            {selected ? (
+                                                filteredOptions.map((option) => (
+                                                    <Combobox.Option
+                                                        key={option.id}
+                                                        className={({ active }: { active: boolean }) =>
+                                                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                                active ? `bg-sky-600 text-white` : 'text-gray-900'
+                                                            }`
+                                                        }
+                                                        value={option}>
+                                                        {({ selected, active }) => (
+                                                            <>
                                                                 <span
-                                                                    className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                                                        active ? 'text-white' : 'text-sky-600'
+                                                                    className={`block truncate ${
+                                                                        selected ? 'font-medium' : 'font-normal'
                                                                     }`}>
-                                                                    <CheckIcon
-                                                                        className="h-5 w-5"
-                                                                        aria-hidden="true"
-                                                                    />
+                                                                    {String(option[inputField] ?? 'Sin Valor')}
                                                                 </span>
-                                                            ) : null}
-                                                        </>
-                                                    )}
-                                                </Combobox.Option>))
+                                                                {selected ? (
+                                                                    <span
+                                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                                                            active ? 'text-white' : 'text-sky-600'
+                                                                        }`}>
+                                                                        <CheckIcon
+                                                                            className="h-5 w-5"
+                                                                            aria-hidden="true"
+                                                                        />
+                                                                    </span>
+                                                                ) : null}
+                                                            </>
+                                                        )}
+                                                    </Combobox.Option>
+                                                ))
                                             )}
                                         </Combobox.Options>
                                     </Transition>
