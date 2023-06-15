@@ -341,7 +341,7 @@ const Home: NextPage = () => {
     }
 
     //- Fetch Functions
-    const fetchGlassData = async () => {
+    const fetchGlassData = async (silenced=false) => {
         try {
             const cachedResponse: SuperGlass[] = JSON.parse(localStorage.getItem('glassData') ?? '{}') as SuperGlass[]
             setGlassData(cachedResponse)
@@ -353,7 +353,7 @@ const Home: NextPage = () => {
             if (response.data === null) throw new Error('No hay vidrios')
             localStorage.setItem('glassData', JSON.stringify(response.data))
             setGlassData(response.data as SuperGlass[])
-            setSnackbar({ type: 'success', message: 'Vidrios Actualizados' })
+            silenced||setSnackbar({ type: 'success', message: 'Vidrios Actualizados' })
 
             const cachedResponseWithConsumed: SuperGlass[] = JSON.parse(
                 localStorage.getItem('glassDataWithConsumed') ?? '{}',
@@ -588,6 +588,13 @@ const Home: NextPage = () => {
 
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+
+    useEffect(() => {
+        fetchGlassData(true)
+    }, [isGlassMoverOpen, isGlassConsumerOpen, isGlassCreatorOpen, glassToDelete, glassToEdit])
+
+    
 
     useEffect(() => {
         setGlassFiltered(null)
