@@ -68,24 +68,18 @@ const Home: NextPage = () => {
     //useEffect
     useEffect(() => {
 
-        setTimeout(() => {
-
-            let visibleInDOM = false
-            while (!visibleInDOM) {
-                const divs = document.getElementsByTagName("div")
-                let licenseDiv
-                for (let i = 0; i < divs.length; i++) {
-                    if (divs[i]?.innerText === 'MUI X Missing license key') {
-                        licenseDiv = divs[i]
-                    }
-                }
-
-                if (licenseDiv) {
-                    licenseDiv?.remove()
-                    visibleInDOM = true
-                }
+        setTimeout(()=> {
+            const divs = document.getElementsByTagName("div")
+        let licenseDiv
+        for(let i = 0; i < divs.length; i++){
+            if(divs[i]?.innerText==='MUI X Missing license key'){
+                licenseDiv = divs[i]
+                
             }
-        }, 0)
+        }
+  
+        licenseDiv?.remove()
+        },200)
 
 
         fetchMovementsData()

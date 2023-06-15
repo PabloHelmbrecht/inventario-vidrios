@@ -73,7 +73,7 @@ interface RowType extends SuperGlass {
 type FormInputType = SuperGlass & {
     width?: { id: number; width: number }
     height?: { id: number; height: number }
-    batch?: { id: number; batch: string }
+    batch?: {id: number; batch: string}
 }
 
 interface formResponseType {
@@ -282,7 +282,7 @@ const Home: NextPage = () => {
 
     const onGlassEdit = async (formResponse: object) => {
         try {
-            console.log({ formResponse })
+            console.log({formResponse })
             const { id } = formResponse as formResponseType
 
             const { type, width, height, vendor, location, newComment, quantity, batch, expirationDate } = formResponse as formResponseType
@@ -484,7 +484,7 @@ const Home: NextPage = () => {
             return response
         })
 
-        console.log({ foundGlass, glass })
+        console.log({foundGlass, glass})
 
         if (foundGlass?.length === 1 && foundGlass) {
             setGlassFiltered(foundGlass[0] as SuperGlass)
@@ -503,56 +503,50 @@ const Home: NextPage = () => {
     function processDynamicForm(props: FormRenderProps) {
         const values = props.values as FormInputType
 
-        // eslint-disable-next-line no-unused-vars
-        const setFormAttribute = props.form.mutators.setFormAttribute as (fieldName: string, fieldVal: number | string | null | object | Date) => void
+                    // eslint-disable-next-line no-unused-vars
+                    const setFormAttribute = props.form.mutators.setFormAttribute as (fieldName: string, fieldVal: number | string | null | object | Date) => void
 
-        const formGlass: SuperGlass = {
-            ...values,
-            width: values?.width?.width,
-            height: values?.height?.height,
-            batch: values?.batch?.batch,
-        }
+                    const formGlass: SuperGlass = {
+                        ...values,
+                        width: values?.width?.width,
+                        height: values?.height?.height,
+                        batch: values?.batch?.batch,
+                    }
 
-        filterGlassData({ ...formGlass, difQuantity: String(props.values?.difQuantity) })
+                    filterGlassData({ ...formGlass, difQuantity: String(props.values?.difQuantity) })
 
 
 
-        if (glassFiltered?.id && values.id !== glassFiltered.id) {
-            setFormAttribute('id', glassFiltered.id)
-            setFormAttribute('type', glassFiltered.type as object)
-            setFormAttribute('vendor', glassFiltered.vendor as object)
-            setFormAttribute('location', glassFiltered.location as object)
-            setFormAttribute('width', { id: 1, width: glassFiltered.width } as object)
-            setFormAttribute('height', { id: 1, height: glassFiltered.height } as object)
-            setFormAttribute('batch', { id: 1, batch: glassFiltered.batch } as object)
-            setFormAttribute('quantity', glassFiltered.quantity)
-        }
+                    if (glassFiltered?.id && values.id !== glassFiltered.id) {
+                        setFormAttribute('id', glassFiltered.id)
+                        setFormAttribute('type', glassFiltered.type as object)
+                        setFormAttribute('vendor', glassFiltered.vendor as object)
+                        setFormAttribute('location', glassFiltered.location as object)
+                        setFormAttribute('width', { id: 1, width: glassFiltered.width } as object)
+                        setFormAttribute('height', { id: 1, height: glassFiltered.height } as object)
+                        setFormAttribute('batch', { id: 1, batch: glassFiltered.batch } as object)
+                        setFormAttribute('quantity', glassFiltered.quantity)
+                    }
 
-        return formGlass
+                    return formGlass
     }
 
     //useEffect
     useEffect(() => {
 
-        setTimeout(() => {
-
-            let visibleInDOM = false
-            while (!visibleInDOM) {
-                const divs = document.getElementsByTagName("div")
-                let licenseDiv
-                for (let i = 0; i < divs.length; i++) {
-                    if (divs[i]?.innerText === 'MUI X Missing license key') {
-                        licenseDiv = divs[i]
-                    }
-                }
-
-                if (licenseDiv) {
-                    licenseDiv?.remove()
-                    visibleInDOM = true
-                }
+        setTimeout(()=> {
+            const divs = document.getElementsByTagName("div")
+        let licenseDiv
+        for(let i = 0; i < divs.length; i++){
+            if(divs[i]?.innerText==='MUI X Missing license key'){
+                licenseDiv = divs[i]
+                
             }
-        }, 0)
-
+        }
+  
+        licenseDiv?.remove()
+        },200)
+        
         fetchGlassData()
         fetchTypesData()
         fetchLocationsData()
@@ -986,7 +980,7 @@ const Home: NextPage = () => {
                 render={(props) => {
 
                     const formGlass = processDynamicForm(props)
-
+                    
 
                     return (
                         <>
@@ -1033,7 +1027,7 @@ const Home: NextPage = () => {
                                 inputField="batch"
                                 className="sm:col-span-3"
                                 options={getFieldOptions(formGlass).batch?.map((batch, id) => {
-                                    return { id: id + 1, batch: batch !== 'null' ? batch : null }
+                                    return { id: id + 1, batch: batch!=='null'?batch:null }
                                 })}
                             />
 
@@ -1100,7 +1094,7 @@ const Home: NextPage = () => {
                 isOpen={isGlassConsumerOpen}
                 setIsOpen={setIsGlassConsumerOpen}
                 onSubmit={(values) => {
-                    const formResponse = values as { width: { width: number }; height: { height: number }; batch: { batch: string } }
+                    const formResponse = values as { width: { width: number }; height: { height: number }; batch: {batch: string} }
                     onGlassConsumption({
                         ...formResponse,
                         width: formResponse?.width?.width,
@@ -1157,7 +1151,7 @@ const Home: NextPage = () => {
                                 inputField="batch"
                                 className="sm:col-span-2"
                                 options={getFieldOptions(formGlass).batch?.map((batch, id) => {
-                                    return { id: id + 1, batch: batch !== 'null' ? batch : null }
+                                    return { id: id + 1, batch: batch!=='null'?batch:null }
                                 })}
                             />
 
