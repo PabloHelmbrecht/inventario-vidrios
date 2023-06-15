@@ -279,6 +279,7 @@ const Home: NextPage = () => {
 
     const onGlassEdit = async (formResponse: object) => {
         try {
+            console.log({formResponse })
             const { id } = formResponse as formResponseType
 
             const { type, width, height, vendor, location, newComment, quantity, batch, expirationDate } = formResponse as formResponseType
@@ -477,6 +478,8 @@ const Home: NextPage = () => {
 
             return response
         })
+
+        console.log({foundGlass})
 
         if (foundGlass?.length === 1 && foundGlass) {
             setGlassFiltered(foundGlass[0] as SuperGlass)

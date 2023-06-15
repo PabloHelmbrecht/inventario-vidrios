@@ -58,6 +58,7 @@ export default function DateField({
             next: () => <ArrowRightIcon className='w-5 '/>,
         },
         datepickerClassNames: "top-12",
+        defaultDate: false,
         weekDays: ['L','M','X','J','V','S','D'],
         
         language: "es",
