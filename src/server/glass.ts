@@ -204,6 +204,8 @@ export async function PATCH(request: NextRequest) {
                 glassUpdates.quantity = glassUpdates.quantity + originalGlass.quantity
                 if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
                 if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
+                if(!glassUpdates.batch) glassUpdates.batch = null
+                if(!glassUpdates.expirationDate) glassUpdates.expirationDate = null
 
                 updatedGlass = await tx.glass.update({
                     where: {
@@ -229,6 +231,8 @@ export async function PATCH(request: NextRequest) {
             else {
                 if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
                 if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
+                if(!glassUpdates.batch) glassUpdates.batch = null
+                if(!glassUpdates.expirationDate) glassUpdates.expirationDate = null
                 originalGlass = await tx.glass.findUnique({
                     where: {
                         id,
