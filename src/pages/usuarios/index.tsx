@@ -62,12 +62,16 @@ const userRoles = [
 
 const Home: NextPage = () => {
     const { data: session } = useSession()
-    const isAdmin = session?.user?.role === 'ADMIN'
 
     //States
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
     const [userToEdit, setUserToEdit] = useState<User | null>(null)
     const [usersData, setUsersData] = useState<User[] | null>(null)
+
+
+    //User admin verification
+    const foundUser = usersData?.find((user: User) => user.id === session?.user?.id)
+    const isAdmin = foundUser?.role === 'ADMIN'
 
     //Functions
     //- Submit Functions
@@ -145,7 +149,7 @@ const Home: NextPage = () => {
                                 width={40}
                                 alt={`${name || 'placeholder'} avatar`}
                             />
-                            <div className="text-xs font-medium">{name}</div>
+                            <div className=" font-medium">{name}</div>
                         </div>
                     )
                 )

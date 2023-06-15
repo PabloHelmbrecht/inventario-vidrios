@@ -18,7 +18,7 @@ import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridV
 import axios from 'axios'
 
 //Prisma
-import { type GlassVendor } from '@prisma/client'
+import { type User, type GlassVendor } from '@prisma/client'
 
 //Custom Components
 import TextLine from '../../components/inputFields/textlineField'
@@ -41,7 +41,6 @@ interface formResponseType {
 
 const Home: NextPage = () => {
     const { data: session } = useSession()
-    const isAdmin = session?.user?.role === 'ADMIN'
 
     //States
     const [vendorSelection, setVendorSelection] = useState<GlassVendor | null>(null)
@@ -53,6 +52,12 @@ const Home: NextPage = () => {
     const [vendorToEdit, setVendorToEdit] = useState<GlassVendor | null>(null)
 
     const [vendorsData, setVendorsData] = useState<GlassVendor[] | null>(null)
+    const [usersData, setUsersData] = useState<User[] | null>(null)
+
+    //User admin verification
+    const foundUser = usersData?.find((user: User) => user.id === session?.user?.id)
+    const isAdmin = foundUser?.role === 'ADMIN'
+    
 
     //Functions
     //- Submit Functions
@@ -127,9 +132,25 @@ const Home: NextPage = () => {
         }
     }
 
+    const fetchUsersData = async () => {
+        try {
+            const cachedResponse: User[] = JSON.parse(localStorage.getItem('usersData') ?? '{}') as User[]
+            setUsersData(cachedResponse)
+
+            const response = await axios.get(`/api/user`)
+            if (response.data === null) throw new Error('No hay usuarios')
+            localStorage.setItem('usersData', JSON.stringify(response.data))
+            setUsersData(response.data as User[])
+        } catch (error) {
+            console.error('Error fetching data:', error)
+            
+        }
+    }
+
     //useEffect
     useEffect(() => {
         fetchVendorsData()
+        fetchUsersData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

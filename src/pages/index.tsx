@@ -27,7 +27,7 @@ import {
 import axios from 'axios'
 
 //Prisma
-import { type Glass, type GlassType, type GlassLocation, type GlassVendor } from '@prisma/client'
+import { type Glass, type GlassType, type GlassLocation, type GlassVendor, type User } from '@prisma/client'
 
 //Custom Components
 import Combobox from '../components/inputFields/comboboxField'
@@ -94,9 +94,7 @@ interface formResponseType {
 
 const Home: NextPage = () => {
     const { data: session } = useSession()
-    const isAdmin = session?.user?.role === 'ADMIN'
 
-    session?.user
     const user = session?.user ?? {
         name: 'MANTENIMIENTO UVEG',
         email: 'mantenimiento@uveg.ar',
@@ -123,6 +121,13 @@ const Home: NextPage = () => {
     const [typesData, setTypesData] = useState<GlassType[] | null>(null)
     const [locationsData, setLocationsData] = useState<GlassLocation[] | null>(null)
     const [vendorsData, setVendorsData] = useState<GlassVendor[] | null>(null)
+    const [usersData, setUsersData] = useState<User[] | null>(null)
+
+
+    //User admin verification
+    const foundUser = usersData?.find((user: User) => user.id === session?.user?.id)
+    const isAdmin = foundUser?.role === 'ADMIN'
+    
 
     //Functions
     //- Submit Functions
@@ -425,6 +430,20 @@ const Home: NextPage = () => {
         }
     }
 
+    const fetchUsersData = async () => {
+        try {
+            const cachedResponse: User[] = JSON.parse(localStorage.getItem('usersData') ?? '{}') as User[]
+            setUsersData(cachedResponse)
+
+            const response = await axios.get(`/api/user`)
+            if (response.data === null) throw new Error('No hay usuarios')
+            localStorage.setItem('usersData', JSON.stringify(response.data))
+            setUsersData(response.data as User[])
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
+
     // - Form Functions
 
     function getFieldOptions(glass: SuperGlass) {
@@ -565,6 +584,7 @@ const Home: NextPage = () => {
         fetchTypesData()
         fetchLocationsData()
         fetchVendorsData()
+        fetchUsersData()
 
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
