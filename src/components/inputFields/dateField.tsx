@@ -5,6 +5,7 @@ import { Field } from 'react-final-form'
 import Datepicker from 'tailwind-datepicker-react' 
 import { useState } from 'react'
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
+import { isValidDate } from '~/server/variableChecker'
 
 
 
@@ -90,7 +91,7 @@ export default function DateField({
                     <div className="mt-2">
 
 
-                    <Datepicker placeholder={placeholder} options={options} {...input} disabled={disabled} show={show} setShow={handleClose} className="rounded-full" />
+                    <Datepicker placeholder={placeholder} options={{...options, defaultDate: isValidDate(new Date(input.value))?new Date(input.value):new Date()}} {...input} disabled={disabled} show={show} setShow={handleClose} className="rounded-full" />
 
 
 
