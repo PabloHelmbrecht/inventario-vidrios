@@ -509,7 +509,7 @@ const Home: NextPage = () => {
         console.log(divs)
         console.log({licenseDiv})
         licenseDiv?.remove()
-        },1001)
+        },500)
         
         fetchGlassData()
         fetchTypesData()
