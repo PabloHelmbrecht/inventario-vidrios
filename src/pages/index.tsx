@@ -570,7 +570,7 @@ const Home: NextPage = () => {
             setFormAttribute('height', { id: 1, height: glassFiltered.height } as object)
             setFormAttribute('batch', { id: 1, batch: glassFiltered.batch } as object)
             setFormAttribute('quantity', glassFiltered.quantity)
-            setFormAttribute('diffQuantity', Number(props.values?.difQuantity))
+    
             
         }
         
@@ -995,6 +995,7 @@ const Home: NextPage = () => {
                                 label="Vencimiento"
                                 name="expirationDate"
                                 className=" sm:col-span-3"
+                                required={false}
                             />
                             <Numeric
                                 label="Cantidad"
@@ -1334,6 +1335,7 @@ const Home: NextPage = () => {
                                 label="Vencimiento"
                                 name="expirationDate"
                                 className=" sm:col-span-3"
+                                required={false}
                             />
 
                             <Combobox
