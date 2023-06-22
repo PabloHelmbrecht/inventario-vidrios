@@ -40,11 +40,12 @@ import Toggle from '../components/toggle'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
 
 //Custom Functions
-import { isNotNullUndefinedOrEmpty } from '../server/variableChecker'
+import { isNotNullUndefinedOrEmpty, isValidDate } from '../server/variableChecker'
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../constants/localeTextConstants'
 import { useSession } from 'next-auth/react'
+import dayjs from 'dayjs'
 
 //Custom Types
 interface SuperGlass extends Glass {
@@ -770,6 +771,24 @@ const Home: NextPage = () => {
             type: 'date',
             valueGetter: ({ value }: { value: string }) => (value ? new Date(value) : undefined),
             groupable: false,
+            renderCell: (params) => {
+
+                const expirationDate = new Date(params?.value as Date)
+                if (!isValidDate(expirationDate)||!params?.value) return undefined
+                const today = new Date()
+                const daysUntilExpirationDate = (expirationDate.getTime() - today.getTime())/(1000*3600*24)
+                const yellowWarningDays = isNaN(Number(process.env.YELLOW_WARNING_DAYS??30))?30:Number(process.env.YELLOW_WARNING_DAYS??30)
+                const orangeWarningDays = isNaN(Number(process.env.ORANGE_WARNING_DAYS??15))?15:Number(process.env.ORANGE_WARNING_DAYS??15)
+
+              
+
+                if(daysUntilExpirationDate <= 0 )  return <span className='text-red-500'>{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
+                if(daysUntilExpirationDate <= orangeWarningDays )  return <span className='text-orange-500'>{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
+                if(daysUntilExpirationDate <= yellowWarningDays )  return <span className='text-yellow-500'>{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
+
+
+                return <span>{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
+            }
         },
         {
             headerName: 'Creado En',
