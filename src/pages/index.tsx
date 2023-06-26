@@ -127,7 +127,9 @@ const Home: NextPage = () => {
 
     //User admin verification
     const foundUser = usersData?.find((user: User) => user.id === session?.user?.id)
-    const isAdmin = foundUser?.role === 'ADMIN'
+    const isAdmin = process.env.NODE_ENV !== 'development'?foundUser?.role === 'ADMIN':true
+    //const isViewer = foundUser?.role === 'VIEWER'
+    
     
 
     //Functions

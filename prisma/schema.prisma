@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider     = "mysql"
-  url          = env("DATABASE_URL")
+  url          = "mysql://3xe31enozsu66g4p0eds:pscale_pw_miFudFIQZIIJnks6MjHTYKMBV4trKv7obDTy2FDJbkN@aws.connect.psdb.cloud/gestor_inventario_vidrios?sslaccept=strict"
   relationMode = "prisma"
 }
 
@@ -132,4 +132,5 @@ enum GlassStatus {
 enum Role {
   USER
   ADMIN
+  VIEWER
 }

@@ -55,6 +55,14 @@ const userRoles = [
         backgroundColor: 'bg-yellow-50',
         textColor: 'text-yellow-800',
     },
+    {
+        id: 3,
+        role: 'VIEWER',
+        name: 'Espectador',
+        ringColor: 'ring-slate-700/10',
+        backgroundColor: 'bg-slate-50',
+        textColor: 'text-slate-800',
+    },
 ]
 
 /*eslint-disable @typescript-eslint/no-misused-promises*/
@@ -71,7 +79,7 @@ const Home: NextPage = () => {
 
     //User admin verification
     const foundUser = usersData?.find((user: User) => user.id === session?.user?.id)
-    const isAdmin = foundUser?.role === 'ADMIN'
+    const isAdmin = process.env.NODE_ENV !== 'development'?foundUser?.role === 'ADMIN':true
 
     //Functions
     //- Submit Functions
