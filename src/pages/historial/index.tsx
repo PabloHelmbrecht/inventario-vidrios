@@ -139,7 +139,7 @@ const Home: NextPage = () => {
                             className={`${
                                 user.role === 'ADMIN'
                                     ? 'bg-yellow-50 text-yellow-700 ring-yellow-700/10'
-                                    : 'bg-slate-50 text-slate-700 ring-slate-700/10 '
+                                    : user.role==='VIEWER' ? 'bg-orange-50 text-orange-700 ring-orange-700/10 ': 'bg-slate-50 text-slate-700 ring-slate-700/10 '
                             } flex items-center gap-3 overflow-hidden rounded-md px-2 py-1.5 text-xs font-medium ring-1 ring-inset `}>
                             <Image
                                 className="h-5 w-5 rounded-full"

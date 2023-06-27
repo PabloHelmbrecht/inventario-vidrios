@@ -43,9 +43,9 @@ const userRoles = [
         id: 1,
         role: 'USER',
         name: 'Usuario',
-        ringColor: 'ring-slate-700/10',
-        backgroundColor: 'bg-slate-50',
-        textColor: 'text-slate-800',
+        ringColor: 'ring-orange-700/10',
+        backgroundColor: 'bg-orange-50',
+        textColor: 'text-orange-800',
     },
     {
         id: 2,
