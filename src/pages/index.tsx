@@ -128,7 +128,7 @@ const Home: NextPage = () => {
     //User admin verification
     const foundUser = usersData?.find((user: User) => user.id === session?.user?.id)
     const isAdmin = process.env.NODE_ENV !== 'development'?foundUser?.role === 'ADMIN':true
-    //const isViewer = foundUser?.role === 'VIEWER'
+    const isViewer = process.env.NODE_ENV !== 'development'?foundUser?.role === 'VIEWER':false
     
     
 
@@ -829,14 +829,14 @@ const Home: NextPage = () => {
                                   onClick={() => setGlassToEdit(row as RowType)}
                               />,
                           ]
-                        : [
-                              <GridActionsCellItem
-                                  key={1}
-                                  icon={<PencilSquareIcon className="w-4" />}
-                                  label="Edit"
-                                  onClick={() => setGlassToEdit(row as RowType)}
-                              />,
-                          ]
+                        : isViewer?[]:[
+                            <GridActionsCellItem
+                                key={1}
+                                icon={<PencilSquareIcon className="w-4" />}
+                                label="Edit"
+                                onClick={() => setGlassToEdit(row as RowType)}
+                            />,
+                        ]
                     : [],
             aggregable: false,
             groupable: false,
@@ -876,7 +876,7 @@ const Home: NextPage = () => {
                                     onClick={() => {
                                         setIsGlassCreatorOpen(true)
                                     }}
-                                    disabled={!(glassData && typesData && vendorsData && locationsData)}
+                                    disabled={!(glassData && typesData && vendorsData && locationsData)||isViewer}
                                     className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
                                     Cargar
                                 </button>
@@ -884,7 +884,7 @@ const Home: NextPage = () => {
                                     onClick={() => {
                                         setIsGlassMoverOpen(true)
                                     }}
-                                    disabled={!(glassData && typesData && vendorsData && locationsData)}
+                                    disabled={!(glassData && typesData && vendorsData && locationsData)||isViewer}
                                     className=" rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-500">
                                     Mover
                                 </button>
@@ -893,7 +893,7 @@ const Home: NextPage = () => {
                                     onClick={() => {
                                         setIsGlassConsumerOpen(true)
                                     }}
-                                    disabled={!(glassData && typesData && vendorsData && locationsData)}
+                                    disabled={!(glassData && typesData && vendorsData && locationsData)||isViewer}
                                     className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:bg-slate-500">
                                     Consumir
                                 </button>
