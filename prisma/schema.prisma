@@ -109,7 +109,7 @@ model User {
   email         String?         @unique
   emailVerified DateTime?
   image         String?
-  role          Role            @default(USER)
+  role          Role            @default(VIEWER)
   accounts      Account[]
   sessions      Session[]
   GlassMovement GlassMovement[]

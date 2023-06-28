@@ -17,7 +17,7 @@ const prismaX = prisma.$extends({
             squaredMeters: {
                 needs: { height: true, width: true, quantity: true },
                 compute(data: { height: number; width: number; quantity: number }) {
-                    return (data.height * data.width *  data.quantity) / 1000000
+                    return (data.height * data.width * data.quantity) / 1000000
                 },
             },
         },

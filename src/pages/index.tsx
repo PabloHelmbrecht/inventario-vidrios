@@ -104,7 +104,9 @@ const Home: NextPage = () => {
     }
 
     //States
-    const [glassSelection, setGlassSelection] = useState<SuperGlass & {difQuantity?:number; destinyLocation?: GlassLocation} | null>(null)
+    const [glassSelection, setGlassSelection] = useState<
+        (SuperGlass & { difQuantity?: number; destinyLocation?: GlassLocation }) | null
+    >(null)
     const [glassFiltered, setGlassFiltered] = useState<SuperGlass | null>(null)
     const [allowQuantityChange, setAllowQuantityChange] = useState<boolean>(false)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
@@ -124,13 +126,10 @@ const Home: NextPage = () => {
     const [vendorsData, setVendorsData] = useState<GlassVendor[] | null>(null)
     const [usersData, setUsersData] = useState<User[] | null>(null)
 
-
     //User admin verification
     const foundUser = usersData?.find((user: User) => user.id === session?.user?.id)
-    const isAdmin = process.env.NODE_ENV !== 'development'?foundUser?.role === 'ADMIN':true
-    const isViewer = process.env.NODE_ENV !== 'development'?foundUser?.role === 'VIEWER':false
-    
-    
+    const isAdmin = process.env.NODE_ENV !== 'development' ? foundUser?.role === 'ADMIN' : true
+    const isViewer = process.env.NODE_ENV !== 'development' ? foundUser?.role === 'VIEWER' : false
 
     //Functions
     //- Submit Functions
@@ -344,7 +343,7 @@ const Home: NextPage = () => {
     }
 
     //- Fetch Functions
-    const fetchGlassData = async (silenced=false) => {
+    const fetchGlassData = async (silenced = false) => {
         try {
             const cachedResponse: SuperGlass[] = JSON.parse(localStorage.getItem('glassData') ?? '{}') as SuperGlass[]
             setGlassData(cachedResponse)
@@ -356,7 +355,7 @@ const Home: NextPage = () => {
             if (response.data === null) throw new Error('No hay vidrios')
             localStorage.setItem('glassData', JSON.stringify(response.data))
             setGlassData(response.data as SuperGlass[])
-            silenced||setSnackbar({ type: 'success', message: 'Vidrios Actualizados' })
+            silenced || setSnackbar({ type: 'success', message: 'Vidrios Actualizados' })
 
             const cachedResponseWithConsumed: SuperGlass[] = JSON.parse(
                 localStorage.getItem('glassDataWithConsumed') ?? '{}',
@@ -522,8 +521,6 @@ const Home: NextPage = () => {
             return response
         })
 
-   
-
         if (foundGlass?.length === 1 && foundGlass) {
             setGlassFiltered(foundGlass[0] as SuperGlass)
         } else {
@@ -533,15 +530,9 @@ const Home: NextPage = () => {
         if (glassFiltered && foundGlass && Number(glass?.difQuantity) <= Number(foundGlass[0]?.quantity)) {
             setAllowQuantityChange(true)
             setGlassSelection(null)
-
-            
-            
         } else {
             setAllowQuantityChange(false)
         }
-
-
-       
     }
 
     function processDynamicForm(props: FormRenderProps) {
@@ -573,10 +564,7 @@ const Home: NextPage = () => {
             setFormAttribute('height', { id: 1, height: glassFiltered.height } as object)
             setFormAttribute('batch', { id: 1, batch: glassFiltered.batch } as object)
             setFormAttribute('quantity', glassFiltered.quantity)
-    
-            
         }
-        
 
         return formGlass
     }
@@ -604,12 +592,9 @@ const Home: NextPage = () => {
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-
     useEffect(() => {
         fetchGlassData(true)
     }, [isGlassMoverOpen, isGlassConsumerOpen, isGlassCreatorOpen, glassToDelete, glassToEdit])
-
-    
 
     useEffect(() => {
         setGlassFiltered(null)
@@ -774,23 +759,26 @@ const Home: NextPage = () => {
             valueGetter: ({ value }: { value: string }) => (value ? new Date(value) : undefined),
             groupable: false,
             renderCell: (params) => {
-
                 const expirationDate = new Date(params?.value as Date)
-                if (!isValidDate(expirationDate)||!params?.value) return undefined
+                if (!isValidDate(expirationDate) || !params?.value) return undefined
                 const today = new Date()
-                const daysUntilExpirationDate = (expirationDate.getTime() - today.getTime())/(1000*3600*24)
-                const yellowWarningDays = isNaN(Number(process.env.YELLOW_WARNING_DAYS??30))?30:Number(process.env.YELLOW_WARNING_DAYS??30)
-                const orangeWarningDays = isNaN(Number(process.env.ORANGE_WARNING_DAYS??15))?15:Number(process.env.ORANGE_WARNING_DAYS??15)
+                const daysUntilExpirationDate = (expirationDate.getTime() - today.getTime()) / (1000 * 3600 * 24)
+                const yellowWarningDays = isNaN(Number(process.env.YELLOW_WARNING_DAYS ?? 30))
+                    ? 30
+                    : Number(process.env.YELLOW_WARNING_DAYS ?? 30)
+                const orangeWarningDays = isNaN(Number(process.env.ORANGE_WARNING_DAYS ?? 15))
+                    ? 15
+                    : Number(process.env.ORANGE_WARNING_DAYS ?? 15)
 
-              
-
-                if(daysUntilExpirationDate <= 0 )  return <span className='text-red-500'>{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
-                if(daysUntilExpirationDate <= orangeWarningDays )  return <span className='text-orange-500'>{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
-                if(daysUntilExpirationDate <= yellowWarningDays )  return <span className='text-yellow-500'>{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
-
+                if (daysUntilExpirationDate <= 0)
+                    return <span className="text-red-500">{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
+                if (daysUntilExpirationDate <= orangeWarningDays)
+                    return <span className="text-orange-500">{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
+                if (daysUntilExpirationDate <= yellowWarningDays)
+                    return <span className="text-yellow-500">{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
 
                 return <span>{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
-            }
+            },
         },
         {
             headerName: 'Creado En',
@@ -829,14 +817,16 @@ const Home: NextPage = () => {
                                   onClick={() => setGlassToEdit(row as RowType)}
                               />,
                           ]
-                        : isViewer?[]:[
-                            <GridActionsCellItem
-                                key={1}
-                                icon={<PencilSquareIcon className="w-4" />}
-                                label="Edit"
-                                onClick={() => setGlassToEdit(row as RowType)}
-                            />,
-                        ]
+                        : isViewer
+                        ? []
+                        : [
+                              <GridActionsCellItem
+                                  key={1}
+                                  icon={<PencilSquareIcon className="w-4" />}
+                                  label="Edit"
+                                  onClick={() => setGlassToEdit(row as RowType)}
+                              />,
+                          ]
                     : [],
             aggregable: false,
             groupable: false,
@@ -876,7 +866,7 @@ const Home: NextPage = () => {
                                     onClick={() => {
                                         setIsGlassCreatorOpen(true)
                                     }}
-                                    disabled={!(glassData && typesData && vendorsData && locationsData)||isViewer}
+                                    disabled={!(glassData && typesData && vendorsData && locationsData) || isViewer}
                                     className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
                                     Cargar
                                 </button>
@@ -884,7 +874,7 @@ const Home: NextPage = () => {
                                     onClick={() => {
                                         setIsGlassMoverOpen(true)
                                     }}
-                                    disabled={!(glassData && typesData && vendorsData && locationsData)||isViewer}
+                                    disabled={!(glassData && typesData && vendorsData && locationsData) || isViewer}
                                     className=" rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-500">
                                     Mover
                                 </button>
@@ -893,7 +883,7 @@ const Home: NextPage = () => {
                                     onClick={() => {
                                         setIsGlassConsumerOpen(true)
                                     }}
-                                    disabled={!(glassData && typesData && vendorsData && locationsData)||isViewer}
+                                    disabled={!(glassData && typesData && vendorsData && locationsData) || isViewer}
                                     className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:bg-slate-500">
                                     Consumir
                                 </button>
@@ -1075,10 +1065,6 @@ const Home: NextPage = () => {
                 }
                 render={(props) => {
                     const formGlass = processDynamicForm(props)
-
-                    
-
-                        
 
                     return (
                         <>
