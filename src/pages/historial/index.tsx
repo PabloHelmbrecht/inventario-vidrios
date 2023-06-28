@@ -68,6 +68,8 @@ const Home: NextPage = () => {
             if (response.data === null) throw new Error('No hay movimientos')
             localStorage.setItem('movementsData', JSON.stringify(response.data))
 
+            console.log(response.data.length)
+
             response.data = response.data.map((movement) => {
                 return { ...movement, userName: String(movement.user.name) + ' ' + String(movement.user.email) }
             })

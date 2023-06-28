@@ -20,6 +20,12 @@ export async function GET(request: NextRequest) {
 
         if (glassId) {
             const response = await prisma.glassMovement.findMany({
+                orderBy: [
+                    {
+                      updatedAt: 'desc',
+                    },
+                    
+                  ],
                 include: {
                     user: true,
                 },
@@ -42,6 +48,12 @@ export async function GET(request: NextRequest) {
             return NextResponse.json(response)
         } else {
             const response = await prisma.glassMovement.findMany({
+                orderBy: [
+                    {
+                      updatedAt: 'desc',
+                    },
+                    
+                  ],
                 include: {
                     user: true,
                 },
@@ -59,6 +71,7 @@ export async function GET(request: NextRequest) {
                             : undefined,
                 },
             })
+
 
             return NextResponse.json(response)
         }

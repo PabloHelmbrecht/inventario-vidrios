@@ -51,6 +51,12 @@ export async function GET(req: NextRequest) {
         //Si no existe entonces traigo todos los vidrios de la base de datos que tienen el status obtenido
         else {
             const response = await prismaX.glass.findMany({
+                orderBy: [
+                    {
+                      updatedAt: 'desc',
+                    },
+                    
+                  ],
                 include: {
                     type: true,
                     vendor: true,
