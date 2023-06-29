@@ -529,7 +529,7 @@ const Home: NextPage = () => {
 
         if (glassFiltered && foundGlass && Number(glass?.difQuantity) <= Number(foundGlass[0]?.quantity)) {
             setAllowQuantityChange(true)
-            setGlassSelection(null)
+            //setGlassSelection(null)
         } else {
             setAllowQuantityChange(false)
         }
@@ -546,6 +546,21 @@ const Home: NextPage = () => {
             fieldVal: number | string | null | object | Date,
         ) => void
 
+
+        if (glassSelection?.id && values.id !== glassSelection.id) {
+            setFormAttribute('id', glassSelection.id)
+            setFormAttribute('type', glassSelection.type as object)
+            setFormAttribute('vendor', glassSelection.vendor as object)
+            setFormAttribute('location', glassSelection.location as object)
+            setFormAttribute('width', { id: 1, width: glassSelection.width } )
+            setFormAttribute('height', { id: 1, height: glassSelection.height } )
+            setFormAttribute('batch', { id: 1, batch: glassSelection.batch })
+            setFormAttribute('quantity', glassSelection.quantity)
+        }
+
+
+
+
         const formGlass: SuperGlass = {
             ...values,
             width: values?.width?.width,
@@ -560,9 +575,9 @@ const Home: NextPage = () => {
             setFormAttribute('type', glassFiltered.type as object)
             setFormAttribute('vendor', glassFiltered.vendor as object)
             setFormAttribute('location', glassFiltered.location as object)
-            setFormAttribute('width', { id: 1, width: glassFiltered.width } as object)
-            setFormAttribute('height', { id: 1, height: glassFiltered.height } as object)
-            setFormAttribute('batch', { id: 1, batch: glassFiltered.batch } as object)
+            setFormAttribute('width', { id: 1, width: glassFiltered.width } )
+            setFormAttribute('height', { id: 1, height: glassFiltered.height } )
+            setFormAttribute('batch', { id: 1, batch: glassFiltered.batch })
             setFormAttribute('quantity', glassFiltered.quantity)
         }
 
@@ -896,9 +911,28 @@ const Home: NextPage = () => {
                                 rows={rows}
                                 columns={columns}
                                 slots={{ toolbar: GridToolbar }}
-                                onRowSelectionModelChange={(ids) =>
-                                    setGlassSelection(rows.find((row) => row.id === ids[0]) as RowType)
-                                }
+                                onRowSelectionModelChange={(ids) => {
+                                    const glassSelected = rows.find((row) => row.id === ids[0]) as RowType
+                                    setGlassSelection(glassSelected?{
+                                        id: glassSelected?.id,
+                                        typeId: glassSelected?.typeId,
+                                        status: glassSelected?.status,
+                                        quantity: glassSelected?.quantity,
+                                        createdAt: glassSelected?.createdAt,
+                                        updatedAt: glassSelected?.updatedAt,
+                                        locationId: glassSelected?.locationId,
+                                        width: glassSelected?.width,
+                                        height: glassSelected?.height,
+                                        vendorId: glassSelected?.vendorId,
+                                        batch: glassSelected?.batch,
+                                        expirationDate: glassSelected?.expirationDate,
+                                        Comment: glassSelected?.Comment,
+                                        type: glassSelected?.type,
+                                        location: glassSelected?.location,
+                                        vendor: glassSelected?.vendor,
+                                        squaredMeters: glassSelected?.squaredMeters,
+                                    }:null)
+                                }}
                                 groupingColDef={{
                                     headerName: 'Grupo',
                                 }}
@@ -947,7 +981,7 @@ const Home: NextPage = () => {
                 setState={setSnackbar}
             />
 
-            {/*Formulario de Carga en almacen traer solo almacen de esa posicion*/}
+            {/*Formulario de Carga*/}
             <DialogForm
                 title="Carga de Vidrios"
                 buttonText="Cargar"
@@ -1000,6 +1034,7 @@ const Home: NextPage = () => {
                             <TextLine
                                 label="Lote"
                                 name="batch"
+                                required={false}
                                 className=" sm:col-span-3"
                             />
                             <DateField
@@ -1053,16 +1088,7 @@ const Home: NextPage = () => {
                         batch: formResponse?.batch?.batch,
                     })
                 }}
-                initialValues={
-                    glassSelection
-                        ? {
-                              ...glassSelection,
-                              width: { id: 1, width: glassSelection?.width },
-                              height: { id: 1, height: glassSelection?.height },
-                              batch: { id: 1, batch: glassFiltered?.batch },
-                          }
-                        : undefined
-                }
+                
                 render={(props) => {
                     const formGlass = processDynamicForm(props)
 
@@ -1110,6 +1136,7 @@ const Home: NextPage = () => {
                                 name="batch"
                                 inputField="batch"
                                 className="sm:col-span-3"
+                                required={false}
                                 options={getFieldOptions(formGlass).batch?.map((batch, id) => {
                                     return { id: id + 1, batch: batch !== 'null' ? batch : null }
                                 })}
@@ -1191,16 +1218,7 @@ const Home: NextPage = () => {
                         batch: formResponse?.batch?.batch,
                     })
                 }}
-                initialValues={
-                    glassSelection
-                        ? {
-                              ...glassSelection,
-                              width: { id: 1, width: glassSelection?.width },
-                              height: { id: 1, height: glassSelection?.height },
-                              batch: { id: 1, batch: glassFiltered?.batch },
-                          }
-                        : null
-                }
+               
                 render={(props) => {
                     const formGlass = processDynamicForm(props)
 
@@ -1247,6 +1265,7 @@ const Home: NextPage = () => {
                                 name="batch"
                                 inputField="batch"
                                 className="sm:col-span-2"
+                                required={false}
                                 options={getFieldOptions(formGlass).batch?.map((batch, id) => {
                                     return { id: id + 1, batch: batch !== 'null' ? batch : null }
                                 })}
@@ -1336,6 +1355,7 @@ const Home: NextPage = () => {
                             <TextLine
                                 label="Lote"
                                 name="batch"
+                                required={false}
                                 className=" sm:col-span-3"
                             />
                             <DateField

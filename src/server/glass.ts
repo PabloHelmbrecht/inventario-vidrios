@@ -53,10 +53,9 @@ export async function GET(req: NextRequest) {
             const response = await prismaX.glass.findMany({
                 orderBy: [
                     {
-                      updatedAt: 'desc',
+                        updatedAt: 'desc',
                     },
-                    
-                  ],
+                ],
                 include: {
                     type: true,
                     vendor: true,

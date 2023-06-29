@@ -49,7 +49,8 @@ function groupAndAggregateObjects<T extends AggregatedObject>(
         } else {
             for (const key of aggregateKeys) {
                 if (typeof obj[key] === 'number') {
-                    (result[groupKey] as AggregatedObject)[key] = (Number((result[groupKey] as T)[key] || 0) + Number(obj[key]))
+                    (result[groupKey] as AggregatedObject)[key] =
+                        Number((result[groupKey] as T)[key] || 0) + Number(obj[key])
                 }
             }
         }
@@ -80,7 +81,6 @@ const Home: NextPage = () => {
             localStorage.setItem('glassData', JSON.stringify(response.data))
             setGlassData(response.data as SuperGlass[])
             silenced || setSnackbar({ type: 'success', message: 'Vidrios Actualizados' })
-
         } catch (error) {
             console.error('Error fetching data:', error)
             setSnackbar({ type: 'warning', message: 'Error al obtener los vidrios' })
@@ -194,7 +194,9 @@ const Home: NextPage = () => {
                                 rows={rows}
                                 columns={columns}
                                 slots={{ toolbar: GridToolbar }}
-                                getRowId={(row: AggregatedObject) => `${String(row.typeName)}-${String(row.width)}-${String(row.height)}`}
+                                getRowId={(row: AggregatedObject) =>
+                                    `${String(row.typeName)}-${String(row.width)}-${String(row.height)}`
+                                }
                                 slotProps={{
                                     toolbar: {
                                         showQuickFilter: true,
