@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
             //Busco en la base de datos si existe un vidrio con las mismas características
             let createdGlass: Glass | null = await tx.glass.findFirst({
                 where: {
-                    typeId: requestData.typeId ?? null,
+                    typeId: requestData.materialId ?? null,
                     locationId: requestData.locationId ?? null,
                     vendorId: requestData.vendorId ?? null,
                     height: requestData.height ?? null,
@@ -193,7 +193,7 @@ export async function PATCH(request: NextRequest) {
                         id: {
                             not: id,
                         },
-                        typeId: glassUpdates.typeId ?? null,
+                        typeId: glassUpdates.materialId ?? null,
                         locationId: glassUpdates.locationId ?? null,
                         vendorId: glassUpdates.vendorId ?? null,
                         height: glassUpdates.height ?? null,

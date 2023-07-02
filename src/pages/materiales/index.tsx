@@ -18,7 +18,7 @@ import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridV
 import axios from 'axios'
 
 //Prisma
-import { type User, type GlassType } from '@prisma/client'
+import { type User, type GlassMaterial } from '@prisma/client'
 
 //Custom Components
 import TextLine from '../../components/inputFields/textlineField'
@@ -44,15 +44,15 @@ const Home: NextPage = () => {
     const { data: session } = useSession()
 
     //States
-    const [typeSelection, setTypeSelection] = useState<GlassType | null>(null)
+    const [typeSelection, setTypeSelection] = useState<GlassMaterial | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
 
     const [isTypeCreatorOpen, setIsTypeCreatorOpen] = useState<boolean>(false)
 
-    const [typeToDelete, setTypeToDelete] = useState<GlassType | null>(null)
-    const [typeToEdit, setTypeToEdit] = useState<GlassType | null>(null)
+    const [typeToDelete, setTypeToDelete] = useState<GlassMaterial | null>(null)
+    const [typeToEdit, setTypeToEdit] = useState<GlassMaterial | null>(null)
 
-    const [typesData, setTypesData] = useState<GlassType[] | null>(null)
+    const [typesData, setTypesData] = useState<GlassMaterial[] | null>(null)
     const [usersData, setUsersData] = useState<User[] | null>(null)
 
     //User admin verification
@@ -115,13 +115,13 @@ const Home: NextPage = () => {
 
     const fetchTypesData = async () => {
         try {
-            const cachedResponse: GlassType[] = JSON.parse(localStorage.getItem('typesData') ?? '{}') as GlassType[]
+            const cachedResponse: GlassMaterial[] = JSON.parse(localStorage.getItem('typesData') ?? '{}') as GlassMaterial[]
             setTypesData(cachedResponse)
 
             const response = await axios.get(`/api/type`)
             if (response.data === null) throw new Error('No hay materiales')
             localStorage.setItem('typesData', JSON.stringify(response.data))
-            setTypesData(response.data as GlassType[])
+            setTypesData(response.data as GlassMaterial[])
             setSnackbar({ type: 'success', message: 'Materiales Actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -154,7 +154,7 @@ const Home: NextPage = () => {
     }, [])
 
     //DataGrid Definitions
-    const rows: GlassType[] = useMemo(() => typesData as GlassType[], [typesData])
+    const rows: GlassMaterial[] = useMemo(() => typesData as GlassMaterial[], [typesData])
 
     let columns: GridColDef[] = [
         {
@@ -203,13 +203,13 @@ const Home: NextPage = () => {
                         key={1}
                         icon={<TrashIcon className="w-4" />}
                         label="Delete"
-                        onClick={() => setTypeToDelete(row as GlassType)}
+                        onClick={() => setTypeToDelete(row as GlassMaterial)}
                     />,
                     <GridActionsCellItem
                         key={1}
                         icon={<PencilSquareIcon className="w-4" />}
                         label="Delete"
-                        onClick={() => setTypeToEdit(row as GlassType)}
+                        onClick={() => setTypeToEdit(row as GlassMaterial)}
                     />,
                 ],
             },
@@ -256,7 +256,7 @@ const Home: NextPage = () => {
                                 columns={columns}
                                 slots={{ toolbar: GridToolbar }}
                                 onRowSelectionModelChange={(ids) =>
-                                    setTypeSelection(rows.find((row) => row.id === ids[0]) as GlassType)
+                                    setTypeSelection(rows.find((row) => row.id === ids[0]) as GlassMaterial)
                                 }
                                 slotProps={{
                                     toolbar: {

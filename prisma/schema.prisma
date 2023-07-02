@@ -11,7 +11,7 @@ datasource db {
 
 model Glass {
   id             Int             @id @default(autoincrement())
-  typeId         Int?
+  materialId         Int? @map("typeId")
   status         GlassStatus
   quantity       Int             @default(0)
   createdAt      DateTime        @default(now())
@@ -23,12 +23,12 @@ model Glass {
   batch          String?
   expirationDate DateTime?
   Comment        String?
-  type           GlassMaterial?      @relation(fields: [typeId], references: [id])
+  material           GlassMaterial?      @relation(fields: [materialId], references: [id])
   location       GlassLocation?  @relation(fields: [locationId], references: [id])
   vendor         GlassVendor?    @relation(fields: [vendorId], references: [id])
   GlassMovement  GlassMovement[]
 
-  @@index([typeId])
+  @@index([materialId])
   @@index([locationId])
   @@index([vendorId])
 }

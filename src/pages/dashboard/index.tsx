@@ -12,7 +12,7 @@ import { DataGridPremium as DataGrid, GridToolbar, type GridColDef } from '@mui/
 import axios from 'axios'
 
 //Prisma
-import { type Glass, type GlassType, type GlassVendor } from '@prisma/client'
+import { type Glass, type GlassMaterial, type GlassVendor } from '@prisma/client'
 
 //Custom Components
 import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
@@ -22,7 +22,7 @@ import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
 
 //Custom Types
 interface SuperGlass extends Glass {
-    type?: GlassType | null
+    type?: GlassMaterial | null
     location?: SuperGlass | null
     vendor?: GlassVendor | null
     squaredMeters?: number

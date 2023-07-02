@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from './db'
-import { type GlassType } from '@prisma/client/edge'
+import { type GlassMaterial } from '@prisma/client/edge'
 export const config = {
     runtime: 'edge',
 }
@@ -11,11 +11,11 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
         if (id) {
-            const response = await prisma.glassType.findUnique({ where: { id } })
+            const response = await prisma.glassMaterial.findUnique({ where: { id } })
 
             return NextResponse.json(response)
         } else {
-            const response = await prisma.glassType.findMany({})
+            const response = await prisma.glassMaterial.findMany({})
 
             return NextResponse.json(response)
         }
@@ -31,8 +31,8 @@ export async function GET(request: NextRequest) {
 // POST /api/type
 export async function POST(request: NextRequest) {
     try {
-        const typeData = (await request.json()) as GlassType
-        const createdType = await prisma.glassType.create({
+        const typeData = (await request.json()) as GlassMaterial
+        const createdType = await prisma.glassMaterial.create({
             data: typeData,
         })
 
@@ -51,8 +51,8 @@ export async function PATCH(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
-        const typeData = (await request.json()) as GlassType
-        const updatedType = await prisma.glassType.update({
+        const typeData = (await request.json()) as GlassMaterial
+        const updatedType = await prisma.glassMaterial.update({
             where: {
                 id: id,
             },
@@ -75,7 +75,7 @@ export async function DELETE(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
 
-        const deletedType = await prisma.glassType.delete({ where: { id } })
+        const deletedType = await prisma.glassMaterial.delete({ where: { id } })
 
         return NextResponse.json(deletedType)
     } catch (error) {

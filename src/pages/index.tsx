@@ -27,7 +27,7 @@ import {
 import axios from 'axios'
 
 //Prisma
-import { type Glass, type GlassType, type GlassLocation, type GlassVendor, type User } from '@prisma/client'
+import { type Glass, type GlassMaterial, type GlassLocation, type GlassVendor, type User } from '@prisma/client'
 
 //Custom Components
 import Combobox from '../components/inputFields/comboboxField'
@@ -49,17 +49,17 @@ import dayjs from 'dayjs'
 
 //Custom Types
 interface SuperGlass extends Glass {
-    type?: GlassType | null
+    material?: GlassMaterial | null
     location?: GlassLocation | null
     vendor?: GlassVendor | null
     squaredMeters?: number
 }
 
 interface RowType extends SuperGlass {
-    typeName?: string
-    typeDescription?: string
-    typeCreatedAt?: Date
-    typeUpdatedAt?: Date
+    materialName?: string
+    materialDescription?: string
+    materialCreatedAt?: Date
+    materialUpdatedAt?: Date
     locationPosition?: string
     locationWarehouse?: string
     locationCreatedAt?: Date
@@ -77,7 +77,7 @@ type FormInputType = SuperGlass & {
 
 interface formResponseType {
     id?: number
-    type: { id: number }
+    material: { id: number }
     location?: { id: number }
     destinyLocation?: { id: number }
     vendor: { id: number }
@@ -121,7 +121,7 @@ const Home: NextPage = () => {
 
     const [glassData, setGlassData] = useState<SuperGlass[] | null>(null)
     const [glassDataWithConsumed, setGlassDataWithConsumed] = useState<SuperGlass[] | null>(null)
-    const [typesData, setTypesData] = useState<GlassType[] | null>(null)
+    const [materialsData, setMaterialsData] = useState<GlassMaterial[] | null>(null)
     const [locationsData, setLocationsData] = useState<GlassLocation[] | null>(null)
     const [vendorsData, setVendorsData] = useState<GlassVendor[] | null>(null)
     const [usersData, setUsersData] = useState<User[] | null>(null)
@@ -135,12 +135,12 @@ const Home: NextPage = () => {
     //- Submit Functions
     const onGlassCreation = async (formResponse: object) => {
         try {
-            const { type, width, height, vendor, location, quantity, batch, expirationDate, newComment } =
+            const { material, width, height, vendor, location, quantity, batch, expirationDate, newComment } =
                 formResponse as formResponseType
             const response = await axios.post('/api/glass', {
                 user,
                 glass: {
-                    typeId: type.id,
+                    materialId: material.id,
                     width,
                     height,
                     vendorId: vendor.id,
@@ -168,7 +168,7 @@ const Home: NextPage = () => {
                 quantity,
                 difQuantity,
                 newComment,
-                type,
+                material,
                 width,
                 height,
                 vendor,
@@ -193,7 +193,7 @@ const Home: NextPage = () => {
                     glass: {
                         quantity: difQuantity,
                         Comment: newComment,
-                        typeId: type.id,
+                        materialId: material.id,
                         width,
                         height,
                         vendorId: vendor.id,
@@ -210,7 +210,7 @@ const Home: NextPage = () => {
                 const oldGlass = await axios.patch(`/api/glass/${Number(id)}`, {
                     user,
                     glass: {
-                        typeId: type.id,
+                        materialId: material.id,
                         quantity: newQuantity,
                         height,
                         width,
@@ -225,7 +225,7 @@ const Home: NextPage = () => {
                 const newGlass = await axios.post('/api/glass', {
                     user,
                     glass: {
-                        typeId: type.id,
+                        materialId: material.id,
                         quantity: difQuantity,
                         height,
                         width,
@@ -255,7 +255,7 @@ const Home: NextPage = () => {
                 quantity,
                 difQuantity,
                 newComment,
-                type,
+                material,
                 width,
                 height,
                 vendor,
@@ -277,7 +277,7 @@ const Home: NextPage = () => {
                 glass: {
                     quantity: newQuantity,
                     Comment: newComment,
-                    typeId: type.id,
+                    materialId: material.id,
                     width,
                     height,
                     vendorId: vendor.id,
@@ -315,13 +315,13 @@ const Home: NextPage = () => {
         try {
             const { id } = formResponse as formResponseType
 
-            const { type, width, height, vendor, location, newComment, quantity, batch, expirationDate } =
+            const { material, width, height, vendor, location, newComment, quantity, batch, expirationDate } =
                 formResponse as formResponseType
 
             const response = await axios.patch(`/api/glass/${Number(id)}`, {
                 user,
                 glass: {
-                    typeId: type.id,
+                    materialId: material.id,
                     width,
                     height,
                     quantity,
@@ -371,15 +371,15 @@ const Home: NextPage = () => {
         }
     }
 
-    const fetchTypesData = async () => {
+    const fetchMaterialsData = async () => {
         try {
-            const cachedResponse: GlassType[] = JSON.parse(localStorage.getItem('typesData') ?? '{}') as GlassType[]
-            setTypesData(cachedResponse)
+            const cachedResponse: GlassMaterial[] = JSON.parse(localStorage.getItem('materialsData') ?? '{}') as GlassMaterial[]
+            setMaterialsData(cachedResponse)
 
-            const response = await axios.get('/api/type')
+            const response = await axios.get('/api/material')
             if (response.data === null) throw new Error('No hay materiales')
-            localStorage.setItem('typesData', JSON.stringify(response.data))
-            setTypesData(response.data as GlassType[])
+            localStorage.setItem('materialsData', JSON.stringify(response.data))
+            setMaterialsData(response.data as GlassMaterial[])
             //setSnackbar({ type: 'success', message: 'Materiales Actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -421,7 +421,7 @@ const Home: NextPage = () => {
             const response = await axios.get('/api/vendor')
             if (response.data === null) throw new Error('No hay proovedores')
             localStorage.setItem('vendorsData', JSON.stringify(response.data))
-            setVendorsData(response.data as GlassType[])
+            setVendorsData(response.data as GlassMaterial[])
             //setSnackbar({ type: 'success', message: 'Proovedores Actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -472,7 +472,7 @@ const Home: NextPage = () => {
                 response = false
             }
 
-            if (glass.type?.name && glass.type?.name !== glassToCompare.type?.name) {
+            if (glass.material?.name && glass.material?.name !== glassToCompare.material?.name) {
                 response = false
             }
 
@@ -481,7 +481,7 @@ const Home: NextPage = () => {
 
         return {
             id: [...new Set(foundGlasses?.map((glass) => glass.id))],
-            type: [...new Set(foundGlasses?.map((glass) => glass.type))],
+            material: [...new Set(foundGlasses?.map((glass) => glass.material))],
             location: [...new Set(foundGlasses?.map((glass) => glass.location))],
             vendor: [...new Set(foundGlasses?.map((glass) => glass.vendor))],
             width: [...new Set(foundGlasses?.map((glass) => glass.width))],
@@ -514,7 +514,7 @@ const Home: NextPage = () => {
                 response = false
             }
 
-            if (glass.type?.name && glass.type?.name !== glassToCompare.type?.name) {
+            if (glass.material?.name && glass.material?.name !== glassToCompare.material?.name) {
                 response = false
             }
 
@@ -549,7 +549,7 @@ const Home: NextPage = () => {
 
         if (glassSelection?.id && values.id !== glassSelection.id) {
             setFormAttribute('id', glassSelection.id)
-            setFormAttribute('type', glassSelection.type as object)
+            setFormAttribute('material', glassSelection.material as object)
             setFormAttribute('vendor', glassSelection.vendor as object)
             setFormAttribute('location', glassSelection.location as object)
             setFormAttribute('width', { id: 1, width: glassSelection.width } )
@@ -572,7 +572,7 @@ const Home: NextPage = () => {
 
         if (glassFiltered?.id && values.id !== glassFiltered.id) {
             setFormAttribute('id', glassFiltered.id)
-            setFormAttribute('type', glassFiltered.type as object)
+            setFormAttribute('material', glassFiltered.material as object)
             setFormAttribute('vendor', glassFiltered.vendor as object)
             setFormAttribute('location', glassFiltered.location as object)
             setFormAttribute('width', { id: 1, width: glassFiltered.width } )
@@ -599,7 +599,7 @@ const Home: NextPage = () => {
         }, 200)
 
         fetchGlassData()
-        fetchTypesData()
+        fetchMaterialsData()
         fetchLocationsData()
         fetchVendorsData()
         fetchUsersData()
@@ -620,10 +620,10 @@ const Home: NextPage = () => {
         return (seeConsumedGlass ? glassDataWithConsumed : glassData)?.map((row) => {
             return {
                 ...row,
-                typeName: row.type?.name,
-                typeDescription: row.type?.description,
-                typeCreatedAt: row.type?.createdAt,
-                typeUpdatedAt: row.type?.updatedAt,
+                materialName: row.material?.name,
+                materialDescription: row.material?.description,
+                materialCreatedAt: row.material?.createdAt,
+                materialUpdatedAt: row.material?.updatedAt,
                 locationPosition: row.location?.position,
                 locationWarehouse: row.location?.warehouse,
                 locationCreatedAt: row.location?.createdAt,
@@ -695,13 +695,13 @@ const Home: NextPage = () => {
         {
             headerName: 'Código',
             width: 140,
-            field: 'typeName',
+            field: 'materialName',
             aggregable: false,
         },
 
         {
             headerName: 'Descripción',
-            field: 'typeDescription',
+            field: 'materialDescription',
             width: 200,
             aggregable: false,
         },
@@ -881,7 +881,7 @@ const Home: NextPage = () => {
                                     onClick={() => {
                                         setIsGlassCreatorOpen(true)
                                     }}
-                                    disabled={!(glassData && typesData && vendorsData && locationsData) || isViewer}
+                                    disabled={!(glassData && materialsData && vendorsData && locationsData) || isViewer}
                                     className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
                                     Cargar
                                 </button>
@@ -889,7 +889,7 @@ const Home: NextPage = () => {
                                     onClick={() => {
                                         setIsGlassMoverOpen(true)
                                     }}
-                                    disabled={!(glassData && typesData && vendorsData && locationsData) || isViewer}
+                                    disabled={!(glassData && materialsData && vendorsData && locationsData) || isViewer}
                                     className=" rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:bg-slate-500">
                                     Mover
                                 </button>
@@ -898,7 +898,7 @@ const Home: NextPage = () => {
                                     onClick={() => {
                                         setIsGlassConsumerOpen(true)
                                     }}
-                                    disabled={!(glassData && typesData && vendorsData && locationsData) || isViewer}
+                                    disabled={!(glassData && materialsData && vendorsData && locationsData) || isViewer}
                                     className=" rounded-md border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 disabled:bg-slate-500">
                                     Consumir
                                 </button>
@@ -915,7 +915,7 @@ const Home: NextPage = () => {
                                     const glassSelected = rows.find((row) => row.id === ids[0]) as RowType
                                     setGlassSelection(glassSelected?{
                                         id: glassSelected?.id,
-                                        typeId: glassSelected?.typeId,
+                                        materialId: glassSelected?.id,
                                         status: glassSelected?.status,
                                         quantity: glassSelected?.quantity,
                                         createdAt: glassSelected?.createdAt,
@@ -927,7 +927,7 @@ const Home: NextPage = () => {
                                         batch: glassSelected?.batch,
                                         expirationDate: glassSelected?.expirationDate,
                                         Comment: glassSelected?.Comment,
-                                        type: glassSelected?.type,
+                                        material: glassSelected?.material,
                                         location: glassSelected?.location,
                                         vendor: glassSelected?.vendor,
                                         squaredMeters: glassSelected?.squaredMeters,
@@ -997,13 +997,13 @@ const Home: NextPage = () => {
                                 label="Material"
                                 name="type"
                                 inputField="name"
-                                options={typesData as GlassType[]}
+                                options={materialsData as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
-                                options={typesData as GlassType[]}
+                                options={materialsData as GlassMaterial[]}
                             />
                             <Numeric
                                 label="Ancho"
@@ -1063,7 +1063,7 @@ const Home: NextPage = () => {
                         Mover Vidrio
                         {isNotNullUndefinedOrEmpty(glassFiltered) ? (
                             <span className="text-sm font-normal text-slate-500">{`${` #${glassFiltered?.id ?? ''} ${
-                                glassFiltered?.type?.name ?? ''
+                                glassFiltered?.material?.name ?? ''
                             } ${glassFiltered?.width ?? ''}X${glassFiltered?.height ?? ''}`}`}</span>
                         ) : (
                             ''
@@ -1104,13 +1104,13 @@ const Home: NextPage = () => {
                                 label="Material"
                                 name="type"
                                 inputField="name"
-                                options={getFieldOptions(formGlass).type as GlassType[]}
+                                options={getFieldOptions(formGlass).material as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
-                                options={getFieldOptions(formGlass).type as GlassType[]}
+                                options={getFieldOptions(formGlass).material as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Ancho"
@@ -1193,7 +1193,7 @@ const Home: NextPage = () => {
                         Consumir Vidrio
                         {isNotNullUndefinedOrEmpty(glassFiltered) ? (
                             <span className="text-sm font-normal text-slate-500">{`${` #${glassFiltered?.id ?? ''} ${
-                                glassFiltered?.type?.name ?? ''
+                                glassFiltered?.material?.name ?? ''
                             } ${glassFiltered?.width ?? ''}X${glassFiltered?.height ?? ''}`}`}</span>
                         ) : (
                             ''
@@ -1234,13 +1234,13 @@ const Home: NextPage = () => {
                                 label="Material"
                                 name="type"
                                 inputField="name"
-                                options={getFieldOptions(formGlass).type as GlassType[]}
+                                options={getFieldOptions(formGlass).material as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
-                                options={getFieldOptions(formGlass).type as GlassType[]}
+                                options={getFieldOptions(formGlass).material as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Ancho"
@@ -1313,7 +1313,7 @@ const Home: NextPage = () => {
                         Editar Vidrio
                         {isNotNullUndefinedOrEmpty(glassToEdit) ? (
                             <span className="text-sm font-normal text-slate-500">{`${` #${glassToEdit?.id ?? ''} ${
-                                glassToEdit?.type?.name ?? ''
+                                glassToEdit?.material?.name ?? ''
                             } ${glassToEdit?.width ?? ''}X${glassToEdit?.height ?? ''}`}`}</span>
                         ) : (
                             ''
@@ -1334,13 +1334,13 @@ const Home: NextPage = () => {
                                 label="Material"
                                 name="type"
                                 inputField="name"
-                                options={typesData as GlassType[]}
+                                options={materialsData as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Descripción"
                                 name="type"
                                 inputField="description"
-                                options={typesData as GlassType[]}
+                                options={materialsData as GlassMaterial[]}
                             />
                             <Numeric
                                 label="Ancho"
@@ -1402,7 +1402,7 @@ const Home: NextPage = () => {
                 titleStyles="text-center"
                 buttonText={`Eliminar #${
                     isNotNullUndefinedOrEmpty(glassToDelete)
-                        ? `${glassToDelete?.id ?? ''} ${glassToDelete?.type?.name ?? ''} ${
+                        ? `${glassToDelete?.id ?? ''} ${glassToDelete?.material?.name ?? ''} ${
                               glassToDelete?.width ?? ''
                           }X${glassToDelete?.height ?? ''}`
                         : 'vidrio'
