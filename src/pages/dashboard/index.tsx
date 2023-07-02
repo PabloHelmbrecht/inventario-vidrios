@@ -22,7 +22,7 @@ import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
 
 //Custom Types
 interface SuperGlass extends Glass {
-    type?: GlassMaterial | null
+    material?: GlassMaterial | null
     location?: SuperGlass | null
     vendor?: GlassVendor | null
     squaredMeters?: number
@@ -108,8 +108,8 @@ const Home: NextPage = () => {
     const rows = useMemo(() => {
         const glassDataParsed = glassData?.map((glass) => {
             return {
-                typeName: glass.type?.name,
-                typeDescription: glass.type?.description,
+                materialName: glass.material?.name,
+                materialDescription: glass.material?.description,
                 width: glass.width,
                 height: glass.height,
                 squaredMeters: glass.squaredMeters,
@@ -119,7 +119,7 @@ const Home: NextPage = () => {
 
         const rows = groupAndAggregateObjects(
             glassDataParsed as AggregatedObject[],
-            ['typeName', 'typeDescription', 'width', 'height'],
+            ['materialName', 'materialDescription', 'width', 'height'],
             ['squaredMeters', 'quantity'],
         )
 
@@ -130,12 +130,12 @@ const Home: NextPage = () => {
         {
             headerName: 'Código',
             width: 150,
-            field: 'typeName',
+            field: 'materialName',
             aggregable: false,
         },
         {
             headerName: 'Descripción',
-            field: 'typeDescription',
+            field: 'materialDescription',
             width: 350,
             aggregable: false,
         },
@@ -195,7 +195,7 @@ const Home: NextPage = () => {
                                 columns={columns}
                                 slots={{ toolbar: GridToolbar }}
                                 getRowId={(row: AggregatedObject) =>
-                                    `${String(row.typeName)}-${String(row.width)}-${String(row.height)}`
+                                    `${String(row.materialName)}-${String(row.width)}-${String(row.height)}`
                                 }
                                 slotProps={{
                                     toolbar: {
@@ -206,7 +206,7 @@ const Home: NextPage = () => {
                                 initialState={{
                                     columns: {
                                         columnVisibilityModel: {
-                                            typeDescription: false,
+                                            materialDescription: false,
                                         },
                                     },
                                     aggregation: {

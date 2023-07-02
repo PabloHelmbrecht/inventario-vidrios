@@ -915,7 +915,7 @@ const Home: NextPage = () => {
                                     const glassSelected = rows.find((row) => row.id === ids[0]) as RowType
                                     setGlassSelection(glassSelected?{
                                         id: glassSelected?.id,
-                                        materialId: glassSelected?.id,
+                                        materialId: glassSelected?.materialId,
                                         status: glassSelected?.status,
                                         quantity: glassSelected?.quantity,
                                         createdAt: glassSelected?.createdAt,
@@ -945,7 +945,7 @@ const Home: NextPage = () => {
                                 initialState={{
                                     columns: {
                                         columnVisibilityModel: {
-                                            typeDescription: false,
+                                            materialDescription: false,
                                             locationWarehouse: false,
                                             vendorName: false,
                                             expirationDate: false,
@@ -995,13 +995,13 @@ const Home: NextPage = () => {
                         <>
                             <Combobox
                                 label="Material"
-                                name="type"
+                                name="material"
                                 inputField="name"
                                 options={materialsData as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Descripción"
-                                name="type"
+                                name="material"
                                 inputField="description"
                                 options={materialsData as GlassMaterial[]}
                             />
@@ -1102,13 +1102,13 @@ const Home: NextPage = () => {
                             />
                             <Combobox
                                 label="Material"
-                                name="type"
+                                name="material"
                                 inputField="name"
                                 options={getFieldOptions(formGlass).material as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Descripción"
-                                name="type"
+                                name="material"
                                 inputField="description"
                                 options={getFieldOptions(formGlass).material as GlassMaterial[]}
                             />
@@ -1232,13 +1232,13 @@ const Home: NextPage = () => {
                             />
                             <Combobox
                                 label="Material"
-                                name="type"
+                                name="material"
                                 inputField="name"
                                 options={getFieldOptions(formGlass).material as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Descripción"
-                                name="type"
+                                name="material"
                                 inputField="description"
                                 options={getFieldOptions(formGlass).material as GlassMaterial[]}
                             />
@@ -1332,13 +1332,13 @@ const Home: NextPage = () => {
                         <>
                             <Combobox
                                 label="Material"
-                                name="type"
+                                name="material"
                                 inputField="name"
                                 options={materialsData as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Descripción"
-                                name="type"
+                                name="material"
                                 inputField="description"
                                 options={materialsData as GlassMaterial[]}
                             />

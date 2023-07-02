@@ -1,4 +1,3 @@
-//Agregar el paráemtro de que se pueda selecionar que camp se quiere usar y eliminar el type option
 
 //React
 import React, { Fragment, useState } from 'react'

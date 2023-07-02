@@ -33,7 +33,7 @@ interface SuperGlassMovement extends GlassMovement {
 
 const columnDictionary: { [key: string]: string } = {
     id: 'ID del Vidrio',
-    typeId: 'ID del Material',
+    materialId: 'ID del Material',
     status: 'Estado',
     quantity: 'Cantidad',
     createdAt: 'Creado En',

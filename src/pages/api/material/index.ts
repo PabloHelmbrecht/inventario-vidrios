@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { GET, POST, PATCH, DELETE } from '../../../server/type'
+import { GET, POST, PATCH, DELETE } from '../../../server/material'
 
 export const config = {
     runtime: 'edge',

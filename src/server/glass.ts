@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
         if (id) {
             const response = await prismaX.glass.findUnique({
                 include: {
-                    type: true,
+                    material: true,
                     vendor: true,
                     location: true,
                 },
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
                     },
                 ],
                 include: {
-                    type: true,
+                    material: true,
                     vendor: true,
                     location: true,
                 },
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
             //Busco en la base de datos si existe un vidrio con las mismas características
             let createdGlass: Glass | null = await tx.glass.findFirst({
                 where: {
-                    typeId: requestData.materialId ?? null,
+                    materialId: requestData.materialId ?? null,
                     locationId: requestData.locationId ?? null,
                     vendorId: requestData.vendorId ?? null,
                     height: requestData.height ?? null,
@@ -193,7 +193,7 @@ export async function PATCH(request: NextRequest) {
                         id: {
                             not: id,
                         },
-                        typeId: glassUpdates.materialId ?? null,
+                        materialId: glassUpdates.materialId ?? null,
                         locationId: glassUpdates.locationId ?? null,
                         vendorId: glassUpdates.vendorId ?? null,
                         height: glassUpdates.height ?? null,

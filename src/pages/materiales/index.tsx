@@ -44,15 +44,15 @@ const Home: NextPage = () => {
     const { data: session } = useSession()
 
     //States
-    const [typeSelection, setTypeSelection] = useState<GlassMaterial | null>(null)
+    const [materialSelection, setMaterialSelection] = useState<GlassMaterial | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
 
-    const [isTypeCreatorOpen, setIsTypeCreatorOpen] = useState<boolean>(false)
+    const [isMaterialCreatorOpen, setIsMaterialCreatorOpen] = useState<boolean>(false)
 
-    const [typeToDelete, setTypeToDelete] = useState<GlassMaterial | null>(null)
-    const [typeToEdit, setTypeToEdit] = useState<GlassMaterial | null>(null)
+    const [materialToDelete, setMaterialToDelete] = useState<GlassMaterial | null>(null)
+    const [materialToEdit, setMaterialToEdit] = useState<GlassMaterial | null>(null)
 
-    const [typesData, setTypesData] = useState<GlassMaterial[] | null>(null)
+    const [materialsData, setMaterialsData] = useState<GlassMaterial[] | null>(null)
     const [usersData, setUsersData] = useState<User[] | null>(null)
 
     //User admin verification
@@ -61,67 +61,67 @@ const Home: NextPage = () => {
 
     //Functions
     //- Submit Functions
-    const onTypeCreation = async (formResponse: object) => {
+    const onMaterialCreation = async (formResponse: object) => {
         try {
             const { name, description } = formResponse as formResponseType
 
-            const response = await axios.post(`/api/type`, {
+            const response = await axios.post(`/api/material`, {
                 name,
                 description,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Material cargado exitosamente' })
 
-            fetchTypesData()
+            fetchMaterialsData()
         } catch (error) {
-            console.error('Error creating type:', error)
+            console.error('Error creating material:', error)
             setSnackbar({ type: 'warning', message: 'Error al crear el material' })
         }
     }
 
-    const onTypeDelete = async (formResponse: object) => {
+    const onMaterialDelete = async (formResponse: object) => {
         try {
             const { id } = formResponse as formResponseType
-            const response = await axios.delete(`/api/type/${Number(id)}`)
+            const response = await axios.delete(`/api/material/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Material eliminado exitosamente' })
 
-            fetchTypesData()
+            fetchMaterialsData()
         } catch (error) {
-            console.error('Error deleting type:', error)
+            console.error('Error deleting material:', error)
             setSnackbar({ type: 'warning', message: 'Error al eliminar el material' })
         }
     }
 
-    const onTypeEdit = async (formResponse: object) => {
+    const onMaterialEdit = async (formResponse: object) => {
         try {
             const { id, name, description } = formResponse as formResponseType
 
-            const response = await axios.patch(`/api/type/${Number(id)}`, {
+            const response = await axios.patch(`/api/material/${Number(id)}`, {
                 name,
                 description,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Material editado exitosamente' })
 
-            fetchTypesData()
+            fetchMaterialsData()
         } catch (error) {
-            console.error('Error deleting glass:', error)
+            console.error('Error deleting material:', error)
             setSnackbar({ type: 'warning', message: 'Error al editar el material de vidrio' })
         }
     }
 
     //- Fetch Functions
 
-    const fetchTypesData = async () => {
+    const fetchMaterialsData = async () => {
         try {
-            const cachedResponse: GlassMaterial[] = JSON.parse(localStorage.getItem('typesData') ?? '{}') as GlassMaterial[]
-            setTypesData(cachedResponse)
+            const cachedResponse: GlassMaterial[] = JSON.parse(localStorage.getItem('materialsData') ?? '{}') as GlassMaterial[]
+            setMaterialsData(cachedResponse)
 
-            const response = await axios.get(`/api/type`)
+            const response = await axios.get(`/api/material`)
             if (response.data === null) throw new Error('No hay materiales')
-            localStorage.setItem('typesData', JSON.stringify(response.data))
-            setTypesData(response.data as GlassMaterial[])
+            localStorage.setItem('materialsData', JSON.stringify(response.data))
+            setMaterialsData(response.data as GlassMaterial[])
             setSnackbar({ type: 'success', message: 'Materiales Actualizados' })
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -148,13 +148,13 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
-        fetchTypesData()
+        fetchMaterialsData()
         fetchUsersData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     //DataGrid Definitions
-    const rows: GlassMaterial[] = useMemo(() => typesData as GlassMaterial[], [typesData])
+    const rows: GlassMaterial[] = useMemo(() => materialsData as GlassMaterial[], [materialsData])
 
     let columns: GridColDef[] = [
         {
@@ -203,13 +203,13 @@ const Home: NextPage = () => {
                         key={1}
                         icon={<TrashIcon className="w-4" />}
                         label="Delete"
-                        onClick={() => setTypeToDelete(row as GlassMaterial)}
+                        onClick={() => setMaterialToDelete(row as GlassMaterial)}
                     />,
                     <GridActionsCellItem
                         key={1}
                         icon={<PencilSquareIcon className="w-4" />}
                         label="Delete"
-                        onClick={() => setTypeToEdit(row as GlassMaterial)}
+                        onClick={() => setMaterialToEdit(row as GlassMaterial)}
                     />,
                 ],
             },
@@ -239,16 +239,16 @@ const Home: NextPage = () => {
                                 <div className="flex w-full justify-end gap-3">
                                     <button
                                         onClick={() => {
-                                            setIsTypeCreatorOpen(true)
+                                            setIsMaterialCreatorOpen(true)
                                         }}
-                                        disabled={!typesData}
+                                        disabled={!materialsData}
                                         className=" rounded-md border border-transparent bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:bg-slate-500">
                                         Crear Material
                                     </button>
                                 </div>
                             )}
                         </div>
-                        {typesData && (
+                        {materialsData && (
                             <DataGrid
                                 disableDensitySelector
                                 localeText={GRID_DEFAULT_LOCALE_TEXT}
@@ -256,7 +256,7 @@ const Home: NextPage = () => {
                                 columns={columns}
                                 slots={{ toolbar: GridToolbar }}
                                 onRowSelectionModelChange={(ids) =>
-                                    setTypeSelection(rows.find((row) => row.id === ids[0]) as GlassMaterial)
+                                    setMaterialSelection(rows.find((row) => row.id === ids[0]) as GlassMaterial)
                                 }
                                 slotProps={{
                                     toolbar: {
@@ -290,10 +290,10 @@ const Home: NextPage = () => {
                 title="Crear Material de Vidrio"
                 buttonText="Crear"
                 buttonStyles="bg-emerald-500 hover:bg-emerald-600"
-                isOpen={isTypeCreatorOpen}
-                setIsOpen={setIsTypeCreatorOpen}
-                onSubmit={onTypeCreation}
-                initialValues={typeSelection}
+                isOpen={isMaterialCreatorOpen}
+                setIsOpen={setIsMaterialCreatorOpen}
+                onSubmit={onMaterialCreation}
+                initialValues={materialSelection}
                 render={() => {
                     return (
                         <>
@@ -315,20 +315,20 @@ const Home: NextPage = () => {
                 title={
                     <>
                         Editar Material de Vidrio
-                        {isNotNullUndefinedOrEmpty(typeToEdit) ? (
-                            <span className="text-sm font-normal text-slate-500">{`   ${typeToEdit?.name ?? ''}`}</span>
+                        {isNotNullUndefinedOrEmpty(materialToEdit) ? (
+                            <span className="text-sm font-normal text-slate-500">{`   ${materialToEdit?.name ?? ''}`}</span>
                         ) : (
                             ''
                         )}
                     </>
                 }
                 buttonText="Editar"
-                isOpen={isNotNullUndefinedOrEmpty(typeToEdit)}
+                isOpen={isNotNullUndefinedOrEmpty(materialToEdit)}
                 setIsOpen={(value) => {
-                    value || setTypeToEdit(null)
+                    value || setMaterialToEdit(null)
                 }}
-                onSubmit={onTypeEdit}
-                initialValues={typeToEdit}
+                onSubmit={onMaterialEdit}
+                initialValues={materialToEdit}
                 render={() => {
                     return (
                         <>
@@ -348,17 +348,17 @@ const Home: NextPage = () => {
             {/*Formulario de Eliminación*/}
             <DialogForm
                 title={`¿Desea eliminar el material ${
-                    isNotNullUndefinedOrEmpty(typeToDelete) ? `${typeToDelete?.name ?? ''}` : ''
+                    isNotNullUndefinedOrEmpty(materialToDelete) ? `${materialToDelete?.name ?? ''}` : ''
                 }?`}
                 titleStyles="text-center"
-                buttonText={`Eliminar ${isNotNullUndefinedOrEmpty(typeToDelete) ? `${typeToDelete?.name ?? ''}` : ''}`}
+                buttonText={`Eliminar ${isNotNullUndefinedOrEmpty(materialToDelete) ? `${materialToDelete?.name ?? ''}` : ''}`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"
-                isOpen={isNotNullUndefinedOrEmpty(typeToDelete)}
+                isOpen={isNotNullUndefinedOrEmpty(materialToDelete)}
                 setIsOpen={(value) => {
-                    value || setTypeToDelete(null)
+                    value || setMaterialToDelete(null)
                 }}
-                onSubmit={onTypeDelete}
-                initialValues={typeToDelete}
+                onSubmit={onMaterialDelete}
+                initialValues={materialToDelete}
                 render={() => {
                     return (
                         <>
