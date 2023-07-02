@@ -6,26 +6,28 @@ const mustBeNumber = (value: number | string): string | undefined =>
     isNaN(Number(value)) ? 'Debe ser un número' : undefined
 const minValue =
     (min: number) =>
-    (value: number | string): string | undefined =>
-        isNaN(Number(value)) || Number(value) >= min ? undefined : `Debe ser mayor o igual que ${min}`
+        (value: number | string): string | undefined =>
+            isNaN(Number(value)) || Number(value) >= min ? undefined : `Debe ser mayor o igual que ${min}`
 const composeValidators =
     (
         /* eslint-disable no-unused-vars */
         ...validators: ((value: number | string) => string | undefined)[]
     ): ((value: number | string) => string | undefined) =>
-    (value: number | string): string | undefined =>
-        validators.reduce((error: string | undefined, validator) => error || validator(value), undefined)
+        (value: number | string): string | undefined =>
+            validators.reduce((error: string | undefined, validator) => error || validator(value), undefined)
 
 export default function NumericField({
     label = 'Insert label',
     name = 'numeric',
     placeholder = '',
+    suffix='',
     className = '',
     disabled = false,
 }: {
     label?: string
     name?: string
     placeholder?: string
+    suffix?: string
     className?: string
     disabled?: boolean
 }) {
@@ -45,7 +47,10 @@ export default function NumericField({
                         {label}
                         {meta.error ? <span className="text-xs italic  text-slate-500"> *{meta.error}</span> : ''}
                     </label>
-                    <div className="mt-2	">
+                    <div className="mt-2 relative	">
+                        <div className="pointer-events-none absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <span className="text-gray-500 sm:text-sm">{suffix}</span>
+                        </div>
                         <input
                             disabled={disabled ?? false}
                             {...input}

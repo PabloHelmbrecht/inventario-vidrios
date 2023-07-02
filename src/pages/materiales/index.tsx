@@ -25,6 +25,7 @@ import { env } from '~/env.mjs'
 
 //Custom Components
 import TextLine from '../../components/inputFields/textlineField'
+import Numeric from '../../components/inputFields/numericField'
 import DialogForm from '../../components/dialogForm'
 import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 
@@ -38,6 +39,7 @@ interface formResponseType {
     id?: number
     name: string
     description: string
+    density?: number
 }
 
 /*eslint-disable @typescript-eslint/no-misused-promises*/
@@ -66,11 +68,12 @@ const Home: NextPage = () => {
     //- Submit Functions
     const onMaterialCreation = async (formResponse: object) => {
         try {
-            const { name, description } = formResponse as formResponseType
+            const { name, description, density } = formResponse as formResponseType
 
             const response = await axios.post(`/api/materials`, {
                 name,
                 description,
+                density: Number(density)
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Material cargado exitosamente' })
@@ -98,11 +101,12 @@ const Home: NextPage = () => {
 
     const onMaterialEdit = async (formResponse: object) => {
         try {
-            const { id, name, description } = formResponse as formResponseType
+            const { id, name, description, density } = formResponse as formResponseType
 
             const response = await axios.patch(`/api/materials/${Number(id)}`, {
                 name,
                 description,
+                density: Number(density)
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Material editado exitosamente' })
@@ -177,6 +181,13 @@ const Home: NextPage = () => {
             headerName: 'Descripción',
             field: 'description',
             width: 400,
+        },
+        {
+            headerName: 'Densidad',
+            field: 'density',
+            type: 'number',
+            width: 100,
+            valueFormatter: ({ value }: { value: string }) => (value ? `${value} kg/m²` : undefined),
         },
         {
             headerName: 'Creado En',
@@ -308,6 +319,11 @@ const Home: NextPage = () => {
                                 label="Descripción"
                                 name="description"
                             />
+                            <Numeric
+                                suffix='kg/m²'
+                                label="Densidad"
+                                name="density"
+                            />
                         </>
                     )
                 }}
@@ -343,6 +359,11 @@ const Home: NextPage = () => {
                                 label="Descripción"
                                 name="description"
                             />
+                            <Numeric
+                                suffix='kg/m²'
+                                label="Densidad"
+                                name="density"
+                            />
                         </>
                     )
                 }}
@@ -350,9 +371,8 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title={`¿Desea eliminar el material ${
-                    isNotNullUndefinedOrEmpty(materialToDelete) ? `${materialToDelete?.name ?? ''}` : ''
-                }?`}
+                title={`¿Desea eliminar el material ${isNotNullUndefinedOrEmpty(materialToDelete) ? `${materialToDelete?.name ?? ''}` : ''
+                    }?`}
                 titleStyles="text-center"
                 buttonText={`Eliminar ${isNotNullUndefinedOrEmpty(materialToDelete) ? `${materialToDelete?.name ?? ''}` : ''}`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"

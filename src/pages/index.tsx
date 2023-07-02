@@ -60,6 +60,7 @@ interface SuperGlass extends Glass {
     vendor?: GlassVendor | null
     squaredMeters?: number
     type?: string
+    weight?: number
 }
 
 interface RowType extends SuperGlass {
@@ -735,6 +736,14 @@ const Home: NextPage = () => {
                 value ? `${parseFloat(value).toFixed(2)} m²` : undefined,
         },
         {
+            headerName: 'Peso',
+            field: 'weight',
+            width: 100,
+            type: 'number',
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? `${parseFloat(value).toFixed(0)} kg` : undefined,
+        },
+        {
             headerName: 'Tipo',
             field: 'type',
             width: 80,
@@ -982,6 +991,7 @@ const Home: NextPage = () => {
                                         location: glassSelected?.location,
                                         vendor: glassSelected?.vendor,
                                         squaredMeters: glassSelected?.squaredMeters,
+                                        weight: glassSelected?.weight,
                                         type: glassSelected?.type,
                                     }:null)
                                 }}
@@ -1000,6 +1010,8 @@ const Home: NextPage = () => {
                                             materialDescription: false,
                                             locationWarehouse: false,
                                             vendorName: false,
+                                            weight: false,
+                                            type: false,
                                             expirationDate: false,
                                             createdAt: false,
                                             updatedAt: false,
@@ -1009,6 +1021,7 @@ const Home: NextPage = () => {
                                         model: {
                                             quantity: 'sum',
                                             squaredMeters: 'sum',
+                                            weight: 'sum',
                                         },
                                     },
                                 }}
@@ -1059,12 +1072,14 @@ const Home: NextPage = () => {
                             />
                             <Numeric
                                 label="Ancho"
+                                suffix='mm'
                                 name="width"
                                 className=" sm:col-span-3"
                             />
                             <Numeric
                                 label="Alto"
                                 name="height"
+                                suffix='mm'
                                 className=" sm:col-span-3"
                             />
                             <Combobox
@@ -1397,11 +1412,13 @@ const Home: NextPage = () => {
                             <Numeric
                                 label="Ancho"
                                 name="width"
+                                suffix='mm'
                                 className=" sm:col-span-3"
                             />
                             <Numeric
                                 label="Alto"
                                 name="height"
+                                suffix='mm'
                                 className=" sm:col-span-3"
                             />
                             <TextLine
