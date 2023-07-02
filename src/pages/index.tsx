@@ -137,7 +137,7 @@ const Home: NextPage = () => {
         try {
             const { material, width, height, vendor, location, quantity, batch, expirationDate, newComment } =
                 formResponse as formResponseType
-            const response = await axios.post('/api/glass', {
+            const response = await axios.post('/api/glasses', {
                 user,
                 glass: {
                     materialId: material.id,
@@ -188,7 +188,7 @@ const Home: NextPage = () => {
 
             //Muevo todo el vidrio solamente cambia de posición
             if (newQuantity === 0) {
-                const response = await axios.patch(`/api/glass/${Number(id)}`, {
+                const response = await axios.patch(`/api/glasses/${Number(id)}`, {
                     user,
                     glass: {
                         quantity: difQuantity,
@@ -207,7 +207,7 @@ const Home: NextPage = () => {
             }
             //Creo un vidrio nuevo igual pero con difquantity y modifico el vidrio anterior con newquantity
             else {
-                const oldGlass = await axios.patch(`/api/glass/${Number(id)}`, {
+                const oldGlass = await axios.patch(`/api/glasses/${Number(id)}`, {
                     user,
                     glass: {
                         materialId: material.id,
@@ -222,7 +222,7 @@ const Home: NextPage = () => {
                     },
                 })
 
-                const newGlass = await axios.post('/api/glass', {
+                const newGlass = await axios.post('/api/glasses', {
                     user,
                     glass: {
                         materialId: material.id,
@@ -272,7 +272,7 @@ const Home: NextPage = () => {
                 return
             }
 
-            const response = await axios.patch(`/api/glass/${Number(id)}`, {
+            const response = await axios.patch(`/api/glasses/${Number(id)}`, {
                 user,
                 glass: {
                     quantity: newQuantity,
@@ -300,7 +300,7 @@ const Home: NextPage = () => {
     const onGlassDelete = async (formResponse: object) => {
         try {
             const { id } = formResponse as formResponseType
-            const response = await axios.delete(`/api/glass/${Number(id)}`)
+            const response = await axios.delete(`/api/glasses/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Vidrio eliminado exitosamente' })
 
@@ -318,7 +318,7 @@ const Home: NextPage = () => {
             const { material, width, height, vendor, location, newComment, quantity, batch, expirationDate } =
                 formResponse as formResponseType
 
-            const response = await axios.patch(`/api/glass/${Number(id)}`, {
+            const response = await axios.patch(`/api/glasses/${Number(id)}`, {
                 user,
                 glass: {
                     materialId: material.id,
@@ -347,7 +347,7 @@ const Home: NextPage = () => {
         try {
             const cachedResponse: SuperGlass[] = JSON.parse(localStorage.getItem('glassData') ?? '{}') as SuperGlass[]
             setGlassData(cachedResponse)
-            const response = await axios.get('/api/glass', {
+            const response = await axios.get('/api/glasses', {
                 params: {
                     status: 'TRANSIT,STORED',
                 },
@@ -361,7 +361,7 @@ const Home: NextPage = () => {
                 localStorage.getItem('glassDataWithConsumed') ?? '{}',
             ) as SuperGlass[]
             setGlassDataWithConsumed(cachedResponseWithConsumed)
-            const responseWithConsumed = await axios.get('/api/glass')
+            const responseWithConsumed = await axios.get('/api/glasses')
             if (responseWithConsumed.data === null) throw new Error('No hay vidrios')
             localStorage.setItem('glassDataWithConsumed', JSON.stringify(responseWithConsumed.data))
             setGlassDataWithConsumed(responseWithConsumed.data as SuperGlass[])
@@ -376,7 +376,7 @@ const Home: NextPage = () => {
             const cachedResponse: GlassMaterial[] = JSON.parse(localStorage.getItem('materialsData') ?? '{}') as GlassMaterial[]
             setMaterialsData(cachedResponse)
 
-            const response = await axios.get('/api/material')
+            const response = await axios.get('/api/materials')
             if (response.data === null) throw new Error('No hay materiales')
             localStorage.setItem('materialsData', JSON.stringify(response.data))
             setMaterialsData(response.data as GlassMaterial[])
@@ -397,7 +397,7 @@ const Home: NextPage = () => {
             ) as GlassLocation[]
             setLocationsData(cachedResponse)
 
-            const response = await axios.get('/api/location')
+            const response = await axios.get('/api/locations')
             if (response.data === null) throw new Error('No hay ubicaciones')
             localStorage.setItem('locationsData', JSON.stringify(response.data))
             setLocationsData(response.data as GlassLocation[])
@@ -418,7 +418,7 @@ const Home: NextPage = () => {
             ) as GlassVendor[]
             setVendorsData(cachedResponse)
 
-            const response = await axios.get('/api/vendor')
+            const response = await axios.get('/api/vendors')
             if (response.data === null) throw new Error('No hay proovedores')
             localStorage.setItem('vendorsData', JSON.stringify(response.data))
             setVendorsData(response.data as GlassMaterial[])
@@ -437,7 +437,7 @@ const Home: NextPage = () => {
             const cachedResponse: User[] = JSON.parse(localStorage.getItem('usersData') ?? '{}') as User[]
             setUsersData(cachedResponse)
 
-            const response = await axios.get(`/api/user`)
+            const response = await axios.get(`/api/users`)
             if (response.data === null) throw new Error('No hay usuarios')
             localStorage.setItem('usersData', JSON.stringify(response.data))
             setUsersData(response.data as User[])

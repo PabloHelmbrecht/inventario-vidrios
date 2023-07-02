@@ -6,7 +6,7 @@ export const config = {
     runtime: 'edge',
 }
 
-// GET /api/location
+// GET /api/locations
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     }
 }
 
-// POST /api/location
+// POST /api/locations
 export async function POST(request: NextRequest) {
     try {
         const locationData = (await request.json()) as GlassLocation
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// PATCH /api/location/:id
+// PATCH /api/locations/:id
 export async function PATCH(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
@@ -70,7 +70,7 @@ export async function PATCH(request: NextRequest) {
     }
 }
 
-// DELETE /api/location/:id
+// DELETE /api/locations/:id
 export async function DELETE(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)

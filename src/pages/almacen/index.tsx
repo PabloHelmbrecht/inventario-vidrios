@@ -65,7 +65,7 @@ const Home: NextPage = () => {
         try {
             const { position, warehouse } = formResponse as formResponseType
 
-            const response = await axios.post(`/api/location`, {
+            const response = await axios.post(`/api/locations`, {
                 position,
                 warehouse,
             })
@@ -82,7 +82,7 @@ const Home: NextPage = () => {
     const onLocationDelete = async (formResponse: object) => {
         try {
             const { id } = formResponse as formResponseType
-            const response = await axios.delete(`/api/location/${Number(id)}`)
+            const response = await axios.delete(`/api/locations/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Posición eliminada exitosamente' })
 
@@ -97,7 +97,7 @@ const Home: NextPage = () => {
         try {
             const { id, position, warehouse } = formResponse as formResponseType
 
-            const response = await axios.patch(`/api/location/${Number(id)}`, {
+            const response = await axios.patch(`/api/locations/${Number(id)}`, {
                 position,
                 warehouse,
             })
@@ -120,7 +120,7 @@ const Home: NextPage = () => {
             ) as GlassLocation[]
             setLocationsData(cachedResponse)
 
-            const response = await axios.get(`/api/location`)
+            const response = await axios.get(`/api/locations`)
             if (response.data === null) throw new Error('No hay posiciones')
             localStorage.setItem('locationsData', JSON.stringify(response.data))
             setLocationsData(response.data as GlassLocation[])
@@ -139,7 +139,7 @@ const Home: NextPage = () => {
             const cachedResponse: User[] = JSON.parse(localStorage.getItem('usersData') ?? '{}') as User[]
             setUsersData(cachedResponse)
 
-            const response = await axios.get(`/api/user`)
+            const response = await axios.get(`/api/users`)
             if (response.data === null) throw new Error('No hay usuarios')
             localStorage.setItem('usersData', JSON.stringify(response.data))
             setUsersData(response.data as User[])

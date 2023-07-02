@@ -6,7 +6,7 @@ export const config = {
     runtime: 'edge',
 }
 
-// GET /api/movement
+// GET /api/movements
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
     }
 }
 
-// POST /api/movement
+// POST /api/movements
 export async function POST(request: NextRequest) {
     try {
         const movementData = (await request.json()) as GlassMovement
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// PATCH /api/movement/:id
+// PATCH /api/movements/:id
 export async function PATCH(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
@@ -122,7 +122,7 @@ export async function PATCH(request: NextRequest) {
     }
 }
 
-// DELETE /api/movement/:id
+// DELETE /api/movements/:id
 export async function DELETE(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)

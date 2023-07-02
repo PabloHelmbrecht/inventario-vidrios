@@ -64,7 +64,7 @@ const Home: NextPage = () => {
             ) as SuperGlassMovement[]
             setMovementsData(cachedResponse)
 
-            const response: { data: SuperGlassMovement[] } = await axios.get(`/api/movement`)
+            const response: { data: SuperGlassMovement[] } = await axios.get(`/api/movements`)
             if (response.data === null) throw new Error('No hay movimientos')
             localStorage.setItem('movementsData', JSON.stringify(response.data))
 

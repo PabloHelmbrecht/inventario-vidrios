@@ -72,7 +72,7 @@ const Home: NextPage = () => {
         try {
             const cachedResponse: SuperGlass[] = JSON.parse(localStorage.getItem('glassData') ?? '{}') as SuperGlass[]
             setGlassData(cachedResponse)
-            const response = await axios.get('/api/glass', {
+            const response = await axios.get('/api/glasses', {
                 params: {
                     status: 'TRANSIT,STORED',
                 },

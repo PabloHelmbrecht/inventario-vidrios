@@ -65,7 +65,7 @@ const Home: NextPage = () => {
         try {
             const { name, description } = formResponse as formResponseType
 
-            const response = await axios.post(`/api/material`, {
+            const response = await axios.post(`/api/materials`, {
                 name,
                 description,
             })
@@ -82,7 +82,7 @@ const Home: NextPage = () => {
     const onMaterialDelete = async (formResponse: object) => {
         try {
             const { id } = formResponse as formResponseType
-            const response = await axios.delete(`/api/material/${Number(id)}`)
+            const response = await axios.delete(`/api/materials/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Material eliminado exitosamente' })
 
@@ -97,7 +97,7 @@ const Home: NextPage = () => {
         try {
             const { id, name, description } = formResponse as formResponseType
 
-            const response = await axios.patch(`/api/material/${Number(id)}`, {
+            const response = await axios.patch(`/api/materials/${Number(id)}`, {
                 name,
                 description,
             })
@@ -118,7 +118,7 @@ const Home: NextPage = () => {
             const cachedResponse: GlassMaterial[] = JSON.parse(localStorage.getItem('materialsData') ?? '{}') as GlassMaterial[]
             setMaterialsData(cachedResponse)
 
-            const response = await axios.get(`/api/material`)
+            const response = await axios.get(`/api/materials`)
             if (response.data === null) throw new Error('No hay materiales')
             localStorage.setItem('materialsData', JSON.stringify(response.data))
             setMaterialsData(response.data as GlassMaterial[])
@@ -137,7 +137,7 @@ const Home: NextPage = () => {
             const cachedResponse: User[] = JSON.parse(localStorage.getItem('usersData') ?? '{}') as User[]
             setUsersData(cachedResponse)
 
-            const response = await axios.get(`/api/user`)
+            const response = await axios.get(`/api/users`)
             if (response.data === null) throw new Error('No hay usuarios')
             localStorage.setItem('usersData', JSON.stringify(response.data))
             setUsersData(response.data as User[])

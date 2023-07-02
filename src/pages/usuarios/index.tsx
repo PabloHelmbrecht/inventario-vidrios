@@ -88,7 +88,7 @@ const Home: NextPage = () => {
             const { role } = (formResponse as formResponseType).role
             const { id } = formResponse as formResponseType
 
-            const response = await axios.patch(`/api/user/${String(id)}`, {
+            const response = await axios.patch(`/api/users/${String(id)}`, {
                 role,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
@@ -107,7 +107,7 @@ const Home: NextPage = () => {
             const cachedResponse: User[] = JSON.parse(localStorage.getItem('usersData') ?? '{}') as User[]
             setUsersData(cachedResponse)
 
-            const response = await axios.get(`/api/user`)
+            const response = await axios.get(`/api/users`)
             if (response.data === null) throw new Error('No hay usuarios')
             localStorage.setItem('usersData', JSON.stringify(response.data))
             setUsersData(response.data as User[])

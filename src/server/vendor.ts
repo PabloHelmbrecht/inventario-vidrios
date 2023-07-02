@@ -5,7 +5,7 @@ export const config = {
     runtime: 'edge',
 }
 
-// GET /api/vendor
+// GET /api/vendors
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     }
 }
 
-// POST /api/vendor
+// POST /api/vendors
 export async function POST(request: NextRequest) {
     try {
         const vendorData = (await request.json()) as GlassVendor
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// PATCH /api/vendor/:id
+// PATCH /api/vendors/:id
 export async function PATCH(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
@@ -69,7 +69,7 @@ export async function PATCH(request: NextRequest) {
     }
 }
 
-// DELETE /api/vendor/:id
+// DELETE /api/vendors/:id
 export async function DELETE(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)

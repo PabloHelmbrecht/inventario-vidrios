@@ -5,7 +5,7 @@ export const config = {
     runtime: 'edge',
 }
 
-// GET /api/material
+// GET /api/materials
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     }
 }
 
-// POST /api/material
+// POST /api/materials
 export async function POST(request: NextRequest) {
     try {
         const materialData = (await request.json()) as GlassMaterial
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// PATCH /api/material/:id
+// PATCH /api/materials/:id
 export async function PATCH(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
@@ -69,7 +69,7 @@ export async function PATCH(request: NextRequest) {
     }
 }
 
-// DELETE /api/material/:id
+// DELETE /api/materials/:id
 export async function DELETE(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)

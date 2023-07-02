@@ -24,7 +24,7 @@ const prismaX = prisma.$extends({
     },
 })
 
-// GET /api/glass
+// GET /api/glasses
 export async function GET(req: NextRequest) {
     try {
         //Optengo el id y status pasados por query params
@@ -79,7 +79,7 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// POST /api/glass
+// POST /api/glasses
 export async function POST(request: NextRequest) {
     try {
         //Obtengo el vidrio a través de request
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// PATCH /api/glass/:id
+// PATCH /api/glasses/:id
 export async function PATCH(request: NextRequest) {
     try {
         //Obtengo el vidrio de la petición y el id de los query params
@@ -290,7 +290,7 @@ export async function PATCH(request: NextRequest) {
     }
 }
 
-// DELETE /api/glass/:id
+// DELETE /api/glasses/:id
 export async function DELETE(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)

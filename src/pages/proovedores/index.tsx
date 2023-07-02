@@ -64,7 +64,7 @@ const Home: NextPage = () => {
         try {
             const { name } = formResponse as formResponseType
 
-            const response = await axios.post(`/api/vendor`, {
+            const response = await axios.post(`/api/vendors`, {
                 name,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
@@ -80,7 +80,7 @@ const Home: NextPage = () => {
     const onVendorDelete = async (formResponse: object) => {
         try {
             const { id } = formResponse as formResponseType
-            const response = await axios.delete(`/api/vendor/${Number(id)}`)
+            const response = await axios.delete(`/api/vendors/${Number(id)}`)
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Proovedor eliminado exitosamente' })
 
@@ -95,7 +95,7 @@ const Home: NextPage = () => {
         try {
             const { id, name } = formResponse as formResponseType
 
-            const response = await axios.patch(`/api/vendor/${Number(id)}`, {
+            const response = await axios.patch(`/api/vendors/${Number(id)}`, {
                 name,
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
@@ -117,7 +117,7 @@ const Home: NextPage = () => {
             ) as GlassVendor[]
             setVendorsData(cachedResponse)
 
-            const response = await axios.get(`/api/vendor`)
+            const response = await axios.get(`/api/vendors`)
             if (response.data === null) throw new Error('No hay proovedores')
             localStorage.setItem('vendorsData', JSON.stringify(response.data))
             setVendorsData(response.data as GlassVendor[])
@@ -136,7 +136,7 @@ const Home: NextPage = () => {
             const cachedResponse: User[] = JSON.parse(localStorage.getItem('usersData') ?? '{}') as User[]
             setUsersData(cachedResponse)
 
-            const response = await axios.get(`/api/user`)
+            const response = await axios.get(`/api/users`)
             if (response.data === null) throw new Error('No hay usuarios')
             localStorage.setItem('usersData', JSON.stringify(response.data))
             setUsersData(response.data as User[])

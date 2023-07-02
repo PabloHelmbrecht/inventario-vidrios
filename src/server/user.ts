@@ -5,7 +5,7 @@ export const config = {
     runtime: 'edge',
 }
 
-// GET /api/user
+// GET /api/users
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     }
 }
 
-// PATCH /api/user/:id
+// PATCH /api/users/:id
 export async function PATCH(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
