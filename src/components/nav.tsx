@@ -8,6 +8,9 @@ import { signIn, signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
+//Env variables
+import { env } from '~/env.mjs'
+
 const navigation = [
     { name: 'Inventario de Vidrios', href: '/' },
     //{ name: 'Movimientos', href: '/movimientos' },
@@ -34,7 +37,7 @@ export default function Navbar() {
         if (
             status === 'unauthenticated' &&
             router.pathname !== '/auth/signin' &&
-            process.env.NODE_ENV !== 'development'
+            env.NEXT_PUBLIC_NODE_ENV !== 'development'
         ) {
             void router.push('/auth/signin')
         }

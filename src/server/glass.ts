@@ -5,13 +5,20 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from './db'
 
+import {z} from 'zod'
+
 import { type Glass, type GlassMovement, type GlassStatus } from '@prisma/client'
+
+//Env variables
+import { env } from '~/env.mjs'
+
 export const config = {
     runtime: 'edge',
 }
 
-const prismaX = prisma.$extends({
-    //name: `squareMetersComputed`,
+const prismaX = prisma
+.$extends({
+    name: `squareMetersComputed`,
     result: {
         glass: {
             squaredMeters: {
@@ -23,6 +30,20 @@ const prismaX = prisma.$extends({
         },
     },
 })
+.$extends({
+    name: `typeComputed`,
+    result: {
+        glass: {
+            type: {
+                needs: { squaredMeters: true },
+                compute(data: { squaredMeters: number }) {
+                    return (data.squaredMeters>=env.SQUARED_METERS_LIMIT?'Jumbo':'Small')
+                },
+            },
+        },
+    },
+})
+
 
 // GET /api/glasses
 export async function GET(req: NextRequest) {
@@ -31,6 +52,14 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url)
         const id = searchParams.get('id') ?? searchParams.get('nextParamid')
         const status = searchParams.get('status')?.split(',') as GlassStatus[] | null
+
+
+        const glassSchema = z.object({
+            squaredMeters: z.number(),
+            material: z.object({
+                density: z.number(),
+            })
+        })
 
         //Si existe un id entonces devuelvo ese vidrio específico
         if (id) {
@@ -45,12 +74,22 @@ export async function GET(req: NextRequest) {
                 },
             })
 
-            return NextResponse.json(response)
+            
+            try {  
+                const responseParsed = glassSchema.parse(response)
+
+                return NextResponse.json({...response, weight: responseParsed.squaredMeters*responseParsed.material.density})
+            }
+            catch(e) {
+                return NextResponse.json({...response, weight: null})
+            }
+        
+
         }
 
         //Si no existe entonces traigo todos los vidrios de la base de datos que tienen el status obtenido
         else {
-            const response = await prismaX.glass.findMany({
+            const response = (await prismaX.glass.findMany({
                 orderBy: [
                     {
                         updatedAt: 'desc',
@@ -64,6 +103,16 @@ export async function GET(req: NextRequest) {
                 where: {
                     status: status != null ? { in: status } : undefined,
                 },
+            }))
+            .map(glass => {
+                try {  
+                    const glassParsed = glassSchema.parse(glass)
+                    
+                    return {...glass, weight: glassParsed.squaredMeters*glassParsed.material.density}
+                }
+                catch(e) {
+                    return {...glass, weight: null}
+                }
             })
 
             return NextResponse.json(response)

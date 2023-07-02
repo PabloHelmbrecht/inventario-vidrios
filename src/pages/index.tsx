@@ -4,6 +4,9 @@ import React, { useState, useEffect, useMemo } from 'react'
 //React Final Form
 import { type FormRenderProps } from 'react-final-form'
 
+//Zod
+import {z} from 'zod'
+
 //Next Auth
 //import { useSession } from 'next-auth/react'
 
@@ -29,6 +32,9 @@ import axios from 'axios'
 //Prisma
 import { type Glass, type GlassMaterial, type GlassLocation, type GlassVendor, type User } from '@prisma/client'
 
+//Env variables
+import { env } from '~/env.mjs'
+
 //Custom Components
 import Combobox from '../components/inputFields/comboboxField'
 import Numeric from '../components/inputFields/numericField'
@@ -53,6 +59,7 @@ interface SuperGlass extends Glass {
     location?: GlassLocation | null
     vendor?: GlassVendor | null
     squaredMeters?: number
+    type?: string
 }
 
 interface RowType extends SuperGlass {
@@ -128,8 +135,8 @@ const Home: NextPage = () => {
 
     //User admin verification
     const foundUser = usersData?.find((user: User) => user.id === session?.user?.id)
-    const isAdmin = process.env.NODE_ENV !== 'development' ? foundUser?.role === 'ADMIN' : true
-    const isViewer = process.env.NODE_ENV !== 'development' ? foundUser?.role === 'VIEWER' : false
+    const isAdmin = env.NEXT_PUBLIC_NODE_ENV !== 'development' ? foundUser?.role === 'ADMIN' : true
+    const isViewer = env.NEXT_PUBLIC_NODE_ENV !== 'development' ? foundUser?.role === 'VIEWER' : false
 
     //Functions
     //- Submit Functions
@@ -727,6 +734,50 @@ const Home: NextPage = () => {
             valueFormatter: ({ value }: { value: string }) =>
                 value ? `${parseFloat(value).toFixed(2)} m²` : undefined,
         },
+        {
+            headerName: 'Tipo',
+            field: 'type',
+            width: 80,
+            renderCell: (params) => {
+
+                const typeSchema = z.enum([
+                    'Small',
+                   'Jumbo'
+                  ]).optional()
+                  
+                  const type = typeSchema.parse(params?.value)
+
+
+                  if(type === undefined) {
+                    return undefined
+                  }
+
+                
+                const options = {
+                    'Small': {
+                        text:'En Tránsito',
+                        ringColor:'ring-cyan-700/10',
+                        backgroundColor:'bg-cyan-50',
+                        textColor:'text-cyan-800',
+                    },
+                    'Jumbo': {
+                        text:'En Tránsito',
+                        ringColor:'ring-indigo-700/10',
+                        backgroundColor:'bg-indigo-50',
+                        textColor:'text-indigo-800',
+                    },
+                }
+                
+                
+
+                return (
+                    <div
+                        className={` ${options[type].ringColor} ${options[type].backgroundColor} ${options[type].textColor} inline-flex items-center  rounded-md  px-2 py-1 align-middle text-xs font-medium ring-1 ring-inset`}>
+                        {type}
+                    </div>
+                )
+            }
+        },
 
         {
             headerName: 'Cantidad',
@@ -778,12 +829,12 @@ const Home: NextPage = () => {
                 if (!isValidDate(expirationDate) || !params?.value) return undefined
                 const today = new Date()
                 const daysUntilExpirationDate = (expirationDate.getTime() - today.getTime()) / (1000 * 3600 * 24)
-                const yellowWarningDays = isNaN(Number(process.env.YELLOW_WARNING_DAYS ?? 30))
+                const yellowWarningDays = isNaN(Number(env.NEXT_PUBLIC_YELLOW_WARNING_DAYS ?? 30))
                     ? 30
-                    : Number(process.env.YELLOW_WARNING_DAYS ?? 30)
-                const orangeWarningDays = isNaN(Number(process.env.ORANGE_WARNING_DAYS ?? 15))
+                    : Number(env.NEXT_PUBLIC_YELLOW_WARNING_DAYS ?? 30)
+                const orangeWarningDays = isNaN(Number(env.NEXT_PUBLIC_ORANGE_WARNING_DAYS ?? 15))
                     ? 15
-                    : Number(process.env.ORANGE_WARNING_DAYS ?? 15)
+                    : Number(env.NEXT_PUBLIC_ORANGE_WARNING_DAYS ?? 15)
 
                 if (daysUntilExpirationDate <= 0)
                     return <span className="text-red-500">{dayjs(params?.value as Date).format('DD/MM/YYYY')}</span>
@@ -931,6 +982,7 @@ const Home: NextPage = () => {
                                         location: glassSelected?.location,
                                         vendor: glassSelected?.vendor,
                                         squaredMeters: glassSelected?.squaredMeters,
+                                        type: glassSelected?.type,
                                     }:null)
                                 }}
                                 groupingColDef={{

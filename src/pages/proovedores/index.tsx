@@ -20,6 +20,9 @@ import axios from 'axios'
 //Prisma
 import { type User, type GlassVendor } from '@prisma/client'
 
+//Env variables
+import { env } from '~/env.mjs'
+
 //Custom Components
 import TextLine from '../../components/inputFields/textlineField'
 import DialogForm from '../../components/dialogForm'
@@ -56,7 +59,7 @@ const Home: NextPage = () => {
 
     //User admin verification
     const foundUser = usersData?.find((user: User) => user.id === session?.user?.id)
-    const isAdmin = process.env.NODE_ENV !== 'development' ? foundUser?.role === 'ADMIN' : true
+    const isAdmin = env.NEXT_PUBLIC_NODE_ENV !== 'development' ? foundUser?.role === 'ADMIN' : true
 
     //Functions
     //- Submit Functions
