@@ -23,7 +23,7 @@ model Glass {
   batch          String?
   expirationDate DateTime?
   Comment        String?
-  type           GlassType?      @relation(fields: [typeId], references: [id])
+  type           GlassMaterial?      @relation(fields: [typeId], references: [id])
   location       GlassLocation?  @relation(fields: [locationId], references: [id])
   vendor         GlassVendor?    @relation(fields: [vendorId], references: [id])
   GlassMovement  GlassMovement[]
@@ -48,13 +48,15 @@ model GlassMovement {
   @@index([userId])
 }
 
-model GlassType {
+model GlassMaterial {
   id          Int      @id @default(autoincrement())
   name        String
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   Glass       Glass[]
+  
+	@@map("GlassType")
 }
 
 model GlassLocation {
