@@ -285,6 +285,7 @@ const Home: NextPage = () => {
         <>
             <Head>
                 <title>Listado de Posiciones</title>
+                
                 <meta
                     name="description"
                     content="Gestor de inventario"
