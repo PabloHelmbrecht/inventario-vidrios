@@ -32,6 +32,9 @@ import axios from 'axios'
 //Prisma
 import { type Glass, type GlassMaterial, type GlassLocation, type GlassVendor, type User } from '@prisma/client'
 
+//Day JS
+import dayjs from 'dayjs'
+
 //Env variables
 import { env } from '~/env.mjs'
 
@@ -46,12 +49,12 @@ import Toggle from '../components/toggle'
 import Snackbar, { type AlertProps } from '../components/snackbarAlert'
 
 //Custom Functions
-import { isNotNullUndefinedOrEmpty, isValidDate } from '../server/variableChecker'
+import { isNotNullUndefinedOrEmpty, isValidDate } from '../utils/variableChecker'
+import eliminateLicenseKey from '../utils/eliminateLicenseKey'
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../constants/localeTextConstants'
 import { useSession } from 'next-auth/react'
-import dayjs from 'dayjs'
 
 //Custom Types
 interface SuperGlass extends Glass {
@@ -594,18 +597,8 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
-        setTimeout(() => {
-            const divs = document.getElementsByTagName('div')
-            let licenseDiv
-            for (let i = 0; i < divs.length; i++) {
-                if (divs[i]?.innerText === 'MUI X Missing license key') {
-                    licenseDiv = divs[i]
-                }
-            }
 
-            licenseDiv?.remove()
-        }, 200)
-
+        eliminateLicenseKey()
         fetchGlassData()
         fetchMaterialsData()
         fetchLocationsData()
@@ -831,7 +824,7 @@ const Home: NextPage = () => {
             field: 'expirationDate',
             width: 150,
             type: 'date',
-            valueGetter: ({ value }: { value: string }) => (value ? new Date(value) : undefined),
+            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
             groupable: false,
             renderCell: (params) => {
                 const expirationDate = new Date(params?.value as Date)
@@ -860,7 +853,7 @@ const Home: NextPage = () => {
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => (value ? new Date(value) : undefined),
+            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
             groupable: false,
         },
         {
@@ -868,7 +861,7 @@ const Home: NextPage = () => {
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => (value ? new Date(value) : undefined),
+            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
             groupable: false,
         },
         {
@@ -995,14 +988,14 @@ const Home: NextPage = () => {
                                         type: glassSelected?.type,
                                     }:null)
                                 }}
-                                groupingColDef={{
-                                    headerName: 'Grupo',
-                                }}
                                 slotProps={{
                                     toolbar: {
                                         showQuickFilter: true,
                                         quickFilterProps: { debounceMs: 500 },
                                     },
+                                }}
+                                groupingColDef={{
+                                    headerName: 'Grupo',
                                 }}
                                 initialState={{
                                     columns: {

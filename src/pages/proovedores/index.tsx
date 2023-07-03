@@ -12,7 +12,7 @@ import Head from 'next/head'
 import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid'
+import { DataGridPremium as DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid-premium'
 
 //Axios
 import axios from 'axios'
@@ -23,13 +23,18 @@ import { type User, type GlassVendor } from '@prisma/client'
 //Env variables
 import { env } from '~/env.mjs'
 
+//Day JS
+import dayjs from 'dayjs'
+
 //Custom Components
 import TextLine from '../../components/inputFields/textlineField'
 import DialogForm from '../../components/dialogForm'
 import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 
 //Custom Functions
-import { isNotNullUndefinedOrEmpty } from '../../server/variableChecker'
+import { isNotNullUndefinedOrEmpty } from '../../utils/variableChecker'
+import eliminateLicenseKey from '~/utils/eliminateLicenseKey'
+
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
@@ -150,6 +155,7 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
+        eliminateLicenseKey()
         fetchVendorsData()
         fetchUsersData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
@@ -176,14 +182,14 @@ const Home: NextPage = () => {
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => new Date(value),
+            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
         },
         {
             headerName: 'Actualizado En',
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => new Date(value),
+            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
         },
     ]
 
@@ -229,7 +235,7 @@ const Home: NextPage = () => {
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Listado de Proovedores</h1>
-                    <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4">
+                    <div className="flex h-screen_3/4 w-auto transition-all duration-500 max-w-full flex-col justify-center gap-4">
                         <div className="flex w-full items-end justify-between">
                             {isAdmin && (
                                 <div className="flex w-full justify-end gap-3">
@@ -258,6 +264,21 @@ const Home: NextPage = () => {
                                     toolbar: {
                                         showQuickFilter: true,
                                         quickFilterProps: { debounceMs: 500 },
+                                    },
+                                }}
+                                groupingColDef={{
+                                    headerName: 'Grupo',
+                                }}
+                                initialState={{
+                                    columns: {
+                                        columnVisibilityModel: {
+                                            
+                                        },
+                                    },
+                                    aggregation: {
+                                        model: {
+                                            
+                                        },
                                     },
                                 }}
                                 sx={{

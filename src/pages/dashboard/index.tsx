@@ -14,11 +14,16 @@ import axios from 'axios'
 //Prisma
 import { type Glass, type GlassMaterial, type GlassVendor } from '@prisma/client'
 
+
+
 //Custom Components
 import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
+
+//Custom Functions
+import eliminateLicenseKey from '~/utils/eliminateLicenseKey'
 
 //Custom Types
 interface SuperGlass extends Glass {
@@ -89,17 +94,7 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
-        setTimeout(() => {
-            const divs = document.getElementsByTagName('div')
-            let licenseDiv
-            for (let i = 0; i < divs.length; i++) {
-                if (divs[i]?.innerText === 'MUI X Missing license key') {
-                    licenseDiv = divs[i]
-                }
-            }
-
-            licenseDiv?.remove()
-        }, 200)
+        eliminateLicenseKey()
         fetchGlassData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -186,7 +181,7 @@ const Home: NextPage = () => {
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Dashboard</h1>
-                    <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4">
+                    <div className="flex h-screen_3/4 w-auto transition-all duration-500 max-w-full flex-col justify-center gap-4">
                         {glassData && (
                             <DataGrid
                                 disableDensitySelector

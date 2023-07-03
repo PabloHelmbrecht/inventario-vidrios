@@ -12,10 +12,13 @@ import Head from 'next/head'
 import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid'
+import { DataGridPremium as DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid-premium'
 
 //Axios
 import axios from 'axios'
+
+//Day JS
+import dayjs from 'dayjs'
 
 //Prisma
 import { type User, type GlassLocation } from '@prisma/client'
@@ -23,13 +26,18 @@ import { type User, type GlassLocation } from '@prisma/client'
 //Env variables
 import { env } from '~/env.mjs'
 
+//Zod
+import { z } from 'zod'
+
 //Custom Components
+import Numeric from '../../components/inputFields/numericField'
 import TextLine from '../../components/inputFields/textlineField'
 import DialogForm from '../../components/dialogForm'
 import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 
 //Custom Functions
-import { isNotNullUndefinedOrEmpty } from '../../server/variableChecker'
+import { isNotNullUndefinedOrEmpty } from '../../utils/variableChecker'
+import eliminateLicenseKey from '~/utils/eliminateLicenseKey'
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
@@ -38,6 +46,14 @@ interface formResponseType {
     id?: number
     position: string
     warehouse: string
+    maxCapacityJumbo?: number
+    maxCapacitySmall?: number
+    usedCapacity?: number
+
+}
+
+interface SuperGlassLocation extends GlassLocation {
+    usedCapacity?: number
 }
 
 /*eslint-disable @typescript-eslint/no-misused-promises*/
@@ -48,15 +64,15 @@ const Home: NextPage = () => {
 
     //States
     const [usersData, setUsersData] = useState<User[] | null>(null)
-    const [locationSelection, setLocationSelection] = useState<GlassLocation | null>(null)
+    const [locationSelection, setLocationSelection] = useState<SuperGlassLocation | null>(null)
     const [snackbar, setSnackbar] = useState<AlertProps | null>(null)
 
     const [isLocationCreatorOpen, setIsLocationCreatorOpen] = useState<boolean>(false)
 
-    const [locationToDelete, setLocationToDelete] = useState<GlassLocation | null>(null)
-    const [locationToEdit, setLocationToEdit] = useState<GlassLocation | null>(null)
+    const [locationToDelete, setLocationToDelete] = useState<SuperGlassLocation | null>(null)
+    const [locationToEdit, setLocationToEdit] = useState<SuperGlassLocation | null>(null)
 
-    const [locationsData, setLocationsData] = useState<GlassLocation[] | null>(null)
+    const [locationsData, setLocationsData] = useState<SuperGlassLocation[] | null>(null)
 
     //User admin verification
     const foundUser = usersData?.find((user: User) => user.id === session?.user?.id)
@@ -118,15 +134,15 @@ const Home: NextPage = () => {
 
     const fetchLocationsData = async () => {
         try {
-            const cachedResponse: GlassLocation[] = JSON.parse(
+            const cachedResponse: SuperGlassLocation[] = JSON.parse(
                 localStorage.getItem('locationsData') ?? '{}',
-            ) as GlassLocation[]
+            ) as SuperGlassLocation[]
             setLocationsData(cachedResponse)
 
             const response = await axios.get(`/api/locations`)
             if (response.data === null) throw new Error('No hay posiciones')
             localStorage.setItem('locationsData', JSON.stringify(response.data))
-            setLocationsData(response.data as GlassLocation[])
+            setLocationsData(response.data as SuperGlassLocation[])
             setSnackbar({ type: 'success', message: 'Posiciones Actualizadas' })
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -153,13 +169,14 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
+        eliminateLicenseKey()
         fetchLocationsData()
         fetchUsersData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     //DataGrid Definitions
-    const rows: GlassLocation[] = useMemo(() => locationsData as GlassLocation[], [locationsData])
+    const rows: SuperGlassLocation[] = useMemo(() => locationsData as SuperGlassLocation[], [locationsData])
 
     let columns: GridColDef[] = [
         {
@@ -167,7 +184,7 @@ const Home: NextPage = () => {
             field: 'id',
             width: 70,
             type: 'number',
-            valueFormatter: (params) => `#${(params?.value as string) ?? ''}`,
+            valueFormatter: (params) => (params?.value ? `#${String(params?.value)}` : undefined),
         },
         {
             headerName: 'Posición',
@@ -181,18 +198,61 @@ const Home: NextPage = () => {
             width: 120,
         },
         {
+            headerName: 'Max Jumbo',
+            field: 'maxCapacityJumbo',
+            type: 'number',
+            width: 100,
+        },
+        {
+            headerName: 'Max Small',
+            field: 'maxCapacitySmall',
+            type: 'number',
+            width: 100,
+        },
+        {
+            headerName: '% Ocupación',
+            field: 'usedCapacity',
+            type: 'number',
+            width: 120,
+            valueFormatter: ({ value }: { value: number }) =>
+                ((value * 100).toFixed(2)),
+            renderCell: (params) => {
+
+                const capacitySchema = z.number().optional()
+
+                const capacity = capacitySchema.parse(params?.value)
+
+
+                if (capacity === undefined) {
+                    return undefined
+                }
+                const cssCapacity = Number(capacity>1?1:capacity)
+
+
+
+                return (
+                    <div className='flex row gap-2 items-center'>
+                        {`${(capacity * 100).toFixed(0)}%`}
+                        <div className='w-4 h-4 rounded-full  overflow-hidden relative bg-slate-200'>
+                        <div style={{width: '40rem',height:`${(cssCapacity*100).toFixed(0)}%`,left: `-${(39*cssCapacity).toFixed(2)}rem`}} className={`absolute bottom-0 bg-gradient-to-r from-emerald-500 via-yellow-500 to-red-500`}/>
+                            </div>
+                    </div>
+                )
+            }
+        },
+        {
             headerName: 'Creado En',
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => new Date(value),
+            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
         },
         {
             headerName: 'Actualizado En',
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => new Date(value),
+            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
         },
     ]
 
@@ -208,13 +268,13 @@ const Home: NextPage = () => {
                         key={1}
                         icon={<TrashIcon className="w-4" />}
                         label="Delete"
-                        onClick={() => setLocationToDelete(row as GlassLocation)}
+                        onClick={() => setLocationToDelete(row as SuperGlassLocation)}
                     />,
                     <GridActionsCellItem
                         key={1}
                         icon={<PencilSquareIcon className="w-4" />}
                         label="Delete"
-                        onClick={() => setLocationToEdit(row as GlassLocation)}
+                        onClick={() => setLocationToEdit(row as SuperGlassLocation)}
                     />,
                 ],
             },
@@ -238,7 +298,7 @@ const Home: NextPage = () => {
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Listado de Posiciones</h1>
-                    <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4">
+                    <div className="flex h-screen_3/4 w-auto transition-all duration-500 max-w-full flex-col justify-center gap-4">
                         <div className="flex w-full items-end justify-between">
                             {isAdmin && (
                                 <div className="flex w-full justify-end gap-3">
@@ -261,12 +321,29 @@ const Home: NextPage = () => {
                                 columns={columns}
                                 slots={{ toolbar: GridToolbar }}
                                 onRowSelectionModelChange={(ids) =>
-                                    setLocationSelection(rows.find((row) => row.id === ids[0]) as GlassLocation)
+                                    setLocationSelection(rows.find((row) => row.id === ids[0]) as SuperGlassLocation)
                                 }
                                 slotProps={{
                                     toolbar: {
                                         showQuickFilter: true,
                                         quickFilterProps: { debounceMs: 500 },
+                                    },
+                                }}
+                                groupingColDef={{
+                                    headerName: 'Grupo',
+                                }}
+                                initialState={{
+                                    columns: {
+                                        columnVisibilityModel: {
+                                            maxCapacitySmall: false,
+                                            maxCapacityJumbo: false,
+
+                                        },
+                                    },
+                                    aggregation: {
+                                        model: {
+                                            usedCapacity: 'avg',
+                                        },
                                     },
                                 }}
                                 sx={{
@@ -310,6 +387,18 @@ const Home: NextPage = () => {
                                 label="Almacén"
                                 name="warehouse"
                             />
+                            <Numeric
+                                suffix='vidrios'
+                                label="Capacidad Máxima de Jumbo"
+                                name="maxCapacityJumbo"
+                                className=" sm:col-span-3"
+                            />
+                            <Numeric
+                                suffix='vidrios'
+                                label="Capacidad Máxima de Small"
+                                name="maxCapacitySmall"
+                                className=" sm:col-span-3"
+                            />
                         </>
                     )
                 }}
@@ -321,9 +410,8 @@ const Home: NextPage = () => {
                     <>
                         Editar Posición
                         {isNotNullUndefinedOrEmpty(locationToEdit) ? (
-                            <span className="text-sm font-normal text-slate-500">{`   ${
-                                locationToEdit?.position ?? ''
-                            }`}</span>
+                            <span className="text-sm font-normal text-slate-500">{`   ${locationToEdit?.position ?? ''
+                                }`}</span>
                         ) : (
                             ''
                         )}
@@ -347,6 +435,18 @@ const Home: NextPage = () => {
                                 label="Almacén"
                                 name="warehouse"
                             />
+                            <Numeric
+                                suffix='vidrios'
+                                label="Capacidad Máxima de Jumbo"
+                                name="maxCapacityJumbo"
+                                className=" sm:col-span-3"
+                            />
+                            <Numeric
+                                suffix='vidrios'
+                                label="Capacidad Máxima de Small"
+                                name="maxCapacitySmall"
+                                className=" sm:col-span-3"
+                            />
                         </>
                     )
                 }}
@@ -354,13 +454,11 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title={`¿Desea eliminar la posición ${
-                    isNotNullUndefinedOrEmpty(locationToDelete) ? `${locationToDelete?.position ?? ''}` : ''
-                }?`}
+                title={`¿Desea eliminar la posición ${isNotNullUndefinedOrEmpty(locationToDelete) ? `${locationToDelete?.position ?? ''}` : ''
+                    }?`}
                 titleStyles="text-center"
-                buttonText={`Eliminar ${
-                    isNotNullUndefinedOrEmpty(locationToDelete) ? `${locationToDelete?.position ?? ''}` : ''
-                }`}
+                buttonText={`Eliminar ${isNotNullUndefinedOrEmpty(locationToDelete) ? `${locationToDelete?.position ?? ''}` : ''
+                    }`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"
                 isOpen={isNotNullUndefinedOrEmpty(locationToDelete)}
                 setIsOpen={(value) => {

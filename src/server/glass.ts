@@ -35,9 +35,9 @@ const prismaX = prisma
     result: {
         glass: {
             type: {
-                needs: { squaredMeters: true },
-                compute(data: { squaredMeters: number }) {
-                    return (data.squaredMeters>=env.SQUARED_METERS_LIMIT?'Jumbo':'Small')
+                needs: { height: true,width:true },
+                compute(data: { height: number; width: number }) {
+                    return (((data.height * data.width) / 1000000)>=env.SQUARED_METERS_LIMIT?'Jumbo':'Small')
                 },
             },
         },

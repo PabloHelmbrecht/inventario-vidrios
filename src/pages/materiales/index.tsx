@@ -12,10 +12,13 @@ import Head from 'next/head'
 import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import { DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid'
+import { DataGridPremium as DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid-premium'
 
 //Axios
 import axios from 'axios'
+
+//Day JS
+import dayjs from 'dayjs'
 
 //Prisma
 import { type User, type GlassMaterial } from '@prisma/client'
@@ -30,7 +33,9 @@ import DialogForm from '../../components/dialogForm'
 import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 
 //Custom Functions
-import { isNotNullUndefinedOrEmpty } from '../../server/variableChecker'
+import { isNotNullUndefinedOrEmpty } from '../../utils/variableChecker'
+import eliminateLicenseKey from '~/utils/eliminateLicenseKey'
+
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
@@ -155,6 +160,7 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
+        eliminateLicenseKey()
         fetchMaterialsData()
         fetchUsersData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
@@ -169,7 +175,7 @@ const Home: NextPage = () => {
             field: 'id',
             width: 70,
             type: 'number',
-            valueFormatter: (params) => `#${(params?.value as string) ?? ''}`,
+            valueFormatter: (params) => (params?.value ? `#${String(params?.value)}` : undefined),
         },
         {
             headerName: 'Código',
@@ -194,14 +200,14 @@ const Home: NextPage = () => {
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => new Date(value),
+            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
         },
         {
             headerName: 'Actualizado En',
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => new Date(value),
+            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
         },
     ]
 
@@ -276,6 +282,21 @@ const Home: NextPage = () => {
                                     toolbar: {
                                         showQuickFilter: true,
                                         quickFilterProps: { debounceMs: 500 },
+                                    },
+                                }}
+                                groupingColDef={{
+                                    headerName: 'Grupo',
+                                }}
+                                initialState={{
+                                    columns: {
+                                        columnVisibilityModel: {
+                                            
+                                        },
+                                    },
+                                    aggregation: {
+                                        model: {
+                                            
+                                        },
                                     },
                                 }}
                                 sx={{

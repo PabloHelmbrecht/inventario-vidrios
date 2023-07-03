@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { type GlassMovement } from '@prisma/client/edge'
 import { prisma } from './db'
-import { isValidDate } from './variableChecker'
+import { isValidDate } from '~/utils/variableChecker'
 export const config = {
     runtime: 'edge',
 }

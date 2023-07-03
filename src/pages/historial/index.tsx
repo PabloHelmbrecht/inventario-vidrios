@@ -20,11 +20,17 @@ import axios from 'axios'
 //Prisma
 import { type User, type GlassMovement } from '@prisma/client'
 
+//Day JS
+import dayjs from 'dayjs'
+
 //Custom Components
 import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
+
+//Custom Functions
+import eliminateLicenseKey from '~/utils/eliminateLicenseKey'
 
 interface SuperGlassMovement extends GlassMovement {
     user: User
@@ -43,9 +49,11 @@ const columnDictionary: { [key: string]: string } = {
     height: 'Alto',
     vendorId: 'ID del Proovedor',
     Comment: 'Comentario',
-    batch: 'Lore',
+    batch: 'Lote',
     expirationDate: 'Expira En',
-    squaredMeters: '{Area',
+    squaredMeters: 'Área',
+    weight: 'Peso',
+    type: 'Tipo'
 }
 
 /*eslint-disable @typescript-eslint/no-misused-promises*/
@@ -86,17 +94,7 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
-        setTimeout(() => {
-            const divs = document.getElementsByTagName('div')
-            let licenseDiv
-            for (let i = 0; i < divs.length; i++) {
-                if (divs[i]?.innerText === 'MUI X Missing license key') {
-                    licenseDiv = divs[i]
-                }
-            }
-
-            licenseDiv?.remove()
-        }, 200)
+        eliminateLicenseKey()
 
         fetchMovementsData()
         //eslint-disable-next-line react-hooks/exhaustive-deps
@@ -189,7 +187,7 @@ const Home: NextPage = () => {
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueGetter: ({ value }: { value: string }) => (value ? new Date(value) : undefined),
+            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
         },
     ]
 

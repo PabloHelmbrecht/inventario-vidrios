@@ -5,7 +5,7 @@ import { Field } from 'react-final-form'
 import Datepicker from 'tailwind-datepicker-react'
 import { useState } from 'react'
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
-import { isValidDate } from '~/server/variableChecker'
+import { isValidDate } from '~/utils/variableChecker'
 
 const requiredDecorator = (value: number | string): string | undefined => (value ? undefined : 'Requerido')
 
