@@ -9,23 +9,24 @@ datasource db {
 }
 
 model Glass {
-  id             Int             @id @default(autoincrement())
-  materialId     Int?            @map("typeId")
-  status         GlassStatus
-  quantity       Int             @default(0)
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  locationId     Int?
-  width          Int
-  height         Int
-  vendorId       Int?
-  batch          String?
-  expirationDate DateTime?
-  Comment        String?
-  material       GlassMaterial?  @relation(fields: [materialId], references: [id])
-  location       GlassLocation?  @relation(fields: [locationId], references: [id])
-  vendor         GlassVendor?    @relation(fields: [vendorId], references: [id])
-  GlassMovement  GlassMovement[]
+  id                 Int             @id @default(autoincrement())
+  materialId         Int?            @map("typeId")
+  status             GlassStatus
+  quantity           Int             @default(0)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  locationId         Int?
+  width              Int
+  height             Int
+  vendorId           Int?
+  batch              String?
+  expirationDate     DateTime?
+  projectReservation String?
+  Comment            String?
+  material           GlassMaterial?  @relation(fields: [materialId], references: [id])
+  location           GlassLocation?  @relation(fields: [locationId], references: [id])
+  vendor             GlassVendor?    @relation(fields: [vendorId], references: [id])
+  GlassMovement      GlassMovement[]
 
   @@index([materialId])
   @@index([locationId])

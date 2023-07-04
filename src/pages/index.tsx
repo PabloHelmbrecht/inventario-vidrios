@@ -984,6 +984,7 @@ const Home: NextPage = () => {
                                                   squaredMeters: glassSelected?.squaredMeters,
                                                   weight: glassSelected?.weight,
                                                   type: glassSelected?.type,
+                                                  projectReservation: ''
                                               }
                                             : null,
                                     )
