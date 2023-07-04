@@ -863,8 +863,8 @@ const Home: NextPage = () => {
             field: 'expirationDate',
             width: 150,
             type: 'date',
-            valueFormatter: ({ value }: { value: string }) =>
-                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
+            valueGetter: ({ value }: { value: string }) => value ? new Date(value) : undefined,
+
             groupable: false,
             renderCell: (params) => {
                 const expirationDate = new Date(params?.value as Date)
@@ -893,8 +893,8 @@ const Home: NextPage = () => {
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) =>
-                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
+            valueGetter: ({ value }: { value: string }) => value ? new Date(value) : undefined,
+
             groupable: false,
         },
         {
@@ -902,8 +902,8 @@ const Home: NextPage = () => {
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) =>
-                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
+            valueGetter: ({ value }: { value: string }) => value ? new Date(value) : undefined,
+
             groupable: false,
         },
         {

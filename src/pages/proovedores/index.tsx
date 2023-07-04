@@ -30,7 +30,7 @@ import { type User, type GlassVendor } from '@prisma/client'
 import { env } from '~/env.mjs'
 
 //Day JS
-import dayjs from 'dayjs'
+//import dayjs from 'dayjs'
 
 //Custom Components
 import TextLine from '../../components/inputFields/textlineField'
@@ -187,16 +187,16 @@ const Home: NextPage = () => {
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) =>
-                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
+            valueGetter: ({ value }: { value: string }) => value ? new Date(value) : undefined,
+
         },
         {
             headerName: 'Actualizado En',
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) =>
-                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
+            valueGetter: ({ value }: { value: string }) => value ? new Date(value) : undefined,
+
         },
     ]
 

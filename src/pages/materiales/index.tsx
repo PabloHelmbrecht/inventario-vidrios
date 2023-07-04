@@ -24,7 +24,7 @@ import {
 import axios from 'axios'
 
 //Day JS
-import dayjs from 'dayjs'
+//import dayjs from 'dayjs'
 
 //Prisma
 import { type User, type GlassMaterial } from '@prisma/client'
@@ -209,16 +209,14 @@ const Home: NextPage = () => {
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) =>
-                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
+            valueGetter: ({ value }: { value: string }) => value ? new Date(value): undefined,
         },
         {
             headerName: 'Actualizado En',
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) =>
-                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
+            valueGetter: ({ value }: { value: string }) => value ? new Date(value) : undefined,
         },
     ]
 

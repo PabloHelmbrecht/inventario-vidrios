@@ -21,7 +21,7 @@ import axios from 'axios'
 import { type User, type GlassMovement } from '@prisma/client'
 
 //Day JS
-import dayjs from 'dayjs'
+//import dayjs from 'dayjs'
 
 //Custom Components
 import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
@@ -189,8 +189,8 @@ const Home: NextPage = () => {
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) =>
-                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
+            valueGetter: ({ value }: { value: string }) => value ? new Date(value) : undefined,
+
         },
     ]
 
