@@ -53,7 +53,6 @@ import { isNotNullUndefinedOrEmpty, isValidDate } from '../utils/variableChecker
 import eliminateLicenseKey from '../utils/eliminateLicenseKey'
 import convertFloat from '~/utils/convertFloat'
 
-
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../constants/localeTextConstants'
 import { useSession } from 'next-auth/react'
@@ -86,6 +85,7 @@ type FormInputType = SuperGlass & {
     width?: { id: number; width: number }
     height?: { id: number; height: number }
     batch?: { id: number; batch: string }
+    projectReservation?: { id: number; projectReservation: string }
 }
 
 interface formResponseType {
@@ -98,6 +98,7 @@ interface formResponseType {
     height: number
     quantity: number
     batch?: string
+    projectReservation?: string
     expirationDate?: Date
     newComment?: string
     difQuantity?: string | number
@@ -148,8 +149,18 @@ const Home: NextPage = () => {
     //- Submit Functions
     const onGlassCreation = async (formResponse: object) => {
         try {
-            const { material, width, height, vendor, location, quantity, batch, expirationDate, newComment } =
-                formResponse as formResponseType
+            const {
+                material,
+                width,
+                height,
+                vendor,
+                location,
+                quantity,
+                batch,
+                projectReservation,
+                expirationDate,
+                newComment,
+            } = formResponse as formResponseType
             const response = await axios.post('/api/glasses', {
                 user,
                 glass: {
@@ -160,6 +171,7 @@ const Home: NextPage = () => {
                     locationId: location?.id !== null ? location?.id : undefined,
                     quantity,
                     batch,
+                    projectReservation,
                     expirationDate,
                     Comment: newComment,
                 },
@@ -186,6 +198,7 @@ const Home: NextPage = () => {
                 height,
                 vendor,
                 batch,
+                projectReservation,
                 expirationDate,
                 location,
                 destinyLocation,
@@ -212,6 +225,7 @@ const Home: NextPage = () => {
                         vendorId: vendor.id,
                         locationId: destinyLocation?.id,
                         batch,
+                        projectReservation,
                         expirationDate,
                     },
                 })
@@ -231,6 +245,7 @@ const Home: NextPage = () => {
                         vendorId: vendor.id,
                         Comment: newComment,
                         batch,
+                        projectReservation,
                         expirationDate,
                     },
                 })
@@ -246,6 +261,7 @@ const Home: NextPage = () => {
                         locationId: destinyLocation?.id,
                         Comment: newComment,
                         batch,
+                        projectReservation,
                         expirationDate,
                     },
                 })
@@ -273,6 +289,7 @@ const Home: NextPage = () => {
                 height,
                 vendor,
                 batch,
+                projectReservation,
                 expirationDate,
                 location,
             } = formResponse as formResponseType
@@ -296,6 +313,7 @@ const Home: NextPage = () => {
                     vendorId: vendor.id,
                     locationId: location?.id,
                     batch,
+                    projectReservation,
                     expirationDate,
                 },
             })
@@ -328,8 +346,18 @@ const Home: NextPage = () => {
         try {
             const { id } = formResponse as formResponseType
 
-            const { material, width, height, vendor, location, newComment, quantity, batch, expirationDate } =
-                formResponse as formResponseType
+            const {
+                material,
+                width,
+                height,
+                vendor,
+                location,
+                newComment,
+                quantity,
+                batch,
+                projectReservation,
+                expirationDate,
+            } = formResponse as formResponseType
 
             const response = await axios.patch(`/api/glasses/${Number(id)}`, {
                 user,
@@ -342,6 +370,7 @@ const Home: NextPage = () => {
                     locationId: location?.id,
                     Comment: newComment,
                     batch,
+                    projectReservation,
                     expirationDate,
                 },
             })
@@ -475,6 +504,10 @@ const Home: NextPage = () => {
                 response = false
             }
 
+            if (glass.projectReservation && glass.projectReservation !== glassToCompare.projectReservation) {
+                response = false
+            }
+
             if (glass.location?.position && glass.location?.position !== glassToCompare.location?.position) {
                 response = false
             }
@@ -502,6 +535,7 @@ const Home: NextPage = () => {
             width: [...new Set(foundGlasses?.map((glass) => glass.width))],
             height: [...new Set(foundGlasses?.map((glass) => glass.height))],
             batch: [...new Set(foundGlasses?.map((glass) => String(glass.batch)))],
+            projectReservation: [...new Set(foundGlasses?.map((glass) => String(glass.projectReservation)))],
         }
     }
 
@@ -514,6 +548,10 @@ const Home: NextPage = () => {
             }
 
             if (glass.batch && glass.batch !== glassToCompare.batch) {
+                response = false
+            }
+
+            if (glass.projectReservation && glass.projectReservation !== glassToCompare.projectReservation) {
                 response = false
             }
 
@@ -569,6 +607,7 @@ const Home: NextPage = () => {
             setFormAttribute('width', { id: 1, width: glassSelection.width })
             setFormAttribute('height', { id: 1, height: glassSelection.height })
             setFormAttribute('batch', { id: 1, batch: glassSelection.batch })
+            setFormAttribute('projectReservation', { id: 1, projectReservation: glassSelection.projectReservation })
             setFormAttribute('quantity', glassSelection.quantity)
         }
 
@@ -577,6 +616,7 @@ const Home: NextPage = () => {
             width: values?.width?.width,
             height: values?.height?.height,
             batch: values?.batch?.batch,
+            projectReservation: values?.projectReservation?.projectReservation,
         }
 
         filterGlassData({ ...formGlass, difQuantity: String(props.values?.difQuantity) })
@@ -589,6 +629,7 @@ const Home: NextPage = () => {
             setFormAttribute('width', { id: 1, width: glassFiltered.width })
             setFormAttribute('height', { id: 1, height: glassFiltered.height })
             setFormAttribute('batch', { id: 1, batch: glassFiltered.batch })
+            setFormAttribute('projectReservation', { id: 1, projectReservation: glassFiltered.projectReservation })
             setFormAttribute('quantity', glassFiltered.quantity)
         }
 
@@ -778,7 +819,6 @@ const Home: NextPage = () => {
             width: 130,
             type: 'number',
             valueFormatter: ({ value }: { value: number }) => (value ? convertFloat(value) : undefined),
-
         },
         {
             headerName: 'Almacén',
@@ -802,6 +842,12 @@ const Home: NextPage = () => {
         {
             headerName: 'Lote',
             field: 'batch',
+            width: 100,
+            aggregable: false,
+        },
+        {
+            headerName: 'Reserva',
+            field: 'projectReservation',
             width: 100,
             aggregable: false,
         },
@@ -976,6 +1022,7 @@ const Home: NextPage = () => {
                                                   height: glassSelected?.height,
                                                   vendorId: glassSelected?.vendorId,
                                                   batch: glassSelected?.batch,
+                                                  projectReservation: glassSelected?.projectReservation,
                                                   expirationDate: glassSelected?.expirationDate,
                                                   Comment: glassSelected?.Comment,
                                                   material: glassSelected?.material,
@@ -984,7 +1031,6 @@ const Home: NextPage = () => {
                                                   squaredMeters: glassSelected?.squaredMeters,
                                                   weight: glassSelected?.weight,
                                                   type: glassSelected?.type,
-                                                  projectReservation: ''
                                               }
                                             : null,
                                     )
@@ -1104,9 +1150,16 @@ const Home: NextPage = () => {
                                 className=" sm:col-span-3"
                                 required={false}
                             />
+                            <TextLine
+                                label="Reserva"
+                                name="projectReservation"
+                                required={false}
+                                className=" sm:col-span-3"
+                            />
                             <Numeric
                                 label="Cantidad"
                                 name="quantity"
+                                className=" sm:col-span-3"
                             />
                             <TextArea
                                 label="Comentarios"
@@ -1141,12 +1194,14 @@ const Home: NextPage = () => {
                         width: { width: number }
                         height: { height: number }
                         batch: { batch: string }
+                        projectReservation: { projectReservation: string }
                     }
                     onGlassMovement({
                         ...formResponse,
                         width: formResponse?.width?.width,
                         height: formResponse?.height?.height,
                         batch: formResponse?.batch?.batch,
+                        projectReservation: formResponse?.projectReservation?.projectReservation,
                     })
                 }}
                 render={(props) => {
@@ -1211,6 +1266,22 @@ const Home: NextPage = () => {
                             />
 
                             <Combobox
+                                label="Reserva"
+                                name="projectReservation"
+                                inputField="projectReservation"
+                                required={false}
+                                options={getFieldOptions(formGlass).projectReservation?.map(
+                                    (projectReservation, id) => {
+                                        return {
+                                            id: id + 1,
+                                            projectReservation:
+                                                projectReservation !== 'null' ? projectReservation : null,
+                                        }
+                                    },
+                                )}
+                            />
+
+                            <Combobox
                                 label="Posición Origen"
                                 name="location"
                                 inputField="position"
@@ -1270,12 +1341,14 @@ const Home: NextPage = () => {
                         width: { width: number }
                         height: { height: number }
                         batch: { batch: string }
+                        projectReservation: { projectReservation: string }
                     }
                     onGlassConsumption({
                         ...formResponse,
                         width: formResponse?.width?.width,
                         height: formResponse?.height?.height,
                         batch: formResponse?.batch?.batch,
+                        projectReservation: formResponse?.projectReservation?.projectReservation,
                     })
                 }}
                 render={(props) => {
@@ -1305,7 +1378,7 @@ const Home: NextPage = () => {
                                 label="Ancho"
                                 name="width"
                                 inputField="width"
-                                className=" sm:col-span-2"
+                                className=" sm:col-span-3"
                                 options={getFieldOptions(formGlass).width?.map((width, id) => {
                                     return { id: id + 1, width }
                                 })}
@@ -1314,7 +1387,7 @@ const Home: NextPage = () => {
                                 label="Alto"
                                 name="height"
                                 inputField="height"
-                                className=" sm:col-span-2"
+                                className=" sm:col-span-3"
                                 options={getFieldOptions(formGlass).height?.map((height, id) => {
                                     return { id: id + 1, height }
                                 })}
@@ -1323,11 +1396,28 @@ const Home: NextPage = () => {
                                 label="Lote"
                                 name="batch"
                                 inputField="batch"
-                                className="sm:col-span-2"
+                                className="sm:col-span-3"
                                 required={false}
                                 options={getFieldOptions(formGlass).batch?.map((batch, id) => {
                                     return { id: id + 1, batch: batch !== 'null' ? batch : null }
                                 })}
+                            />
+
+                            <Combobox
+                                label="Reserva"
+                                name="projectReservation"
+                                inputField="projectReservation"
+                                className="sm:col-span-3"
+                                required={false}
+                                options={getFieldOptions(formGlass).projectReservation?.map(
+                                    (projectReservation, id) => {
+                                        return {
+                                            id: id + 1,
+                                            projectReservation:
+                                                projectReservation !== 'null' ? projectReservation : null,
+                                        }
+                                    },
+                                )}
                             />
 
                             <Combobox
@@ -1440,10 +1530,17 @@ const Home: NextPage = () => {
                                 className=" sm:col-span-3"
                                 options={locationsData as GlassLocation[]}
                             />
+                            <TextLine
+                                label="Reserva"
+                                name="projectReservation"
+                                required={false}
+                                className=" sm:col-span-3"
+                            />
                             <Numeric
                                 label="Cantidad"
                                 disabled={true}
                                 name="quantity"
+                                className=" sm:col-span-3"
                             />
 
                             <TextArea

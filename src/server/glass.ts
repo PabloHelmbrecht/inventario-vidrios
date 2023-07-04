@@ -151,6 +151,7 @@ export async function POST(request: NextRequest) {
                     height: requestData.height ?? null,
                     width: requestData.width ?? null,
                     batch: requestData.batch ?? null,
+                    projectReservation: requestData.projectReservation ?? null,
                 },
             })
 
@@ -245,6 +246,8 @@ export async function PATCH(request: NextRequest) {
                         height: glassUpdates.height ?? null,
                         width: glassUpdates.width ?? null,
                         batch: glassUpdates.batch ?? null,
+                        projectReservation: glassUpdates.projectReservation ?? null,
+
                     },
                 })
 
@@ -256,6 +259,7 @@ export async function PATCH(request: NextRequest) {
                 if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
                 if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
                 if (!glassUpdates.batch) glassUpdates.batch = null
+                if (!glassUpdates.projectReservation) glassUpdates.projectReservation = null
                 if (!glassUpdates.expirationDate) glassUpdates.expirationDate = null
 
                 updatedGlass = await tx.glass.update({
@@ -283,6 +287,7 @@ export async function PATCH(request: NextRequest) {
                 if (glassUpdates.quantity <= 0) glassUpdates.status = 'CONSUMED'
                 if (!glassUpdates.locationId) glassUpdates.status = 'TRANSIT'
                 if (!glassUpdates.batch) glassUpdates.batch = null
+                if (!glassUpdates.projectReservation) glassUpdates.projectReservation = null
                 if (!glassUpdates.expirationDate) glassUpdates.expirationDate = null
                 originalGlass = await tx.glass.findUnique({
                     where: {
