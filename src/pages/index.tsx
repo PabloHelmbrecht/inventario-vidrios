@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { type FormRenderProps } from 'react-final-form'
 
 //Zod
-import {z} from 'zod'
+import { z } from 'zod'
 
 //Next Auth
 //import { useSession } from 'next-auth/react'
@@ -51,6 +51,8 @@ import Snackbar, { type AlertProps } from '../components/snackbarAlert'
 //Custom Functions
 import { isNotNullUndefinedOrEmpty, isValidDate } from '../utils/variableChecker'
 import eliminateLicenseKey from '../utils/eliminateLicenseKey'
+import convertFloat from '~/utils/convertFloat'
+
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../constants/localeTextConstants'
@@ -384,7 +386,9 @@ const Home: NextPage = () => {
 
     const fetchMaterialsData = async () => {
         try {
-            const cachedResponse: GlassMaterial[] = JSON.parse(localStorage.getItem('materialsData') ?? '{}') as GlassMaterial[]
+            const cachedResponse: GlassMaterial[] = JSON.parse(
+                localStorage.getItem('materialsData') ?? '{}',
+            ) as GlassMaterial[]
             setMaterialsData(cachedResponse)
 
             const response = await axios.get('/api/materials')
@@ -557,20 +561,16 @@ const Home: NextPage = () => {
             fieldVal: number | string | null | object | Date,
         ) => void
 
-
         if (glassSelection?.id && values.id !== glassSelection.id) {
             setFormAttribute('id', glassSelection.id)
             setFormAttribute('material', glassSelection.material as object)
             setFormAttribute('vendor', glassSelection.vendor as object)
             setFormAttribute('location', glassSelection.location as object)
-            setFormAttribute('width', { id: 1, width: glassSelection.width } )
-            setFormAttribute('height', { id: 1, height: glassSelection.height } )
+            setFormAttribute('width', { id: 1, width: glassSelection.width })
+            setFormAttribute('height', { id: 1, height: glassSelection.height })
             setFormAttribute('batch', { id: 1, batch: glassSelection.batch })
             setFormAttribute('quantity', glassSelection.quantity)
         }
-
-
-
 
         const formGlass: SuperGlass = {
             ...values,
@@ -586,8 +586,8 @@ const Home: NextPage = () => {
             setFormAttribute('material', glassFiltered.material as object)
             setFormAttribute('vendor', glassFiltered.vendor as object)
             setFormAttribute('location', glassFiltered.location as object)
-            setFormAttribute('width', { id: 1, width: glassFiltered.width } )
-            setFormAttribute('height', { id: 1, height: glassFiltered.height } )
+            setFormAttribute('width', { id: 1, width: glassFiltered.width })
+            setFormAttribute('height', { id: 1, height: glassFiltered.height })
             setFormAttribute('batch', { id: 1, batch: glassFiltered.batch })
             setFormAttribute('quantity', glassFiltered.quantity)
         }
@@ -597,7 +597,6 @@ const Home: NextPage = () => {
 
     //useEffect
     useEffect(() => {
-
         eliminateLicenseKey()
         fetchGlassData()
         fetchMaterialsData()
@@ -711,14 +710,14 @@ const Home: NextPage = () => {
             field: 'width',
             width: 110,
             type: 'number',
-            valueFormatter: ({ value }: { value: string }) => (value ? `${value} mm` : undefined),
+            valueFormatter: ({ value }: { value: number }) => (value ? `${convertFloat(value)} mm` : undefined),
         },
         {
             headerName: 'Alto',
             field: 'height',
             width: 110,
             type: 'number',
-            valueFormatter: ({ value }: { value: string }) => (value ? `${value} mm` : undefined),
+            valueFormatter: ({ value }: { value: number }) => (value ? `${convertFloat(value)} mm` : undefined),
         },
         {
             headerName: 'Área',
@@ -741,36 +740,28 @@ const Home: NextPage = () => {
             field: 'type',
             width: 80,
             renderCell: (params) => {
+                const typeSchema = z.enum(['Small', 'Jumbo']).optional()
 
-                const typeSchema = z.enum([
-                    'Small',
-                   'Jumbo'
-                  ]).optional()
-                  
-                  const type = typeSchema.parse(params?.value)
+                const type = typeSchema.parse(params?.value)
 
-
-                  if(type === undefined) {
+                if (type === undefined) {
                     return undefined
-                  }
+                }
 
-                
                 const options = {
-                    'Small': {
-                        text:'En Tránsito',
-                        ringColor:'ring-cyan-700/10',
-                        backgroundColor:'bg-cyan-50',
-                        textColor:'text-cyan-800',
+                    Small: {
+                        text: 'En Tránsito',
+                        ringColor: 'ring-cyan-700/10',
+                        backgroundColor: 'bg-cyan-50',
+                        textColor: 'text-cyan-800',
                     },
-                    'Jumbo': {
-                        text:'En Tránsito',
-                        ringColor:'ring-indigo-700/10',
-                        backgroundColor:'bg-indigo-50',
-                        textColor:'text-indigo-800',
+                    Jumbo: {
+                        text: 'En Tránsito',
+                        ringColor: 'ring-indigo-700/10',
+                        backgroundColor: 'bg-indigo-50',
+                        textColor: 'text-indigo-800',
                     },
                 }
-                
-                
 
                 return (
                     <div
@@ -778,7 +769,7 @@ const Home: NextPage = () => {
                         {type}
                     </div>
                 )
-            }
+            },
         },
 
         {
@@ -786,6 +777,8 @@ const Home: NextPage = () => {
             field: 'quantity',
             width: 130,
             type: 'number',
+            valueFormatter: ({ value }: { value: number }) => (value ? convertFloat(value) : undefined),
+
         },
         {
             headerName: 'Almacén',
@@ -824,7 +817,8 @@ const Home: NextPage = () => {
             field: 'expirationDate',
             width: 150,
             type: 'date',
-            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
             groupable: false,
             renderCell: (params) => {
                 const expirationDate = new Date(params?.value as Date)
@@ -853,7 +847,8 @@ const Home: NextPage = () => {
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
             groupable: false,
         },
         {
@@ -861,7 +856,8 @@ const Home: NextPage = () => {
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
             groupable: false,
         },
         {
@@ -966,27 +962,31 @@ const Home: NextPage = () => {
                                 slots={{ toolbar: GridToolbar }}
                                 onRowSelectionModelChange={(ids) => {
                                     const glassSelected = rows.find((row) => row.id === ids[0]) as RowType
-                                    setGlassSelection(glassSelected?{
-                                        id: glassSelected?.id,
-                                        materialId: glassSelected?.materialId,
-                                        status: glassSelected?.status,
-                                        quantity: glassSelected?.quantity,
-                                        createdAt: glassSelected?.createdAt,
-                                        updatedAt: glassSelected?.updatedAt,
-                                        locationId: glassSelected?.locationId,
-                                        width: glassSelected?.width,
-                                        height: glassSelected?.height,
-                                        vendorId: glassSelected?.vendorId,
-                                        batch: glassSelected?.batch,
-                                        expirationDate: glassSelected?.expirationDate,
-                                        Comment: glassSelected?.Comment,
-                                        material: glassSelected?.material,
-                                        location: glassSelected?.location,
-                                        vendor: glassSelected?.vendor,
-                                        squaredMeters: glassSelected?.squaredMeters,
-                                        weight: glassSelected?.weight,
-                                        type: glassSelected?.type,
-                                    }:null)
+                                    setGlassSelection(
+                                        glassSelected
+                                            ? {
+                                                  id: glassSelected?.id,
+                                                  materialId: glassSelected?.materialId,
+                                                  status: glassSelected?.status,
+                                                  quantity: glassSelected?.quantity,
+                                                  createdAt: glassSelected?.createdAt,
+                                                  updatedAt: glassSelected?.updatedAt,
+                                                  locationId: glassSelected?.locationId,
+                                                  width: glassSelected?.width,
+                                                  height: glassSelected?.height,
+                                                  vendorId: glassSelected?.vendorId,
+                                                  batch: glassSelected?.batch,
+                                                  expirationDate: glassSelected?.expirationDate,
+                                                  Comment: glassSelected?.Comment,
+                                                  material: glassSelected?.material,
+                                                  location: glassSelected?.location,
+                                                  vendor: glassSelected?.vendor,
+                                                  squaredMeters: glassSelected?.squaredMeters,
+                                                  weight: glassSelected?.weight,
+                                                  type: glassSelected?.type,
+                                              }
+                                            : null,
+                                    )
                                 }}
                                 slotProps={{
                                     toolbar: {
@@ -1065,14 +1065,14 @@ const Home: NextPage = () => {
                             />
                             <Numeric
                                 label="Ancho"
-                                suffix='mm'
+                                suffix="mm"
                                 name="width"
                                 className=" sm:col-span-3"
                             />
                             <Numeric
                                 label="Alto"
                                 name="height"
-                                suffix='mm'
+                                suffix="mm"
                                 className=" sm:col-span-3"
                             />
                             <Combobox
@@ -1148,7 +1148,6 @@ const Home: NextPage = () => {
                         batch: formResponse?.batch?.batch,
                     })
                 }}
-                
                 render={(props) => {
                     const formGlass = processDynamicForm(props)
 
@@ -1278,7 +1277,6 @@ const Home: NextPage = () => {
                         batch: formResponse?.batch?.batch,
                     })
                 }}
-               
                 render={(props) => {
                     const formGlass = processDynamicForm(props)
 
@@ -1405,13 +1403,13 @@ const Home: NextPage = () => {
                             <Numeric
                                 label="Ancho"
                                 name="width"
-                                suffix='mm'
+                                suffix="mm"
                                 className=" sm:col-span-3"
                             />
                             <Numeric
                                 label="Alto"
                                 name="height"
-                                suffix='mm'
+                                suffix="mm"
                                 className=" sm:col-span-3"
                             />
                             <TextLine

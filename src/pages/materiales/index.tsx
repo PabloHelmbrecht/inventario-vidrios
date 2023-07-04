@@ -12,7 +12,13 @@ import Head from 'next/head'
 import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import { DataGridPremium as DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid-premium'
+import {
+    DataGridPremium as DataGrid,
+    GridToolbar,
+    GridActionsCellItem,
+    type GridColDef,
+    type GridValidRowModel,
+} from '@mui/x-data-grid-premium'
 
 //Axios
 import axios from 'axios'
@@ -35,6 +41,7 @@ import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 //Custom Functions
 import { isNotNullUndefinedOrEmpty } from '../../utils/variableChecker'
 import eliminateLicenseKey from '~/utils/eliminateLicenseKey'
+import convertFloat from '~/utils/convertFloat'
 
 
 //Custom Constants
@@ -78,7 +85,7 @@ const Home: NextPage = () => {
             const response = await axios.post(`/api/materials`, {
                 name,
                 description,
-                density: Number(density)
+                density: Number(density),
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Material cargado exitosamente' })
@@ -111,7 +118,7 @@ const Home: NextPage = () => {
             const response = await axios.patch(`/api/materials/${Number(id)}`, {
                 name,
                 description,
-                density: Number(density)
+                density: Number(density),
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Material editado exitosamente' })
@@ -127,7 +134,9 @@ const Home: NextPage = () => {
 
     const fetchMaterialsData = async () => {
         try {
-            const cachedResponse: GlassMaterial[] = JSON.parse(localStorage.getItem('materialsData') ?? '{}') as GlassMaterial[]
+            const cachedResponse: GlassMaterial[] = JSON.parse(
+                localStorage.getItem('materialsData') ?? '{}',
+            ) as GlassMaterial[]
             setMaterialsData(cachedResponse)
 
             const response = await axios.get(`/api/materials`)
@@ -193,21 +202,23 @@ const Home: NextPage = () => {
             field: 'density',
             type: 'number',
             width: 100,
-            valueFormatter: ({ value }: { value: string }) => (value ? `${value} kg/m²` : undefined),
+            valueFormatter: ({ value }: { value: number }) => (value ? `${convertFloat(value)} kg/m²` : undefined),
         },
         {
             headerName: 'Creado En',
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
         },
         {
             headerName: 'Actualizado En',
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
         },
     ]
 
@@ -289,14 +300,10 @@ const Home: NextPage = () => {
                                 }}
                                 initialState={{
                                     columns: {
-                                        columnVisibilityModel: {
-                                            
-                                        },
+                                        columnVisibilityModel: {},
                                     },
                                     aggregation: {
-                                        model: {
-                                            
-                                        },
+                                        model: {},
                                     },
                                 }}
                                 sx={{
@@ -341,7 +348,7 @@ const Home: NextPage = () => {
                                 name="description"
                             />
                             <Numeric
-                                suffix='kg/m²'
+                                suffix="kg/m²"
                                 label="Densidad"
                                 name="density"
                             />
@@ -356,7 +363,9 @@ const Home: NextPage = () => {
                     <>
                         Editar Material de Vidrio
                         {isNotNullUndefinedOrEmpty(materialToEdit) ? (
-                            <span className="text-sm font-normal text-slate-500">{`   ${materialToEdit?.name ?? ''}`}</span>
+                            <span className="text-sm font-normal text-slate-500">{`   ${
+                                materialToEdit?.name ?? ''
+                            }`}</span>
                         ) : (
                             ''
                         )}
@@ -381,7 +390,7 @@ const Home: NextPage = () => {
                                 name="description"
                             />
                             <Numeric
-                                suffix='kg/m²'
+                                suffix="kg/m²"
                                 label="Densidad"
                                 name="density"
                             />
@@ -392,10 +401,13 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title={`¿Desea eliminar el material ${isNotNullUndefinedOrEmpty(materialToDelete) ? `${materialToDelete?.name ?? ''}` : ''
-                    }?`}
+                title={`¿Desea eliminar el material ${
+                    isNotNullUndefinedOrEmpty(materialToDelete) ? `${materialToDelete?.name ?? ''}` : ''
+                }?`}
                 titleStyles="text-center"
-                buttonText={`Eliminar ${isNotNullUndefinedOrEmpty(materialToDelete) ? `${materialToDelete?.name ?? ''}` : ''}`}
+                buttonText={`Eliminar ${
+                    isNotNullUndefinedOrEmpty(materialToDelete) ? `${materialToDelete?.name ?? ''}` : ''
+                }`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"
                 isOpen={isNotNullUndefinedOrEmpty(materialToDelete)}
                 setIsOpen={(value) => {

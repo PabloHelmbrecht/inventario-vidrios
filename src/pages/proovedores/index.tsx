@@ -12,7 +12,13 @@ import Head from 'next/head'
 import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import { DataGridPremium as DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid-premium'
+import {
+    DataGridPremium as DataGrid,
+    GridToolbar,
+    GridActionsCellItem,
+    type GridColDef,
+    type GridValidRowModel,
+} from '@mui/x-data-grid-premium'
 
 //Axios
 import axios from 'axios'
@@ -34,7 +40,6 @@ import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 //Custom Functions
 import { isNotNullUndefinedOrEmpty } from '../../utils/variableChecker'
 import eliminateLicenseKey from '~/utils/eliminateLicenseKey'
-
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
@@ -182,14 +187,16 @@ const Home: NextPage = () => {
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
         },
         {
             headerName: 'Actualizado En',
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
         },
     ]
 
@@ -235,7 +242,7 @@ const Home: NextPage = () => {
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Listado de Proovedores</h1>
-                    <div className="flex h-screen_3/4 w-auto transition-all duration-500 max-w-full flex-col justify-center gap-4">
+                    <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4 transition-all duration-500">
                         <div className="flex w-full items-end justify-between">
                             {isAdmin && (
                                 <div className="flex w-full justify-end gap-3">
@@ -271,14 +278,10 @@ const Home: NextPage = () => {
                                 }}
                                 initialState={{
                                     columns: {
-                                        columnVisibilityModel: {
-                                            
-                                        },
+                                        columnVisibilityModel: {},
                                     },
                                     aggregation: {
-                                        model: {
-                                            
-                                        },
+                                        model: {},
                                     },
                                 }}
                                 sx={{

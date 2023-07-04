@@ -14,8 +14,6 @@ import axios from 'axios'
 //Prisma
 import { type Glass, type GlassMaterial, type GlassVendor } from '@prisma/client'
 
-
-
 //Custom Components
 import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 
@@ -24,6 +22,8 @@ import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
 
 //Custom Functions
 import eliminateLicenseKey from '~/utils/eliminateLicenseKey'
+import convertFloat from '~/utils/convertFloat'
+
 
 //Custom Types
 interface SuperGlass extends Glass {
@@ -31,6 +31,7 @@ interface SuperGlass extends Glass {
     location?: SuperGlass | null
     vendor?: GlassVendor | null
     squaredMeters?: number
+    weight?: number
 }
 
 interface AggregatedObject {
@@ -108,6 +109,7 @@ const Home: NextPage = () => {
                 width: glass.width,
                 height: glass.height,
                 squaredMeters: glass.squaredMeters,
+                weight: glass.weight,
                 quantity: glass.quantity,
             }
         })
@@ -115,7 +117,7 @@ const Home: NextPage = () => {
         const rows = groupAndAggregateObjects(
             glassDataParsed as AggregatedObject[],
             ['materialName', 'materialDescription', 'width', 'height'],
-            ['squaredMeters', 'quantity'],
+            ['squaredMeters', 'quantity', 'weight'],
         )
 
         return rows
@@ -139,14 +141,14 @@ const Home: NextPage = () => {
             field: 'width',
             width: 130,
             type: 'number',
-            valueFormatter: ({ value }: { value: string }) => (value ? `${value} mm` : undefined),
+            valueFormatter: ({ value }: { value: number }) => (value ? `${convertFloat(value)} mm` : undefined),
         },
         {
             headerName: 'Alto',
             field: 'height',
             width: 130,
             type: 'number',
-            valueFormatter: ({ value }: { value: string }) => (value ? `${value} mm` : undefined),
+            valueFormatter: ({ value }: { value: number }) => (value ? `${convertFloat(value)} mm` : undefined),
         },
         {
             headerName: 'Área',
@@ -157,10 +159,20 @@ const Home: NextPage = () => {
                 value ? `${parseFloat(value).toFixed(0)} m²` : undefined,
         },
         {
+            headerName: 'Peso',
+            field: 'weight',
+            width: 100,
+            type: 'number',
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? `${parseFloat(value).toFixed(0)} kg` : undefined,
+        },
+        {
             headerName: 'Cantidad',
             field: 'quantity',
             width: 130,
             type: 'number',
+            valueFormatter: ({ value }: { value: number }) => (value ? convertFloat(value) : undefined),
+
         },
     ]
 
@@ -181,7 +193,7 @@ const Home: NextPage = () => {
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Dashboard</h1>
-                    <div className="flex h-screen_3/4 w-auto transition-all duration-500 max-w-full flex-col justify-center gap-4">
+                    <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4 transition-all duration-500">
                         {glassData && (
                             <DataGrid
                                 disableDensitySelector
@@ -208,6 +220,7 @@ const Home: NextPage = () => {
                                         model: {
                                             quantity: 'sum',
                                             squaredMeters: 'sum',
+                                            weight: 'sum',
                                         },
                                     },
                                 }}

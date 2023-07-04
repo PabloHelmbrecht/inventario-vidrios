@@ -16,8 +16,7 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
         if (id) {
-
-            const response = await prisma.$queryRaw `SELECT gl.*, 
+            const response = await prisma.$queryRaw`SELECT gl.*, 
             CASE 
                 WHEN gl.maxCapacityJumbo IS NULL OR gl.maxCapacityJumbo = 0 OR gl.maxCapacitySmall IS NULL OR gl.maxCapacitySmall = 0 
                 THEN NULL 
@@ -35,8 +34,7 @@ export async function GET(request: NextRequest) {
 
             return NextResponse.json(response)
         } else {
-
-            const response = await prisma.$queryRaw `SELECT gl.*, 
+            const response = await prisma.$queryRaw`SELECT gl.*, 
             CASE 
                 WHEN gl.maxCapacityJumbo IS NULL OR gl.maxCapacityJumbo = 0 OR gl.maxCapacitySmall IS NULL OR gl.maxCapacitySmall = 0 
                 THEN NULL 
@@ -50,7 +48,6 @@ export async function GET(request: NextRequest) {
             FROM Glass g
             GROUP BY locationId
         ) AS counts ON gl.id = counts.locationId`
-
 
             return NextResponse.json(response)
         }

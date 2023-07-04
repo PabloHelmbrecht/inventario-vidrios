@@ -53,7 +53,7 @@ const columnDictionary: { [key: string]: string } = {
     expirationDate: 'Expira En',
     squaredMeters: 'Área',
     weight: 'Peso',
-    type: 'Tipo'
+    type: 'Tipo',
 }
 
 /*eslint-disable @typescript-eslint/no-misused-promises*/
@@ -187,7 +187,8 @@ const Home: NextPage = () => {
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
         },
     ]
 

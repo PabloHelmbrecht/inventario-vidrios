@@ -12,7 +12,13 @@ import Head from 'next/head'
 import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import { DataGridPremium as DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid-premium'
+import {
+    DataGridPremium as DataGrid,
+    GridToolbar,
+    GridActionsCellItem,
+    type GridColDef,
+    type GridValidRowModel,
+} from '@mui/x-data-grid-premium'
 
 //Axios
 import axios from 'axios'
@@ -38,6 +44,8 @@ import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 //Custom Functions
 import { isNotNullUndefinedOrEmpty } from '../../utils/variableChecker'
 import eliminateLicenseKey from '~/utils/eliminateLicenseKey'
+import convertFloat from '~/utils/convertFloat'
+
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
@@ -49,7 +57,6 @@ interface formResponseType {
     maxCapacityJumbo?: number
     maxCapacitySmall?: number
     usedCapacity?: number
-
 }
 
 interface SuperGlassLocation extends GlassLocation {
@@ -202,57 +209,65 @@ const Home: NextPage = () => {
             field: 'maxCapacityJumbo',
             type: 'number',
             width: 100,
+            valueFormatter: ({ value }: { value: number }) => (value ? convertFloat(value) : undefined),
+
         },
         {
             headerName: 'Max Small',
             field: 'maxCapacitySmall',
             type: 'number',
             width: 100,
+            valueFormatter: ({ value }: { value: number }) => (value ? convertFloat(value) : undefined),
+
         },
         {
             headerName: '% Ocupación',
             field: 'usedCapacity',
             type: 'number',
             width: 120,
-            valueFormatter: ({ value }: { value: number }) =>
-                ((value * 100).toFixed(2)),
+            valueFormatter: ({ value }: { value: number }) => (value * 100).toFixed(2),
             renderCell: (params) => {
-
                 const capacitySchema = z.number().optional()
 
                 const capacity = capacitySchema.parse(params?.value)
 
-
                 if (capacity === undefined) {
                     return undefined
                 }
-                const cssCapacity = Number(capacity>1?1:capacity)
-
-
+                const cssCapacity = Number(capacity > 1 ? 1 : capacity)
 
                 return (
-                    <div className='flex row gap-2 items-center'>
+                    <div className="row flex items-center gap-2">
                         {`${(capacity * 100).toFixed(0)}%`}
-                        <div className='w-4 h-4 rounded-full  overflow-hidden relative bg-slate-200'>
-                        <div style={{width: '40rem',height:`${(cssCapacity*100).toFixed(0)}%`,left: `-${(39*cssCapacity).toFixed(2)}rem`}} className={`absolute bottom-0 bg-gradient-to-r from-emerald-500 via-yellow-500 to-red-500`}/>
-                            </div>
+                        <div className="relative h-4 w-4  overflow-hidden rounded-full bg-slate-200">
+                            <div
+                                style={{
+                                    width: '40rem',
+                                    height: `${(cssCapacity * 100).toFixed(0)}%`,
+                                    left: `-${(39 * cssCapacity).toFixed(2)}rem`,
+                                }}
+                                className={`absolute bottom-0 bg-gradient-to-r from-emerald-500 via-yellow-500 to-red-500`}
+                            />
+                        </div>
                     </div>
                 )
-            }
+            },
         },
         {
             headerName: 'Creado En',
             field: 'createdAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
         },
         {
             headerName: 'Actualizado En',
             field: 'updatedAt',
             width: 150,
             type: 'dateTime',
-            valueFormatter: ({ value }: { value: string }) => (value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined),
+            valueFormatter: ({ value }: { value: string }) =>
+                value ? dayjs(value).format('D/M/YYYY, HH:mm') : undefined,
         },
     ]
 
@@ -285,7 +300,7 @@ const Home: NextPage = () => {
         <>
             <Head>
                 <title>Listado de Posiciones</title>
-                
+
                 <meta
                     name="description"
                     content="Gestor de inventario"
@@ -299,7 +314,7 @@ const Home: NextPage = () => {
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Listado de Posiciones</h1>
-                    <div className="flex h-screen_3/4 w-auto transition-all duration-500 max-w-full flex-col justify-center gap-4">
+                    <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4 transition-all duration-500">
                         <div className="flex w-full items-end justify-between">
                             {isAdmin && (
                                 <div className="flex w-full justify-end gap-3">
@@ -338,7 +353,6 @@ const Home: NextPage = () => {
                                         columnVisibilityModel: {
                                             maxCapacitySmall: false,
                                             maxCapacityJumbo: false,
-
                                         },
                                     },
                                     aggregation: {
@@ -389,13 +403,13 @@ const Home: NextPage = () => {
                                 name="warehouse"
                             />
                             <Numeric
-                                suffix='vidrios'
+                                suffix="vidrios"
                                 label="Capacidad Máxima de Jumbo"
                                 name="maxCapacityJumbo"
                                 className=" sm:col-span-3"
                             />
                             <Numeric
-                                suffix='vidrios'
+                                suffix="vidrios"
                                 label="Capacidad Máxima de Small"
                                 name="maxCapacitySmall"
                                 className=" sm:col-span-3"
@@ -411,8 +425,9 @@ const Home: NextPage = () => {
                     <>
                         Editar Posición
                         {isNotNullUndefinedOrEmpty(locationToEdit) ? (
-                            <span className="text-sm font-normal text-slate-500">{`   ${locationToEdit?.position ?? ''
-                                }`}</span>
+                            <span className="text-sm font-normal text-slate-500">{`   ${
+                                locationToEdit?.position ?? ''
+                            }`}</span>
                         ) : (
                             ''
                         )}
@@ -437,13 +452,13 @@ const Home: NextPage = () => {
                                 name="warehouse"
                             />
                             <Numeric
-                                suffix='vidrios'
+                                suffix="vidrios"
                                 label="Capacidad Máxima de Jumbo"
                                 name="maxCapacityJumbo"
                                 className=" sm:col-span-3"
                             />
                             <Numeric
-                                suffix='vidrios'
+                                suffix="vidrios"
                                 label="Capacidad Máxima de Small"
                                 name="maxCapacitySmall"
                                 className=" sm:col-span-3"
@@ -455,11 +470,13 @@ const Home: NextPage = () => {
 
             {/*Formulario de Eliminación*/}
             <DialogForm
-                title={`¿Desea eliminar la posición ${isNotNullUndefinedOrEmpty(locationToDelete) ? `${locationToDelete?.position ?? ''}` : ''
-                    }?`}
+                title={`¿Desea eliminar la posición ${
+                    isNotNullUndefinedOrEmpty(locationToDelete) ? `${locationToDelete?.position ?? ''}` : ''
+                }?`}
                 titleStyles="text-center"
-                buttonText={`Eliminar ${isNotNullUndefinedOrEmpty(locationToDelete) ? `${locationToDelete?.position ?? ''}` : ''
-                    }`}
+                buttonText={`Eliminar ${
+                    isNotNullUndefinedOrEmpty(locationToDelete) ? `${locationToDelete?.position ?? ''}` : ''
+                }`}
                 buttonStyles="bg-red-500 hover:bg-red-600 w-full"
                 isOpen={isNotNullUndefinedOrEmpty(locationToDelete)}
                 setIsOpen={(value) => {

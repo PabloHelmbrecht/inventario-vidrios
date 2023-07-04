@@ -13,15 +13,19 @@ import Image from 'next/image'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
 
 //Material UI
-import { DataGridPremium as DataGrid, GridToolbar, GridActionsCellItem, type GridColDef, type GridValidRowModel } from '@mui/x-data-grid-premium'
+import {
+    DataGridPremium as DataGrid,
+    GridToolbar,
+    GridActionsCellItem,
+    type GridColDef,
+    type GridValidRowModel,
+} from '@mui/x-data-grid-premium'
 
 //Axios
 import axios from 'axios'
 
 //Prisma
 import { type User } from '@prisma/client'
-
-
 
 //Env variables
 import { env } from '~/env.mjs'
@@ -34,7 +38,6 @@ import Snackbar, { type AlertProps } from '../../components/snackbarAlert'
 //Custom Functions
 import { isNotNullUndefinedOrEmpty } from '../../utils/variableChecker'
 import eliminateLicenseKey from '~/utils/eliminateLicenseKey'
-
 
 //Custom Constants
 import GRID_DEFAULT_LOCALE_TEXT from '../../constants/localeTextConstants'
@@ -243,7 +246,7 @@ const Home: NextPage = () => {
             <main className="flex flex-col items-center justify-center px-4 py-16">
                 <div className="container flex flex-col items-center justify-center gap-12">
                     <h1 className="text-2xl font-semibold text-gray-700 sm:text-[2rem]">Listado de Usuarios</h1>
-                    <div className="flex h-screen_3/4 w-auto transition-all duration-500 max-w-full flex-col justify-center gap-4">
+                    <div className="flex h-screen_3/4 w-auto max-w-full flex-col justify-center gap-4 transition-all duration-500">
                         {usersData && (
                             <DataGrid
                                 disableDensitySelector
@@ -262,14 +265,10 @@ const Home: NextPage = () => {
                                 }}
                                 initialState={{
                                     columns: {
-                                        columnVisibilityModel: {
-                                            
-                                        },
+                                        columnVisibilityModel: {},
                                     },
                                     aggregation: {
-                                        model: {
-                                            
-                                        },
+                                        model: {},
                                     },
                                 }}
                                 sx={{

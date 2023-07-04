@@ -5,7 +5,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from './db'
 
-import {z} from 'zod'
+import { z } from 'zod'
 
 import { type Glass, type GlassMovement, type GlassStatus } from '@prisma/client'
 
@@ -17,33 +17,32 @@ export const config = {
 }
 
 const prismaX = prisma
-.$extends({
-    name: `squareMetersComputed`,
-    result: {
-        glass: {
-            squaredMeters: {
-                needs: { height: true, width: true, quantity: true },
-                compute(data: { height: number; width: number; quantity: number }) {
-                    return (data.height * data.width * data.quantity) / 1000000
+    .$extends({
+        name: `squareMetersComputed`,
+        result: {
+            glass: {
+                squaredMeters: {
+                    needs: { height: true, width: true, quantity: true },
+                    compute(data: { height: number; width: number; quantity: number }) {
+                        return (data.height * data.width * data.quantity) / 1000000
+                    },
                 },
             },
         },
-    },
-})
-.$extends({
-    name: `typeComputed`,
-    result: {
-        glass: {
-            type: {
-                needs: { height: true,width:true },
-                compute(data: { height: number; width: number }) {
-                    return (((data.height * data.width) / 1000000)>=env.SQUARED_METERS_LIMIT?'Jumbo':'Small')
+    })
+    .$extends({
+        name: `typeComputed`,
+        result: {
+            glass: {
+                type: {
+                    needs: { height: true, width: true },
+                    compute(data: { height: number; width: number }) {
+                        return (data.height * data.width) / 1000000 >= env.SQUARED_METERS_LIMIT ? 'Jumbo' : 'Small'
+                    },
                 },
             },
         },
-    },
-})
-
+    })
 
 // GET /api/glasses
 export async function GET(req: NextRequest) {
@@ -53,12 +52,11 @@ export async function GET(req: NextRequest) {
         const id = searchParams.get('id') ?? searchParams.get('nextParamid')
         const status = searchParams.get('status')?.split(',') as GlassStatus[] | null
 
-
         const glassSchema = z.object({
             squaredMeters: z.number(),
             material: z.object({
                 density: z.number(),
-            })
+            }),
         })
 
         //Si existe un id entonces devuelvo ese vidrio específico
@@ -74,44 +72,43 @@ export async function GET(req: NextRequest) {
                 },
             })
 
-            
-            try {  
+            try {
                 const responseParsed = glassSchema.parse(response)
 
-                return NextResponse.json({...response, weight: responseParsed.squaredMeters*responseParsed.material.density})
+                return NextResponse.json({
+                    ...response,
+                    weight: responseParsed.squaredMeters * responseParsed.material.density,
+                })
+            } catch (e) {
+                return NextResponse.json({ ...response, weight: null })
             }
-            catch(e) {
-                return NextResponse.json({...response, weight: null})
-            }
-        
-
         }
 
         //Si no existe entonces traigo todos los vidrios de la base de datos que tienen el status obtenido
         else {
-            const response = (await prismaX.glass.findMany({
-                orderBy: [
-                    {
-                        updatedAt: 'desc',
+            const response = (
+                await prismaX.glass.findMany({
+                    orderBy: [
+                        {
+                            updatedAt: 'desc',
+                        },
+                    ],
+                    include: {
+                        material: true,
+                        vendor: true,
+                        location: true,
                     },
-                ],
-                include: {
-                    material: true,
-                    vendor: true,
-                    location: true,
-                },
-                where: {
-                    status: status != null ? { in: status } : undefined,
-                },
-            }))
-            .map(glass => {
-                try {  
+                    where: {
+                        status: status != null ? { in: status } : undefined,
+                    },
+                })
+            ).map((glass) => {
+                try {
                     const glassParsed = glassSchema.parse(glass)
-                    
-                    return {...glass, weight: glassParsed.squaredMeters*glassParsed.material.density}
-                }
-                catch(e) {
-                    return {...glass, weight: null}
+
+                    return { ...glass, weight: glassParsed.squaredMeters * glassParsed.material.density }
+                } catch (e) {
+                    return { ...glass, weight: null }
                 }
             })
 

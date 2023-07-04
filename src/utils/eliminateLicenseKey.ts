@@ -1,4 +1,4 @@
-function eliminateLicenseKey():void {
+function eliminateLicenseKey(): void {
     setTimeout(() => {
         const divs = document.getElementsByTagName('div')
         let licenseDiv
@@ -9,7 +9,7 @@ function eliminateLicenseKey():void {
         }
 
         licenseDiv?.remove()
-    }, 100)
+    }, 11)
 }
 
 export default eliminateLicenseKey
