@@ -1055,6 +1055,7 @@ const Home: NextPage = () => {
                                             expirationDate: false,
                                             createdAt: false,
                                             updatedAt: false,
+                                            projectReservation: false,
                                         },
                                     },
                                     aggregation: {
@@ -1140,6 +1141,7 @@ const Home: NextPage = () => {
                             />
                             <TextLine
                                 label="Lote"
+                                placeholder="PL816088"
                                 name="batch"
                                 required={false}
                                 className=" sm:col-span-3"
@@ -1155,6 +1157,7 @@ const Home: NextPage = () => {
                                 name="projectReservation"
                                 required={false}
                                 className=" sm:col-span-3"
+                                placeholder='Carpintería Moras S.A. | Huergo'
                             />
                             <Numeric
                                 label="Cantidad"
@@ -1164,6 +1167,7 @@ const Home: NextPage = () => {
                             <TextArea
                                 label="Comentarios"
                                 name="newComment"
+                                placeholder='Escribe acá tus comentarios'
                             />
                         </>
                     )
@@ -1311,6 +1315,7 @@ const Home: NextPage = () => {
                             <TextArea
                                 label="Comentarios"
                                 name="newComment"
+                                placeholder='Escribe acá tus comentarios'
                             />
                         </>
                     )
@@ -1449,6 +1454,7 @@ const Home: NextPage = () => {
                             <TextArea
                                 label="Comentarios"
                                 name="newComment"
+                                placeholder='Escribe acá tus comentarios'
                             />
                         </>
                     )
@@ -1506,6 +1512,7 @@ const Home: NextPage = () => {
                             <TextLine
                                 label="Lote"
                                 name="batch"
+                                placeholder='PL816088'
                                 required={false}
                                 className=" sm:col-span-3"
                             />
@@ -1535,6 +1542,7 @@ const Home: NextPage = () => {
                                 name="projectReservation"
                                 required={false}
                                 className=" sm:col-span-3"
+                                placeholder='Carpintería Moras S.A. | Huergo'
                             />
                             <Numeric
                                 label="Cantidad"
@@ -1546,6 +1554,7 @@ const Home: NextPage = () => {
                             <TextArea
                                 label="Comentarios"
                                 name="newComment"
+                                placeholder='Escribe acá tus comentarios'
                             />
                         </>
                     )

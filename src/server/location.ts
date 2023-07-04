@@ -16,38 +16,38 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
         if (id) {
-            const response = await prisma.$queryRaw`SELECT gl.*, 
-            CASE 
-                WHEN gl.maxCapacityJumbo IS NULL OR gl.maxCapacityJumbo = 0 OR gl.maxCapacitySmall IS NULL OR gl.maxCapacitySmall = 0 
-                THEN NULL 
-                ELSE (IFNULL(counts.jumboGlassCount, 0) / gl.maxCapacityJumbo + IFNULL(counts.smallGlassCount, 0) / gl.maxCapacitySmall) 
+            const response = await prisma.$queryRaw`SELECT gl.*,
+            CASE
+                WHEN gl.maxCapacityJumbo IS NULL OR gl.maxCapacityJumbo = 0 OR gl.maxCapacitySmall IS NULL OR gl.maxCapacitySmall = 0 THEN NULL
+                ELSE (IFNULL(weights.jumboGlass, 0) / (gl.maxCapacityJumbo) + IFNULL(weights.smallGlass, 0) / (gl.maxCapacitySmall))
             END AS usedCapacity
         FROM GlassLocation gl
         LEFT JOIN (
-            SELECT locationId, 
-                SUM(CASE WHEN ((g.width / 1000) * (g.height / 1000)) > ${env.SQUARED_METERS_LIMIT} THEN g.quantity END) AS jumboGlassCount,
-                SUM(CASE WHEN ((g.width / 1000) * (g.height / 1000)) <= ${env.SQUARED_METERS_LIMIT} THEN g.quantity END) AS smallGlassCount
+            SELECT locationId,
+                SUM(CASE WHEN ((g.width / 1000) * (g.height / 1000)) > ${env.SQUARED_METERS_LIMIT} THEN ((g.width / 1000) * (g.height / 1000)) * (gt.density / 1000) * g.quantity END) AS jumboGlass,
+                SUM(CASE WHEN ((g.width / 1000) * (g.height / 1000)) <= ${env.SQUARED_METERS_LIMIT} THEN ((g.width / 1000) * (g.height / 1000)) * (gt.density / 1000)  * g.quantity END) AS smallGlass
             FROM Glass g
+            INNER JOIN GlassType gt ON g.typeId = gt.id
             GROUP BY locationId
-        ) AS counts ON gl.id = counts.locationId
+        ) AS weights ON gl.id = weights.locationId
             WHERE gl.id = ${id};`
 
             return NextResponse.json(response)
         } else {
-            const response = await prisma.$queryRaw`SELECT gl.*, 
-            CASE 
-                WHEN gl.maxCapacityJumbo IS NULL OR gl.maxCapacityJumbo = 0 OR gl.maxCapacitySmall IS NULL OR gl.maxCapacitySmall = 0 
-                THEN NULL 
-                ELSE (IFNULL(counts.jumboGlassCount, 0) / gl.maxCapacityJumbo + IFNULL(counts.smallGlassCount, 0) / gl.maxCapacitySmall) 
+            const response = await prisma.$queryRaw`SELECT gl.*,
+            CASE
+                WHEN gl.maxCapacityJumbo IS NULL OR gl.maxCapacityJumbo = 0 OR gl.maxCapacitySmall IS NULL OR gl.maxCapacitySmall = 0 THEN NULL
+                ELSE (IFNULL(weights.jumboGlass, 0) / (gl.maxCapacityJumbo) + IFNULL(weights.smallGlass, 0) / (gl.maxCapacitySmall))
             END AS usedCapacity
         FROM GlassLocation gl
         LEFT JOIN (
-            SELECT locationId, 
-                SUM(CASE WHEN ((g.width / 1000) * (g.height / 1000)) > ${env.SQUARED_METERS_LIMIT} THEN g.quantity END) AS jumboGlassCount,
-                SUM(CASE WHEN ((g.width / 1000) * (g.height / 1000)) <= ${env.SQUARED_METERS_LIMIT} THEN g.quantity END) AS smallGlassCount
+            SELECT locationId,
+                SUM(CASE WHEN ((g.width / 1000) * (g.height / 1000)) > ${env.SQUARED_METERS_LIMIT} THEN ((g.width / 1000) * (g.height / 1000)) * (gt.density / 1000) * g.quantity END) AS jumboGlass,
+                SUM(CASE WHEN ((g.width / 1000) * (g.height / 1000)) <= ${env.SQUARED_METERS_LIMIT} THEN ((g.width / 1000) * (g.height / 1000)) * (gt.density / 1000)  * g.quantity END) AS smallGlass
             FROM Glass g
+            INNER JOIN GlassType gt ON g.typeId = gt.id
             GROUP BY locationId
-        ) AS counts ON gl.id = counts.locationId`
+        ) AS weights ON gl.id = weights.locationId`
 
             return NextResponse.json(response)
         }

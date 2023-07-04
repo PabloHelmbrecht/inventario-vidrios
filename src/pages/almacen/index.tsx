@@ -209,7 +209,7 @@ const Home: NextPage = () => {
             field: 'maxCapacityJumbo',
             type: 'number',
             width: 100,
-            valueFormatter: ({ value }: { value: number }) => (value ? convertFloat(value) : undefined),
+            valueFormatter: ({ value }: { value: number }) => (value ? `${convertFloat(value)} T` : undefined),
 
         },
         {
@@ -217,7 +217,7 @@ const Home: NextPage = () => {
             field: 'maxCapacitySmall',
             type: 'number',
             width: 100,
-            valueFormatter: ({ value }: { value: number }) => (value ? convertFloat(value) : undefined),
+            valueFormatter: ({ value }: { value: number }) => (value ? `${convertFloat(value)} T` : undefined),
 
         },
         {
@@ -227,8 +227,9 @@ const Home: NextPage = () => {
             width: 120,
             valueFormatter: ({ value }: { value: number }) => (value * 100).toFixed(2),
             renderCell: (params) => {
-                const capacitySchema = z.number().optional()
+                const capacitySchema = z.number()
 
+               try {
                 const capacity = capacitySchema.parse(params?.value)
 
                 if (capacity === undefined) {
@@ -251,6 +252,11 @@ const Home: NextPage = () => {
                         </div>
                     </div>
                 )
+
+               }
+               catch(e){
+                return undefined
+               }
             },
         },
         {
@@ -403,13 +409,13 @@ const Home: NextPage = () => {
                                 name="warehouse"
                             />
                             <Numeric
-                                suffix="vidrios"
+                                suffix="toneladas"
                                 label="Capacidad Máxima de Jumbo"
                                 name="maxCapacityJumbo"
                                 className=" sm:col-span-3"
                             />
                             <Numeric
-                                suffix="vidrios"
+                                suffix="toneladas"
                                 label="Capacidad Máxima de Small"
                                 name="maxCapacitySmall"
                                 className=" sm:col-span-3"
@@ -452,13 +458,13 @@ const Home: NextPage = () => {
                                 name="warehouse"
                             />
                             <Numeric
-                                suffix="vidrios"
+                                suffix="toneladas"
                                 label="Capacidad Máxima de Jumbo"
                                 name="maxCapacityJumbo"
                                 className=" sm:col-span-3"
                             />
                             <Numeric
-                                suffix="vidrios"
+                                suffix="toneladas"
                                 label="Capacidad Máxima de Small"
                                 name="maxCapacitySmall"
                                 className=" sm:col-span-3"
