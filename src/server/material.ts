@@ -32,9 +32,16 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const materialData = (await request.json()) as GlassMaterial
+
+
+        if(materialData.density) {
+            materialData.density = Number(materialData.density)
+        }
+
         const createdMaterial = await prisma.glassMaterial.create({
             data: materialData,
         })
+        
 
         return NextResponse.json(createdMaterial)
     } catch (error) {
@@ -52,6 +59,11 @@ export async function PATCH(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
         const materialData = (await request.json()) as GlassMaterial
+
+        if(materialData.density) {
+            materialData.density = Number(materialData.density)
+        }
+
         const updatedMaterial = await prisma.glassMaterial.update({
             where: {
                 id: id,

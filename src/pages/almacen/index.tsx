@@ -89,11 +89,13 @@ const Home: NextPage = () => {
     //- Submit Functions
     const onLocationCreation = async (formResponse: object) => {
         try {
-            const { position, warehouse } = formResponse as formResponseType
+            const { position, warehouse, maxCapacityJumbo, maxCapacitySmall } = formResponse as formResponseType
 
             const response = await axios.post(`/api/locations`, {
                 position,
                 warehouse,
+                maxCapacityJumbo,
+                maxCapacitySmall
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Posición cargada exitosamente' })
@@ -121,11 +123,15 @@ const Home: NextPage = () => {
 
     const onLocationEdit = async (formResponse: object) => {
         try {
-            const { id, position, warehouse } = formResponse as formResponseType
+
+            console.log({formResponse})
+            const { id, position, warehouse,maxCapacityJumbo, maxCapacitySmall } = formResponse as formResponseType
 
             const response = await axios.patch(`/api/locations/${Number(id)}`, {
                 position,
                 warehouse,
+                maxCapacityJumbo,
+                maxCapacitySmall
             })
             if (response.data === null) throw new Error('No se obtuvo respuesta')
             setSnackbar({ type: 'success', message: 'Posición editada exitosamente' })

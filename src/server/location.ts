@@ -64,6 +64,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const locationData = (await request.json()) as GlassLocation
+
+        if(locationData.maxCapacityJumbo) {
+            locationData.maxCapacityJumbo = Number(locationData.maxCapacityJumbo)
+        }
+        if(locationData.maxCapacitySmall) {
+            locationData.maxCapacitySmall = Number(locationData.maxCapacitySmall)
+        }
         const createdLocation = await prisma.glassLocation.create({
             data: locationData,
         })
@@ -84,6 +91,14 @@ export async function PATCH(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = Number(searchParams.get('id') ?? searchParams.get('nextParamid'))
         const locationData = (await request.json()) as GlassLocation
+
+        if(locationData.maxCapacityJumbo) {
+            locationData.maxCapacityJumbo = Number(locationData.maxCapacityJumbo)
+        }
+        if(locationData.maxCapacitySmall) {
+            locationData.maxCapacitySmall = Number(locationData.maxCapacitySmall)
+        }
+        
         const updatedLocation = await prisma.glassLocation.update({
             where: {
                 id: id,
