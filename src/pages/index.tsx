@@ -1174,6 +1174,8 @@ const Home: NextPage = () => {
                 }}
             />
 
+            
+
             {/*Formulario de Movimiento*/}
             <DialogForm
                 title={
@@ -1229,7 +1231,7 @@ const Home: NextPage = () => {
                                 label="Descripción"
                                 name="material"
                                 inputField="description"
-                                options={getFieldOptions(formGlass).material as GlassMaterial[]}
+                                options={getFieldOptions(formGlass).material  as GlassMaterial[]}
                             />
                             <Combobox
                                 label="Ancho"

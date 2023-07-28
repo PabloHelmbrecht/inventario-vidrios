@@ -20,10 +20,7 @@ const requiredDecorator = (value: string) => (value ? undefined : 'Requerido')
 export default function ComboboxField({
     label = 'Insert label',
     name = 'combobox',
-    options = [
-        { id: 1, name: 'firstOption', description: 'First Option' },
-        { id: 2, name: 'secondOption', description: 'Second Option' },
-    ],
+    options,
     inputField = 'description',
     className = '',
     required = true,
@@ -31,13 +28,16 @@ export default function ComboboxField({
 }: {
     label?: string
     name?: string
-    options?: Option[]
+    options: Option[]
     inputField?: string
     className?: string
     disabled?: boolean
     required?: boolean
 }) {
     const [query, setQuery] = useState<string>('')
+
+
+    options = options.filter(item => item&&item[inputField])
 
     const filteredOptions: Option[] =
         query === ''
